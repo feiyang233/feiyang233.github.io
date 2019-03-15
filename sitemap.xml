@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://fainyang.github.io/post/Master/</loc>
+    
+    <lastmod>2019-03-15T09:17:32.166Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/post/timestampdiff/</loc>
+    
+    <lastmod>2019-03-15T09:17:29.989Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/post/hexo-blog/</loc>
+    
+    <lastmod>2019-03-15T09:10:55.511Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://fainyang.github.io/post/Onboarding/</loc>
     
     <lastmod>2019-03-15T04:09:43.947Z</lastmod>
@@ -9,30 +30,9 @@
   </url>
   
   <url>
-    <loc>https://fainyang.github.io/post/hexo-blog/</loc>
-    
-    <lastmod>2019-03-15T04:07:13.088Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://fainyang.github.io/post/timestampdiff/</loc>
-    
-    <lastmod>2019-03-15T03:00:14.978Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://fainyang.github.io/post/Robot/</loc>
     
     <lastmod>2019-03-15T03:00:12.980Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://fainyang.github.io/post/Master/</loc>
-    
-    <lastmod>2019-03-15T02:59:38.359Z</lastmod>
     
   </url>
   
