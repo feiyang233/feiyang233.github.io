@@ -2,72 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://fainyang.github.io/about/index.html</loc>
+    <loc>https://fainyang.github.io/post/Onboarding/</loc>
     
-    <lastmod>2019-03-14T11:16:25.044Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://fainyang.github.io/tags/index.html</loc>
-    
-    <lastmod>2019-03-14T11:16:16.039Z</lastmod>
+    <lastmod>2019-03-15T04:09:43.947Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://fainyang.github.io/post/blog/</loc>
+    <loc>https://fainyang.github.io/post/hexo-blog/</loc>
     
-    <lastmod>2019-03-14T09:48:35.351Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://fainyang.github.io/post/Canteen/</loc>
-    
-    <lastmod>2019-03-14T09:17:56.801Z</lastmod>
+    <lastmod>2019-03-15T04:07:13.088Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://fainyang.github.io/post/timestampdiff/</loc>
     
-    <lastmod>2019-03-14T07:08:44.921Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://fainyang.github.io/post/Master/</loc>
-    
-    <lastmod>2019-03-14T06:59:36.415Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://fainyang.github.io/post/Combination/</loc>
-    
-    <lastmod>2019-03-13T15:01:08.486Z</lastmod>
+    <lastmod>2019-03-15T03:00:14.978Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://fainyang.github.io/post/Robot/</loc>
     
-    <lastmod>2019-03-13T15:00:41.891Z</lastmod>
+    <lastmod>2019-03-15T03:00:12.980Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://fainyang.github.io/post/Onboarding/</loc>
+    <loc>https://fainyang.github.io/post/Master/</loc>
     
-    <lastmod>2019-03-13T14:59:18.646Z</lastmod>
+    <lastmod>2019-03-15T02:59:38.359Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/post/Canteen/</loc>
+    
+    <lastmod>2019-03-15T02:59:06.743Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://fainyang.github.io/post/links/</loc>
     
-    <lastmod>2019-03-13T14:58:25.734Z</lastmod>
+    <lastmod>2019-03-15T02:58:42.439Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/post/Combination/</loc>
+    
+    <lastmod>2019-03-15T02:58:11.748Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/post/blog/</loc>
+    
+    <lastmod>2019-03-15T02:56:54.506Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/tags/index.html</loc>
+    
+    <lastmod>2019-03-15T02:55:10.861Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/categories/index.html</loc>
+    
+    <lastmod>2019-03-15T02:54:58.962Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://fainyang.github.io/about/index.html</loc>
+    
+    <lastmod>2019-03-14T11:16:25.044Z</lastmod>
     
   </url>
   
