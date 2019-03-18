@@ -435,11 +435,15 @@
                   
                 
               
-              目前共计 5 个标签
+                
+                  
+                
+              
+              目前共计 6 个标签
             </div>
             <div class="tag-cloud-tags">
               
-                <a href="/tags/NUS/" style="font-size: 21px; color: #6f6f6f">NUS</a> <a href="/tags/hexo/" style="font-size: 12px; color: #ccc">hexo</a> <a href="/tags/links/" style="font-size: 12px; color: #ccc">links</a> <a href="/tags/python/" style="font-size: 30px; color: #111">python</a> <a href="/tags/工作/" style="font-size: 12px; color: #ccc">工作</a>
+                <a href="/tags/NUS/" style="font-size: 21px; color: #6f6f6f">NUS</a> <a href="/tags/hexo/" style="font-size: 12px; color: #ccc">hexo</a> <a href="/tags/links/" style="font-size: 12px; color: #ccc">links</a> <a href="/tags/python/" style="font-size: 30px; color: #111">python</a> <a href="/tags/工作/" style="font-size: 12px; color: #ccc">工作</a> <a href="/tags/美食/" style="font-size: 12px; color: #ccc">美食</a>
               
             </div>
           </div>
@@ -509,7 +513,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -557,7 +561,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -794,7 +800,25 @@
     (d.head || d.body).appendChild(s);
   }
   
-    loadComments();
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
   
 </script>
 
