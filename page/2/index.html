@@ -102,31 +102,23 @@
 
 
 
-  <meta name="description" content="问题介绍假设有小费和小王俩好基友，天天形影不离，二人分在一个组。为了减少迟到的现象，班主任规定如下：  迟到一次，则当事人记一分。（迟到） 小组两人在某一天同时迟到，则小组总分再记一分。（连坐） 一周内如果每天都迟到，则当事人再扣一分。（太皮了）">
-<meta name="keywords" content="python">
-<meta property="og:type" content="article">
-<meta property="og:title" content="排列组合了解一下(阿里笔试题改编)">
-<meta property="og:url" content="http://feiyang233.club/post/Combination/index.html">
+  <meta name="description" content="佛系咸鱼">
+<meta property="og:type" content="website">
+<meta property="og:title" content="feiyang&#39;s blog">
+<meta property="og:url" content="http://feiyang233.club/page/2/index.html">
 <meta property="og:site_name" content="feiyang&#39;s blog">
-<meta property="og:description" content="问题介绍假设有小费和小王俩好基友，天天形影不离，二人分在一个组。为了减少迟到的现象，班主任规定如下：  迟到一次，则当事人记一分。（迟到） 小组两人在某一天同时迟到，则小组总分再记一分。（连坐） 一周内如果每天都迟到，则当事人再扣一分。（太皮了）">
+<meta property="og:description" content="佛系咸鱼">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://feiyang233.club/img/gay.jpeg">
-<meta property="og:image" content="http://feiyang233.club/img/combination1.png">
-<meta property="og:image" content="http://feiyang233.club/img/combination2.png">
-<meta property="og:image" content="http://feiyang233.club/img/combination3.png">
-<meta property="og:image" content="http://feiyang233.club/img/combination4.png">
-<meta property="og:updated_time" content="2019-03-15T02:58:11.748Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="排列组合了解一下(阿里笔试题改编)">
-<meta name="twitter:description" content="问题介绍假设有小费和小王俩好基友，天天形影不离，二人分在一个组。为了减少迟到的现象，班主任规定如下：  迟到一次，则当事人记一分。（迟到） 小组两人在某一天同时迟到，则小组总分再记一分。（连坐） 一周内如果每天都迟到，则当事人再扣一分。（太皮了）">
-<meta name="twitter:image" content="http://feiyang233.club/img/gay.jpeg">
+<meta name="twitter:title" content="feiyang&#39;s blog">
+<meta name="twitter:description" content="佛系咸鱼">
 
 
 
 
 
 
-  <link rel="canonical" href="http://feiyang233.club/post/Combination/">
+  <link rel="canonical" href="http://feiyang233.club/page/2/">
 
 
 
@@ -136,7 +128,7 @@
   };
 </script>
 
-  <title>排列组合了解一下(阿里笔试题改编) | feiyang's blog</title>
+  <title>feiyang's blog</title>
   
 
 
@@ -184,7 +176,8 @@
     
   
 
-  <div class="container sidebar-position-right page-post-detail">
+  <div class="container sidebar-position-right 
+  page-home">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -368,9 +361,9 @@
           
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -402,8 +395,10 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">排列组合了解一下(阿里笔试题改编)
-
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/Combination/" class="post-title-link" itemprop="url">排列组合了解一下(阿里笔试题改编)</a>
               
             
           </h1>
@@ -510,38 +505,23 @@
       
 
       
-        <h2 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h2><p>假设有小费和小王俩好基友，天天形影不离，二人分在一个组。<br>为了减少迟到的现象，班主任规定如下：</p>
+        
+          <h2 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h2><p>假设有小费和小王俩好基友，天天形影不离，二人分在一个组。<br>为了减少迟到的现象，班主任规定如下：</p>
 <ol>
 <li>迟到一次，则当事人记一分。（迟到）</li>
 <li>小组两人在某一天同时迟到，则小组总分再记一分。（连坐）</li>
 <li>一周内如果每天都迟到，则当事人再扣一分。（太皮了）</li>
 </ol>
-<a id="more"></a>
-<p>  三种情况可累加记分，一周结算一次小组总分。<br>  肯定有人想说<br><img src="/img/gay.jpeg" alt="gay里gay气"> </p>
-<h2 id="举个例子好了"><a href="#举个例子好了" class="headerlink" title="举个例子好了"></a>举个例子好了</h2><p>下图为某一周的出勤情况：从图中看出小费同学比较皮，天天迟到！小王同学有两天和小费同学一起开黑，导致了迟到。<br>所以总的小组计分为10分！</p>
-<p><img src="/img/combination1.png" alt="出勤情况"></p>
-<p><code>那么问题来了：如果已知某一周小组的总分情况，列出可能的出勤表</code></p>
-<h2 id="咸鱼采用的暴力破解法"><a href="#咸鱼采用的暴力破解法" class="headerlink" title="咸鱼采用的暴力破解法"></a>咸鱼采用的暴力破解法</h2><p>有两个对象，每个对象有5个记录。每次记录的值有两种情况，我们可以暴力枚举出所有的情况。<br>一共也才2的10次方，1024种情况。对于计算机来说，当然是小菜一碟咯。</p>
-<p>所有上面的出勤图就可以简化为0-1数值图：<br><img src="/img/combination2.png" alt="数值图"></p>
-<p>接下来问题就变成，如何枚举出这1024种情况？</p>
-<ol>
-<li>2行5列一共10个值，循环列出0-1111111111二进制数的情况，高位补0。</li>
-<li>如上图，2列是独立的，我们只需求出5位的情况，两列互相遍历即可。</li>
-<li>用python自带的 <a href="https://docs.python.org/3/library/itertools.html" target="_blank" rel="noopener">itertools</a>库，分分钟枚举完成。</li>
-</ol>
-<p><img src="/img/combination3.png" alt="解释图"></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> itertools</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(start_day,faith_score)</span>:</span></span><br><span class="line">    Calendar=[[<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>],[<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>]] <span class="comment">#模拟日历2行5列</span></span><br><span class="line">    L=list(itertools.product([<span class="number">0</span>,<span class="number">1</span>],repeat=<span class="number">5</span>)) <span class="comment">#枚举产生</span></span><br><span class="line">    leng=len(L)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(leng):<span class="comment">#两次遍历</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(leng):</span><br><span class="line">            Calendar[<span class="number">0</span>]=L[i]</span><br><span class="line">            Calendar[<span class="number">1</span>]=L[j]</span><br><span class="line">            <span class="keyword">if</span> sumcredit(Calendar)==faith_score:<span class="comment">#判断情况</span></span><br><span class="line">                gg=todate(Calendar,start_day)</span><br><span class="line">                print(gg) <span class="comment">#输出情况</span></span><br></pre></td></tr></table></figure>
-<p>只要有了枚举的所有情况，判断计分则是很容易的事情。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">credit1</span><span class="params">(L)</span>:</span> <span class="comment">#迟到一次扣一分</span></span><br><span class="line">    credit=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> L[<span class="number">0</span>]:</span><br><span class="line">        <span class="keyword">if</span> i==<span class="number">1</span>:</span><br><span class="line">            credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> L[<span class="number">1</span>]:</span><br><span class="line">        <span class="keyword">if</span> j==<span class="number">1</span>:</span><br><span class="line">            credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> credit</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">credit2</span> <span class="params">(L)</span>:</span>  <span class="comment">#一起迟到，多扣一分</span></span><br><span class="line">    credit=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</span><br><span class="line">        <span class="keyword">if</span> L[<span class="number">0</span>][i]==<span class="number">1</span> <span class="keyword">and</span> L[<span class="number">1</span>][i]==<span class="number">1</span>:</span><br><span class="line">            credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> credit</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">credit3</span> <span class="params">(L)</span>:</span> <span class="comment">#连续迟到，罪加一等</span></span><br><span class="line">    credit=<span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> <span class="number">0</span> <span class="keyword">not</span> <span class="keyword">in</span> L[<span class="number">0</span>]:</span><br><span class="line">        credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> <span class="number">0</span> <span class="keyword">not</span> <span class="keyword">in</span> L[<span class="number">1</span>]:</span><br><span class="line">        credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> credit</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sumcredit</span><span class="params">(L)</span>:</span> <span class="comment">#累加总分</span></span><br><span class="line">    c1=credit1(L)</span><br><span class="line">    c2=credit2(L)</span><br><span class="line">    c3=credit3(L)</span><br><span class="line">    <span class="keyword">return</span> c1+c2+c3</span><br></pre></td></tr></table></figure>
-<h2 id="时间问题，不容小觑"><a href="#时间问题，不容小觑" class="headerlink" title="时间问题，不容小觑"></a>时间问题，不容小觑</h2><p>因为时间在<code>跨月份</code>是时候有点麻烦，不能用普通的++，但我们可以用<code>datetime</code>库呀。<br>输入一个起始时间，我们要得到那一周的5天。<code>timedelta()</code>函数你值得拥有。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime,timedelta</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_date</span><span class="params">(date)</span>:</span>       <span class="comment">#Y表示四位数的年份(0-9999)</span></span><br><span class="line">    date_begin=datetime.strptime(date,<span class="string">'%Y%m%d'</span>) </span><br><span class="line">    time=str(datetime.date(date_begin))</span><br><span class="line"></span><br><span class="line">    date1=date_begin+timedelta(days=<span class="number">1</span>) <span class="comment">#加1s，哈哈</span></span><br><span class="line">    time1=str(datetime.date(date1))</span><br><span class="line"></span><br><span class="line">    date2=date_begin+timedelta(days=<span class="number">2</span>)</span><br><span class="line">    time2=str(datetime.date(date2))</span><br><span class="line"></span><br><span class="line">    date3=date_begin+timedelta(days=<span class="number">2</span>)</span><br><span class="line">    time3=str(datetime.date(date3))</span><br><span class="line"></span><br><span class="line">    date4=date_begin+timedelta(days=<span class="number">2</span>)</span><br><span class="line">    time4=str(datetime.date(date4))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> time,time1,time2,time3,time4</span><br></pre></td></tr></table></figure>
-<p>最后我们在输出 出勤情况的时候，将那个简化后的二维数组List<code>=&gt;</code>日历对应起来。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">todate</span><span class="params">(L,date)</span>:</span></span><br><span class="line">    time,time1,time2,time3,time4=get_date(date)</span><br><span class="line">    record=[time+<span class="string">'-小费'</span>,time+<span class="string">'-小王'</span>,time1+<span class="string">'-小费'</span>,time1+<span class="string">'-小王'</span>,time2+<span class="string">'-小费'</span>,\</span><br><span class="line">    time2+<span class="string">'-小王'</span>,time3+<span class="string">'-小费'</span>,time3+<span class="string">'-小王'</span>,time4+<span class="string">'-小费'</span>,time4+<span class="string">'-小王'</span>]</span><br><span class="line">    L1=L[<span class="number">0</span>]+L[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(L1)):</span><br><span class="line">        <span class="keyword">if</span> L1[i]==<span class="number">1</span>: <span class="comment">#1 代表迟到</span></span><br><span class="line">            record[i]+=<span class="string">'(迟到)'</span></span><br><span class="line">        <span class="keyword">else</span>: <span class="comment">#0代表没迟到</span></span><br><span class="line">            record[i]+=<span class="string">'(正常)'</span></span><br><span class="line">    <span class="keyword">return</span> record</span><br></pre></td></tr></table></figure>
-<p>假设我们输入<code>date=20180305,score=0</code><br>输出如下结果：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">'2018-03-04-小费(正常)'</span>, <span class="string">'2018-03-04-小王(正常)'</span>,</span><br><span class="line"> <span class="string">'2018-03-05-小费(正常)'</span>, <span class="string">'2018-03-05-小王(正常)'</span>, </span><br><span class="line"> <span class="string">'2018-03-06-小费(正常)'</span>, <span class="string">'2018-03-06-小王(正常)'</span>, </span><br><span class="line"> <span class="string">'2018-03-06-小费(正常)'</span>, <span class="string">'2018-03-06-小王(正常)'</span>, </span><br><span class="line"> <span class="string">'2018-03-06-小费(正常)'</span>, <span class="string">'2018-03-06-小王(正常)'</span>]</span><br><span class="line">[Finished <span class="keyword">in</span> <span class="number">0.2</span>s]</span><br></pre></td></tr></table></figure></p>
-<p>假设我们输入<code>date=20180305,score=1</code><br>输出如下结果：<br><img src="/img/combination4.png" alt="结果"></p>
-<h2 id="最后一点废话"><a href="#最后一点废话" class="headerlink" title="最后一点废话"></a>最后一点废话</h2><p>有一篇关于itertools的文章<a href="https://mp.weixin.qq.com/s/Rb5aYWA7NYOi1eckGtakuQ" target="_blank" rel="noopener">这段代码很Pythonic | 相见恨晚的 itertools 库</a> 安利一下。此文章的python<a href="https://github.com/fainyang/LeetCode_practice/blob/master/score.py" target="_blank" rel="noopener">源代码</a></p>
-<p>马上就要毕业了，再也没有当学生那种无忧无虑的感觉了。以前贪玩欠的债，找工作的时候哭出来。<br>去面试才知道自己有多菜，所幸我还比较<code>naive</code>，未来珍惜时间，好好学习。狗住，加油！</p>
-
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/Combination/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
       
     </div>
 
@@ -562,40 +542,14 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/python/" rel="tag"># python</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/post/timestampdiff/" rel="next" title="时间求差值timestampdiff">
-                <i class="fa fa-chevron-left"></i> 时间求差值timestampdiff
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/Robot/" rel="prev" title="小白也会用的微信机器人">
-                小白也会用的微信机器人 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -605,22 +559,396 @@
   </article>
 
 
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/timestampdiff/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+      <meta itemprop="image" content="/images/feiy.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/timestampdiff/" class="post-title-link" itemprop="url">时间求差值timestampdiff</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-02-23 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-23T00:00:00+08:00">2018-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-15 17:17:29" itemprop="dateModified" datetime="2019-03-15T17:17:29+08:00">2019-03-15</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习/" itemprop="url" rel="index"><span itemprop="name">学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/post/timestampdiff/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="post/timestampdiff/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="问题背景介绍"><a href="#问题背景介绍" class="headerlink" title="问题背景介绍"></a>问题背景介绍</h2><p>因为Prof想知道每个building里的average-dwell时间，NUS-WiFi数据库提供了current-time，<br>first-time。思路就是根据两者时间的差值来估计stay in building的时间。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/timestampdiff/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+      <meta itemprop="image" content="/images/feiy.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/blog/" class="post-title-link" itemprop="url">开始blog啦</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-02-20 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-20T00:00:00+08:00">2018-02-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-15 10:56:54" itemprop="dateModified" datetime="2019-03-15T10:56:54+08:00">2019-03-15</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生活/" itemprop="url" rel="index"><span itemprop="name">生活</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/post/blog/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="post/blog/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="第一篇post"><a href="#第一篇post" class="headerlink" title="第一篇post"></a>第一篇post</h2><p>虽然还不知道怎么用，先把这个网站搭起再说。<br>生活需要多点乐趣，人生苦短，需要一点甜甜的爱。<br>最幸福的事情莫过于找到所爱，所爱的事业，所爱的人。<br>除了美食，最近我也慢慢开始发现编程的乐趣。<br>今年的愿望是：每晚早点休息，年轻人不要熬夜。晚安</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
 
 
           </div>
           
-
-  
-    <div class="comments" id="comments">
-      <div id="disqus_thread">
-        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-      </div>
-    </div>
-
-  
-
-
 
         </div>
         
@@ -640,17 +968,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <div class="site-overview-wrap sidebar-panel">
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -787,23 +1106,6 @@
       </div>
 
       
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题介绍"><span class="nav-number">1.</span> <span class="nav-text">问题介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#举个例子好了"><span class="nav-number">2.</span> <span class="nav-text">举个例子好了</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#咸鱼采用的暴力破解法"><span class="nav-number">3.</span> <span class="nav-text">咸鱼采用的暴力破解法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间问题，不容小觑"><span class="nav-number">4.</span> <span class="nav-text">时间问题，不容小觑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后一点废话"><span class="nav-number">5.</span> <span class="nav-text">最后一点废话</span></a></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
-      
 
       
 
@@ -934,10 +1236,6 @@
 
 
   
-  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
-<script src="/js/src/post-details.js?v=7.0.1"></script>
-
-
 
   
 
@@ -956,46 +1254,9 @@
   <script id="dsq-count-scr" src="https://feiyang233.disqus.com/count.js" async></script>
 
 
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://feiyang233.club/post/Combination/";
-    this.page.identifier = "post/Combination/";
-    this.page.title = '排列组合了解一下(阿里笔试题改编)';
-    };
-  function loadComments() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://feiyang233.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', '' + +new Date());
-    (d.head || d.body).appendChild(s);
-  }
-  
-    $(function() {
-      var offsetTop = $('#comments').offset().top - $(window).height();
-      if (offsetTop <= 0) {
-        // load directly when there's no a scrollbar
-        loadComments();
-      } else {
-        $(window).on('scroll.disqus_scroll', function() {
-          // offsetTop may changes because of manually resizing browser window or lazy loading images.
-          var offsetTop = $('#comments').offset().top - $(window).height();
-          var scrollTop = $(window).scrollTop();
-
-          // pre-load comments a bit? (margin or anything else)
-          if (offsetTop - scrollTop < 60) {
-            $(window).off('.disqus_scroll');
-            loadComments();
-          }
-        });
-      }
-    });
-  
-</script>
 
 
 
-
-
-  
 
 
   
