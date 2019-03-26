@@ -102,31 +102,27 @@
 
 
 
-  <meta name="description" content="问题背景介绍因为Prof想知道每个building里的average-dwell时间，NUS-WiFi数据库提供了current-time，first-time。思路就是根据两者时间的差值来估计stay in building的时间。">
-<meta name="keywords" content="python">
+  <meta name="description" content="ELK 是一个分布式、可扩展、实时的搜索与数据分析引擎。目前我在工作中只用来收集 server 的 log, 开发锅锅们 debug 的好助手。">
+<meta name="keywords" content="docker,elk">
 <meta property="og:type" content="article">
-<meta property="og:title" content="时间求差值timestampdiff">
-<meta property="og:url" content="http://feiyang233.club/post/timestampdiff/index.html">
+<meta property="og:title" content="ELK 日志收集系统快速搭建">
+<meta property="og:url" content="http://feiyang233.club/post/elk/index.html">
 <meta property="og:site_name" content="feiyang&#39;s blog">
-<meta property="og:description" content="问题背景介绍因为Prof想知道每个building里的average-dwell时间，NUS-WiFi数据库提供了current-time，first-time。思路就是根据两者时间的差值来估计stay in building的时间。">
+<meta property="og:description" content="ELK 是一个分布式、可扩展、实时的搜索与数据分析引擎。目前我在工作中只用来收集 server 的 log, 开发锅锅们 debug 的好助手。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://feiyang233.club/img/time1.png">
-<meta property="og:image" content="http://feiyang233.club/img/time3.png">
-<meta property="og:image" content="http://feiyang233.club/img/time2.png">
-<meta property="og:image" content="http://feiyang233.club/img/issue.png">
-<meta property="og:image" content="http://feiyang233.club/img/time4.png">
-<meta property="og:updated_time" content="2019-03-15T09:17:29.989Z">
+<meta property="og:image" content="http://feiyang233.club/img/elk/kibana.png">
+<meta property="og:updated_time" content="2019-03-26T07:16:27.241Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="时间求差值timestampdiff">
-<meta name="twitter:description" content="问题背景介绍因为Prof想知道每个building里的average-dwell时间，NUS-WiFi数据库提供了current-time，first-time。思路就是根据两者时间的差值来估计stay in building的时间。">
-<meta name="twitter:image" content="http://feiyang233.club/img/time1.png">
+<meta name="twitter:title" content="ELK 日志收集系统快速搭建">
+<meta name="twitter:description" content="ELK 是一个分布式、可扩展、实时的搜索与数据分析引擎。目前我在工作中只用来收集 server 的 log, 开发锅锅们 debug 的好助手。">
+<meta name="twitter:image" content="http://feiyang233.club/img/elk/kibana.png">
 
 
 
 
 
 
-  <link rel="canonical" href="http://feiyang233.club/post/timestampdiff/">
+  <link rel="canonical" href="http://feiyang233.club/post/elk/">
 
 
 
@@ -136,7 +132,7 @@
   };
 </script>
 
-  <title>时间求差值timestampdiff | feiyang's blog</title>
+  <title>ELK 日志收集系统快速搭建 | feiyang's blog</title>
   
 
 
@@ -385,7 +381,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/timestampdiff/">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/elk/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="feiyang">
@@ -402,7 +398,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">时间求差值timestampdiff
+          <h1 class="post-title" itemprop="name headline">ELK 日志收集系统快速搭建
 
               
             
@@ -428,7 +424,7 @@
                 
               
 
-              <time title="创建时间：2018-02-23 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-23T00:00:00+08:00">2018-02-23</time>
+              <time title="创建时间：2019-03-25 18:35:07" itemprop="dateCreated datePublished" datetime="2019-03-25T18:35:07+08:00">2019-03-25</time>
             
 
             
@@ -445,7 +441,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-15 17:17:29" itemprop="dateModified" datetime="2019-03-15T17:17:29+08:00">2019-03-15</time>
+                <time title="修改时间：2019-03-26 15:16:27" itemprop="dateModified" datetime="2019-03-26T15:16:27+08:00">2019-03-26</time>
               
             
           </span>
@@ -462,7 +458,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习/" itemprop="url" rel="index"><span itemprop="name">学习</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
 
                 
                 
@@ -481,8 +477,8 @@
                 </span>
             
                 <span class="post-meta-item-text">评论数：</span>
-                <a href="/post/timestampdiff/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="post/timestampdiff/" itemprop="commentCount"></span>
+                <a href="/post/elk/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="post/elk/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -490,7 +486,7 @@
 
           
           
-            <span id="/post/timestampdiff/" class="leancloud_visitors" data-flag-title="时间求差值timestampdiff">
+            <span id="/post/elk/" class="leancloud_visitors" data-flag-title="ELK 日志收集系统快速搭建">
               <span class="post-meta-divider">|</span>
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
@@ -521,26 +517,23 @@
       
 
       
-        <h2 id="问题背景介绍"><a href="#问题背景介绍" class="headerlink" title="问题背景介绍"></a>问题背景介绍</h2><p>因为Prof想知道每个building里的average-dwell时间，NUS-WiFi数据库提供了current-time，<br>first-time。思路就是根据两者时间的差值来估计stay in building的时间。</p>
-<a id="more"></a>
-<p><img src="/img/time1.png" alt="数据时间格式"></p>
-<h2 id="人生苦短，首选python"><a href="#人生苦短，首选python" class="headerlink" title="人生苦短，首选python"></a>人生苦短，首选python</h2><p>第一想法当然是用python，用python包：<code>time</code>, <code>datetime</code>.<br>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">difftime</span><span class="params">(begintime,endtime)</span>:</span></span><br><span class="line">	date1=time.strptime(begintime,<span class="string">'%Y-%m-%d %H:%M:%S'</span>) </span><br><span class="line">	date2=time.strptime(endtime,<span class="string">'%Y-%m-%d %H:%M:%S'</span>)</span><br><span class="line">	<span class="comment">#y两位数的年份表示（00-99）</span></span><br><span class="line">	<span class="comment">#Y四位数的年份表示（000-9999）</span></span><br><span class="line">	date3=datetime.datetime(</span><br><span class="line">		date1[<span class="number">0</span>],date1[<span class="number">1</span>],date1[<span class="number">2</span>],date1[<span class="number">3</span>],date1[<span class="number">4</span>],date1[<span class="number">5</span>]) </span><br><span class="line">	date4=datetime.datetime(</span><br><span class="line">		date2[<span class="number">0</span>],date2[<span class="number">1</span>],date2[<span class="number">2</span>],date2[<span class="number">3</span>],date2[<span class="number">4</span>],date2[<span class="number">5</span>])</span><br><span class="line">	minutes=(date4-date3).seconds/<span class="number">60</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> minutes</span><br></pre></td></tr></table></figure>
-<p>结果如下图：</p>
-<p><img src="/img/time3.png" alt="结果展示"></p>
-<h2 id="MySQL-表示不服"><a href="#MySQL-表示不服" class="headerlink" title="MySQL 表示不服"></a><code>MySQL</code> 表示不服</h2><p>上学期我用python做的统计工作，例如每分钟有多少device，或者每个device在building里停留了多少分钟.<br>用python至少得写30+行代码去读写csv文件，在MySQL就是一行代码的事情，相见恨晚。<br><code>无知限制了我的生产力！</code><br>MySQL的数据类型里有时间戳格式timestamp。也有专门计算时间差值的<code>timestampdiff</code>函数。<br>TIMESTAMPDIFF(unit,begin,end);返回end-begin的时间差值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select timestampdiff(minute,firstime,curtime)</span><br></pre></td></tr></table></figure>
-<p>结果如下图：</p>
-<p><img src="/img/time2.png" alt="结果展示"></p>
-<h2 id="INSERT遇到问题了"><a href="#INSERT遇到问题了" class="headerlink" title="INSERT遇到问题了"></a>INSERT遇到问题了</h2><p>我想把timestampdiff返回的值插入在表的最后，先创建一个字段（列），再用insert插入，结果遇到了问题。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into test (diff)  select timestampdiff(minute,firstime,curtime)  from test;</span><br></pre></td></tr></table></figure>
-<p><img src="/img/issue.png" alt="插入问题"></p>
-<p>如图所示，结果是插在了diff列，但直接插在表的后面，没有覆盖原有的值。经过思考后，我尝试了 update的方法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update test set diff=timestampdiff(minute,firstime,curtime);</span><br></pre></td></tr></table></figure>
-<p>终于成功了！</p>
-<p><img src="/img/time4.png" alt="成功了"></p>
-<h2 id="咸鱼的叹息"><a href="#咸鱼的叹息" class="headerlink" title="咸鱼的叹息"></a>咸鱼的叹息</h2><p>python定义了一个函数来计算，用MySQL就是一句话的事情。光找这句话我就花了好久，还得好好学习。<br>还是在项目中体会得多，光看书是不行的，纸上得来终觉浅。</p>
-<p>很惭愧，连一点微小的工作都没有做，打扰了。</p>
+        <p><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">ELK</a> 是一个分布式、可扩展、实时的搜索与数据分析引擎。目前我在工作中只用来收集 server 的 log, 开发锅锅们 debug 的好助手。<br><a id="more"></a></p>
+<h1 id="单节点-ELK"><a href="#单节点-ELK" class="headerlink" title="单节点 ELK"></a>单节点 ELK</h1><p>如果你想快速的搭建单节点 ELK, 那么使用 docker 方式肯定是你的最佳选择。使用三合一的镜像，文档详情: <a href="https://elk-docker.readthedocs.io/" target="_blank" rel="noopener">https://elk-docker.readthedocs.io/</a><br>注意：安装完 docker, 记得设置 <code>mmap counts</code> 至少 262144 命令为 sysctl -w vm.max_map_count=262144<br>单节点的机器，不必暴露 9200(Elasticsearch JSON interface) 和 9300(Elasticsearch transport interface) 端口。  </p>
+<h2 id="命令行启动一个-ELK"><a href="#命令行启动一个-ELK" class="headerlink" title="命令行启动一个 ELK"></a>命令行启动一个 ELK</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -p 5601:5601 -p 5044:5044 \</span><br><span class="line">-v /data/elk-data:/var/lib/elasticsearch  \</span><br><span class="line">-v /data/elk/logstash:/etc/logstash/conf.d  \</span><br><span class="line">-it -e TZ=<span class="string">"Asia/Singapore"</span> -e ES_HEAP_SIZE=<span class="string">"20g"</span>  \</span><br><span class="line">-e LS_HEAP_SIZE=<span class="string">"10g"</span> --name elk-ubuntu sebp/elk</span><br></pre></td></tr></table></figure>
+<p>将配置和数据挂载出来，即使 docker container 出现了问题。可以立即销毁再重启一个，服务受影响的时间很短。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-v /data/elk-data:/var/lib/elasticsearch   # 将 elasticsearch 存储的数据挂载出来，数据持久化。</span><br><span class="line">-v /data/elk/logstash:/etc/logstash/conf.d # 将 logstash 的配置文件挂载出来，方便在宿主机上修改。</span><br></pre></td></tr></table></figure></p>
+<h2 id="只需要配置-logstash"><a href="#只需要配置-logstash" class="headerlink" title="只需要配置 logstash"></a>只需要配置 logstash</h2><p>接下来，我们再来看一看 logstash.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">input &#123;</span><br><span class="line">  beats &#123;</span><br><span class="line">    port =&gt; 5044</span><br><span class="line">    #ssl =&gt; true</span><br><span class="line">    #ssl_certificate =&gt; &quot;/etc/logstash/logstash.crt&quot;</span><br><span class="line">    #ssl_key =&gt; &quot;/etc/logstash/logstash.key&quot;</span><br><span class="line">#SSL详情可参考&lt;https://documentation.wazuh.com/current/installation-guide/optional-configurations/elastic_ssl.html&gt;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"># filter 模块主要是数据预处理，提取一些信息，方便 elasticsearch 好归类存储。</span><br><span class="line"># grok 正则捕获 &lt;https://doc.yonyoucloud.com/doc/logstash-best-practice-cn/filter/grok.html&gt;</span><br><span class="line"># grok插件语法介绍 &lt;https://blog.csdn.net/qq_34021712/article/details/79746413&gt;</span><br><span class="line"># logstash 配置语法 &lt;http://www.ttlsa.com/elk/elk-logstash-configuration-syntax/&gt;</span><br><span class="line">filter &#123;</span><br><span class="line">    grok &#123;  </span><br><span class="line">      match =&gt; &#123;&quot;message&quot; =&gt; &quot;%&#123;EXIM_DATE:timestamp&#125;\|%&#123;LOGLEVEL:log_level&#125;\|%&#123;INT:pid&#125;\|%&#123;GREEDYDATA&#125;&quot;&#125;</span><br><span class="line"># message 字段是 log 的内容，例如 2018-12-11 23:46:47.051|DEBUG|3491|helper.py:85|helper._save_to_cache|shop_session</span><br><span class="line"># 在这里我们提取出了 timestamp log_level pid，grok 有内置定义好的patterns: EXIM_DATE, EXIM_DATE, INT</span><br><span class="line"># GREEDYDATA 贪婪数据，代表任意字符都可以匹配 </span><br><span class="line">    &#125;</span><br><span class="line"># 我们在 filebeat 里面添加了这个字段[fields][function]的话，那就会执行对应的 match 规则去匹配 path</span><br><span class="line"># source 字段就是 log 的来源路径，例如 /var/log/nginx/feiyang233.club.access.log</span><br><span class="line"># match 后我们就可以得到 path=feiyang233.club.access</span><br><span class="line">    if [fields][function]==&quot;nginx&quot; &#123;</span><br><span class="line">        grok &#123;         </span><br><span class="line">        match =&gt; &#123;&quot;source&quot; =&gt; &quot;/var/log/nginx/%&#123;GREEDYDATA:path&#125;.log%&#123;GREEDYDATA&#125;&quot;&#125;  </span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line"># 例如 ims 日志来源是 /var/log/ims_logic/debug.log</span><br><span class="line"># match 后我们就可以得到 path=ims_logic</span><br><span class="line">    else if [fields][function]==&quot;ims&quot; &#123;</span><br><span class="line">        grok &#123;</span><br><span class="line">        match =&gt; &#123;&quot;source&quot; =&gt; &quot;/var/log/%&#123;GREEDYDATA:path&#125;/%&#123;GREEDYDATA&#125;&quot;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;  </span><br><span class="line"></span><br><span class="line">    else &#123;</span><br><span class="line">        grok &#123;</span><br><span class="line">        match =&gt; &#123;&quot;source&quot; =&gt; &quot;/var/log/app/%&#123;GREEDYDATA:path&#125;/%&#123;GREEDYDATA&#125;&quot;&#125;</span><br><span class="line">            &#125;         </span><br><span class="line">        &#125;</span><br><span class="line"># filebeat 有定义 [fields][function] 时，我们就添加上这个字段，例如 QA</span><br><span class="line">    if [fields][function] &#123;</span><br><span class="line">          mutate &#123;</span><br><span class="line">              add_field =&gt; &#123;</span><br><span class="line">                  &quot;function&quot; =&gt; &quot;%&#123;[fields][function]&#125;&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line"># 因为线上的机器更多，线上的我默认不在 filebeat 添加 function，所以 else 我就添加上 live  </span><br><span class="line">    else &#123;</span><br><span class="line">          mutate &#123;</span><br><span class="line">              add_field =&gt; &#123;</span><br><span class="line">                  &quot;function&quot; =&gt; &quot;live&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"># 在之前 filter message 时，我们得到了 timestamp，这里我们修改一下格式，添加上时区。</span><br><span class="line">    date &#123;</span><br><span class="line">      match =&gt; [&quot;timestamp&quot; , &quot;yyyy-MM-dd HH:mm:ss Z&quot;]</span><br><span class="line">      target =&gt; &quot;@timestamp&quot;</span><br><span class="line">      timezone =&gt; &quot;Asia/Singapore&quot;</span><br><span class="line">    &#125;</span><br><span class="line"># 将之前获得的 path 替换其中的 / 替换为 - , 因为 elasticsearch index name 有要求</span><br><span class="line"># 例如 feiyang/test  feiyang_test </span><br><span class="line">    mutate &#123;</span><br><span class="line">     gsub =&gt; [&quot;path&quot;,&quot;/&quot;,&quot;-&quot;]</span><br><span class="line">      add_field =&gt; &#123;&quot;host_ip&quot; =&gt; &quot;%&#123;[fields][host]&#125;&quot;&#125;</span><br><span class="line">      remove_field =&gt; [&quot;tags&quot;,&quot;@version&quot;,&quot;offset&quot;,&quot;beat&quot;,&quot;fields&quot;,&quot;exim_year&quot;,&quot;exim_month&quot;,&quot;exim_day&quot;,&quot;exim_time&quot;,&quot;timestamp&quot;]</span><br><span class="line">    &#125;</span><br><span class="line"># remove_field 去掉一些多余的字段</span><br><span class="line">&#125;</span><br><span class="line"># 单节点 output 就在本机，也不需要 SSL, 但 index 的命名规则还是需要非常的注意</span><br><span class="line">output &#123;</span><br><span class="line">  elasticsearch &#123;</span><br><span class="line">    hosts =&gt; [&quot;localhost:9200&quot;]</span><br><span class="line">    index =&gt; &quot;sg-%&#123;function&#125;-%&#123;path&#125;-%&#123;+xxxx.ww&#125;&quot;</span><br><span class="line"># sg-nginx-feiyang233.club.access-2019.13  ww代表周数</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>index 的规则 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/6.4/indices-create-index.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/elasticsearch/reference/6.4/indices-create-index.html</a></p>
+<ul>
+<li>Lowercase only</li>
+<li>Cannot include \, /, *, ?, “, &lt;, &gt;, |, ` ` (space character), ,, #</li>
+<li>Indices prior to 7.0 could contain a colon (:), but that’s been deprecated and won’t be supported in 7.0+</li>
+<li>Cannot start with -, _, +</li>
+<li>Cannot be . or ..</li>
+<li>Cannot be longer than 255 bytes (note it is bytes, so multi-byte characters will count towards the 255 limit faster)</li>
+</ul>
+<h2 id="filebeat-配置"><a href="#filebeat-配置" class="headerlink" title="filebeat 配置"></a>filebeat 配置</h2><p>在 client 端，我们需要安装并且配置 filebeat 请参考 <a href="https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-installation.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-installation.html</a><br>配置文件 filebeat.yml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">filebeat.prospectors:</span></span><br><span class="line"><span class="attr">- input_type:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">  paths:</span> <span class="comment"># 需要收集的日志</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">/var/log/app/**/debug.log*</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  fields:</span> <span class="comment">#需要添加的字段</span></span><br><span class="line"><span class="attr">    host:</span> <span class="string">"<span class="template-variable">&#123;&#123;inventory_hostname&#125;&#125;</span>"</span> </span><br><span class="line"><span class="attr">    function:</span> <span class="string">"xxx"</span></span><br><span class="line"><span class="attr">  multiline:</span>  <span class="comment"># 多行匹配</span></span><br><span class="line"><span class="attr">    match:</span> <span class="string">after</span></span><br><span class="line"><span class="attr">    negate:</span> <span class="literal">true</span>  <span class="comment"># pay attention the format</span></span><br><span class="line"><span class="attr">    pattern:</span> <span class="string">'^[[0-9]&#123;4&#125;-[0-9]&#123;2&#125;-[0-9]&#123;2&#125;'</span>  </span><br><span class="line"><span class="attr">  ignore_older:</span> <span class="number">24</span><span class="string">h</span></span><br><span class="line"><span class="attr">  clean_inactive:</span> <span class="number">72</span><span class="string">h</span></span><br><span class="line"></span><br><span class="line"><span class="string">output.logstash:</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">["&#123;&#123;elk_server&#125;&#125;:25044"]</span></span><br><span class="line">  <span class="comment"># ssl:</span></span><br><span class="line">  <span class="comment">#   certificate_authorities: ["/etc/filebeat/logstash.crt"]</span></span><br></pre></td></tr></table></figure></p>
+<p>批量部署 filebeat.yml 最好使用 ansible<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">stop</span> <span class="string">filebeat</span></span><br><span class="line"><span class="attr">    service:</span> </span><br><span class="line"><span class="attr">      name:</span> <span class="string">filebeat</span></span><br><span class="line"><span class="attr">      state:</span> <span class="string">stopped</span></span><br><span class="line"><span class="attr">      enabled:</span> <span class="literal">yes</span></span><br><span class="line">      </span><br><span class="line"><span class="attr">  - name:</span> <span class="string">upload</span> <span class="string">filebeat.yml</span> </span><br><span class="line"><span class="attr">    template:</span></span><br><span class="line"><span class="attr">     src:</span> <span class="string">filebeat.yml</span></span><br><span class="line"><span class="attr">     dest:</span> <span class="string">/etc/filebeat/filebeat.yml</span></span><br><span class="line"><span class="attr">     owner:</span> <span class="string">root</span></span><br><span class="line"><span class="attr">     group:</span> <span class="string">root</span></span><br><span class="line"><span class="attr">     mode:</span> <span class="number">0644</span>      </span><br><span class="line"></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">remove</span></span><br><span class="line"><span class="attr">    file:</span> <span class="comment">#delete all files in this directory</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/var/lib/filebeat/registry</span>    </span><br><span class="line"><span class="attr">      state:</span> <span class="string">absent</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">restart</span> <span class="string">filebeat</span></span><br><span class="line"><span class="attr">    service:</span> </span><br><span class="line"><span class="attr">      name:</span> <span class="string">filebeat</span></span><br><span class="line"><span class="attr">      state:</span> <span class="string">restarted</span></span><br><span class="line"><span class="attr">      enabled:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Kibana-简单的使用"><a href="#Kibana-简单的使用" class="headerlink" title="Kibana 简单的使用"></a>Kibana 简单的使用</h2><p>在搭建 ELK 时，暴露出来的 5601 端口就是 Kibana 的服务。<br>访问 <a href="http://your_elk_ip:5601" target="_blank" rel="noopener">http://your_elk_ip:5601</a><br><img src="/img/elk/kibana.png" alt="kibana"></p>
 
       
     </div>
@@ -564,7 +557,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/python/" rel="tag"># python</a>
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+            <a href="/tags/elk/" rel="tag"># elk</a>
           
         </div>
       
@@ -577,8 +572,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/blog/" rel="next" title="开始blog啦">
-                <i class="fa fa-chevron-left"></i> 开始blog啦
+              <a href="/post/network/" rel="next" title="计算机网络相关">
+                <i class="fa fa-chevron-left"></i> 计算机网络相关
               </a>
             
           </div>
@@ -586,10 +581,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/Combination/" rel="prev" title="排列组合了解一下(阿里笔试题改编)">
-                排列组合了解一下(阿里笔试题改编) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -809,7 +800,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题背景介绍"><span class="nav-number">1.</span> <span class="nav-text">问题背景介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#人生苦短，首选python"><span class="nav-number">2.</span> <span class="nav-text">人生苦短，首选python</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-表示不服"><span class="nav-number">3.</span> <span class="nav-text">MySQL 表示不服</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#INSERT遇到问题了"><span class="nav-number">4.</span> <span class="nav-text">INSERT遇到问题了</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#咸鱼的叹息"><span class="nav-number">5.</span> <span class="nav-text">咸鱼的叹息</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#单节点-ELK"><span class="nav-number">1.</span> <span class="nav-text">单节点 ELK</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令行启动一个-ELK"><span class="nav-number">1.1.</span> <span class="nav-text">命令行启动一个 ELK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#只需要配置-logstash"><span class="nav-number">1.2.</span> <span class="nav-text">只需要配置 logstash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#filebeat-配置"><span class="nav-number">1.3.</span> <span class="nav-text">filebeat 配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kibana-简单的使用"><span class="nav-number">1.4.</span> <span class="nav-text">Kibana 简单的使用</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -970,9 +961,9 @@
 
 <script>
   var disqus_config = function() {
-    this.page.url = "http://feiyang233.club/post/timestampdiff/";
-    this.page.identifier = "post/timestampdiff/";
-    this.page.title = '时间求差值timestampdiff';
+    this.page.url = "http://feiyang233.club/post/elk/";
+    this.page.identifier = "post/elk/";
+    this.page.title = 'ELK 日志收集系统快速搭建';
     };
   function loadComments() {
     var d = document, s = d.createElement('script');
