@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="记录网络相关知识与 Linux 网络相关的命令。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-22T06:39:28.042Z">
+<meta property="og:updated_time" content="2019-03-27T08:41:33.526Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计算机网络相关">
 <meta name="twitter:description" content="记录网络相关知识与 Linux 网络相关的命令。">
@@ -439,7 +439,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-22 14:39:28" itemprop="dateModified" datetime="2019-03-22T14:39:28+08:00">2019-03-22</time>
+                <time title="修改时间：2019-03-27 16:41:33" itemprop="dateModified" datetime="2019-03-27T16:41:33+08:00">2019-03-27</time>
               
             
           </span>
@@ -523,6 +523,7 @@
 <li><a href="https://wsgzao.github.io/post/iptables/" target="_blank" rel="noopener">iptables 奥哥篇</a></li>
 <li><a href="http://cn.linux.vbird.org/linux_server/0250simple_firewall_5.php" target="_blank" rel="noopener">iptables-NAT</a></li>
 </ol>
+<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><p>iptables -t  nat  -nL<br>iptables -t 表名 -L     default filter<br>iptables -t 表名 -L 链名<br>iptables -t 表名 -v -L<br>iptables -t 表名 -n -L<br>iptables –line-numbers -t 表名 -L<br>iptables -t 表名 -v -x -L<br>iptables –line -t filter -nvxL<br>iptables –line -t filter -nvxL INPUT<br>iptables -t 表名 -D 链名 要删除的序号<br>iptables -t 表名 -P 链名 动作    修改默认规则<br>-A INPUT -m iprange –src-range 103.78.77.40-103.78.77.49  -p tcp –dport 11211 -j ACCEPT<br>类型匹配 -p tcp udp udplite icmp icmpv6 esp ah sctp mh<br>转发功能 cat /proc/sys/net/ipv4/ip_forward</p>
 <h1 id="小知识"><a href="#小知识" class="headerlink" title="小知识"></a>小知识</h1><h2 id="Public-IP"><a href="#Public-IP" class="headerlink" title="Public IP"></a>Public IP</h2><ul>
 <li>Class A: 0.x.x.x ~ 127.x.x.x</li>
 <li>Class B: 128.x.x.x ~ 191.x.x.x</li>
@@ -806,7 +807,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#命令"><span class="nav-number">1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小知识"><span class="nav-number">2.</span> <span class="nav-text">小知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Public-IP"><span class="nav-number">2.1.</span> <span class="nav-text">Public IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Private-IP"><span class="nav-number">2.2.</span> <span class="nav-text">Private IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Loopback-IP"><span class="nav-number">2.3.</span> <span class="nav-text">Loopback IP</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#命令"><span class="nav-number">1.</span> <span class="nav-text">命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iptables"><span class="nav-number">1.1.</span> <span class="nav-text">iptables</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小知识"><span class="nav-number">2.</span> <span class="nav-text">小知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Public-IP"><span class="nav-number">2.1.</span> <span class="nav-text">Public IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Private-IP"><span class="nav-number">2.2.</span> <span class="nav-text">Private IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Loopback-IP"><span class="nav-number">2.3.</span> <span class="nav-text">Loopback IP</span></a></li></ol></li></ol></div>
             
 
           </div>
