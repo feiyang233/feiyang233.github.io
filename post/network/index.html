@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="记录网络相关知识与 Linux 网络相关的命令。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-27T08:41:33.526Z">
+<meta property="og:updated_time" content="2019-04-11T09:52:13.735Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计算机网络相关">
 <meta name="twitter:description" content="记录网络相关知识与 Linux 网络相关的命令。">
@@ -439,7 +439,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-27 16:41:33" itemprop="dateModified" datetime="2019-03-27T16:41:33+08:00">2019-03-27</time>
+                <time title="修改时间：2019-04-11 17:52:13" itemprop="dateModified" datetime="2019-04-11T17:52:13+08:00">2019-04-11</time>
               
             
           </span>
@@ -517,13 +517,13 @@
       
         <p>记录网络相关知识与 Linux 网络相关的命令。<br><a id="more"></a></p>
 <h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><ol>
-<li><a href="http://www.cnblogs.com/peida/archive/2013/03/05/2943698.html" target="_blank" rel="noopener">route</a></li>
-<li><a href="https://blog.einverne.info/post/2017/11/mtr-usage.html" target="_blank" rel="noopener">mtr</a></li>
+<li><a href="http://www.cnblogs.com/peida/archive/2013/03/05/2943698.html" target="_blank" rel="noopener">route</a> 某些 IP 段故障</li>
+<li><a href="https://blog.einverne.info/post/2017/11/mtr-usage.html" target="_blank" rel="noopener">mtr</a> 连通性测试</li>
 <li><a href="http://cn.linux.vbird.org/linux_server/0140networkcommand_1.php" target="_blank" rel="noopener">Linux 常用网络指令</a></li>
 <li><a href="https://wsgzao.github.io/post/iptables/" target="_blank" rel="noopener">iptables 奥哥篇</a></li>
 <li><a href="http://cn.linux.vbird.org/linux_server/0250simple_firewall_5.php" target="_blank" rel="noopener">iptables-NAT</a></li>
+<li><a href="http://man.linuxde.net/iperf" target="_blank" rel="noopener">iperf</a> <a href="https://docs.azure.cn/zh-cn/articles/azure-operations-guide/virtual-network/aog-virtual-network-iperf-bandwidth-test" target="_blank" rel="noopener">测试网速</a>的工具<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2>iptables -t  nat  -nL<br>iptables -t 表名 -L     default filter<br>iptables -t 表名 -L 链名<br>iptables -t 表名 -v -L<br>iptables -t 表名 -n -L<br>iptables –line-numbers -t 表名 -L<br>iptables -t 表名 -v -x -L<br>iptables –line -t filter -nvxL<br>iptables –line -t filter -nvxL INPUT<br>iptables -t 表名 -D 链名 要删除的序号<br>iptables -t 表名 -P 链名 动作    修改默认规则<br>-A INPUT -m iprange –src-range 103.78.77.40-103.78.77.49  -p tcp –dport 11211 -j ACCEPT<br>类型匹配 -p tcp udp udplite icmp icmpv6 esp ah sctp mh<br>转发功能 cat /proc/sys/net/ipv4/ip_forward</li>
 </ol>
-<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><p>iptables -t  nat  -nL<br>iptables -t 表名 -L     default filter<br>iptables -t 表名 -L 链名<br>iptables -t 表名 -v -L<br>iptables -t 表名 -n -L<br>iptables –line-numbers -t 表名 -L<br>iptables -t 表名 -v -x -L<br>iptables –line -t filter -nvxL<br>iptables –line -t filter -nvxL INPUT<br>iptables -t 表名 -D 链名 要删除的序号<br>iptables -t 表名 -P 链名 动作    修改默认规则<br>-A INPUT -m iprange –src-range 103.78.77.40-103.78.77.49  -p tcp –dport 11211 -j ACCEPT<br>类型匹配 -p tcp udp udplite icmp icmpv6 esp ah sctp mh<br>转发功能 cat /proc/sys/net/ipv4/ip_forward</p>
 <h1 id="小知识"><a href="#小知识" class="headerlink" title="小知识"></a>小知识</h1><h2 id="Public-IP"><a href="#Public-IP" class="headerlink" title="Public IP"></a>Public IP</h2><ul>
 <li>Class A: 0.x.x.x ~ 127.x.x.x</li>
 <li>Class B: 128.x.x.x ~ 191.x.x.x</li>
