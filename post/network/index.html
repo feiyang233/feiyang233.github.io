@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="记录网络相关知识与 Linux 网络相关的命令。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-09T06:44:49.921Z">
+<meta property="og:updated_time" content="2019-05-13T07:45:30.432Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计算机网络相关">
 <meta name="twitter:description" content="记录网络相关知识与 Linux 网络相关的命令。">
@@ -439,7 +439,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-09 14:44:49" itemprop="dateModified" datetime="2019-05-09T14:44:49+08:00">2019-05-09</time>
+                <time title="修改时间：2019-05-13 15:45:30" itemprop="dateModified" datetime="2019-05-13T15:45:30+08:00">2019-05-13</time>
               
             
           </span>
@@ -536,13 +536,31 @@
 <h2 id="Private-IP"><a href="#Private-IP" class="headerlink" title="Private IP"></a>Private IP</h2><ul>
 <li>Class A: 10.0.0.0 ~ 10.255.255.255</li>
 <li>Class B: 172.16.0.0 ~ 172.31.255.255</li>
-<li>Class C: 192.168.0.0 ~ 192.168.255.255 </li>
-</ul>
-<h2 id="Loopback-IP"><a href="#Loopback-IP" class="headerlink" title="Loopback IP"></a>Loopback IP</h2><ul>
+<li><p>Class C: 192.168.0.0 ~ 192.168.255.255 </p>
+</li>
+<li><p>169.254.x.x  临时 IP DHCP is full. 就用这个 IP </p>
+<h2 id="Loopback-IP"><a href="#Loopback-IP" class="headerlink" title="Loopback IP"></a>Loopback IP</h2></li>
 <li>Class A: 127.0.0.1/8</li>
 </ul>
 <h1 id="设置-NAT-server"><a href="#设置-NAT-server" class="headerlink" title="设置 NAT server"></a>设置 NAT server</h1><p>开启转发功能<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysctl.conf</span><br><span class="line"></span><br><span class="line">net.ipv4.ip_forward=1 <span class="comment"># 添加此行，开启转发功能</span></span><br><span class="line"></span><br><span class="line">sysctl -p    <span class="comment"># 执行生效</span></span><br></pre></td></tr></table></figure></p>
 <p>还需要在 iptable 里设置转发规则<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysconfig/iptables</span><br><span class="line"></span><br><span class="line">*nat</span><br><span class="line">:PREROUTING ACCEPT [0:0]</span><br><span class="line">:INPUT ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [0:0]</span><br><span class="line">:POSTROUTING ACCEPT [0:0]</span><br><span class="line">-A POSTROUTING -o em2 -j MASQUERADE</span><br><span class="line">COMMIT</span><br><span class="line"></span><br><span class="line"><span class="comment"># em2 是公网网卡，当其他内网机器设置 NAT 机器的内网 IP 为网关时。 </span></span><br><span class="line"><span class="comment"># 内网机器发包给 NAT 机器， NAT 机器根据路由规则，将会由 em2 公网网卡转发出去。</span></span><br><span class="line"><span class="comment"># 转发时，会将包的源 IP 替换为自己公网的 IP</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="tcpdump-抓包分析"><a href="#tcpdump-抓包分析" class="headerlink" title="tcpdump 抓包分析"></a>tcpdump 抓包分析</h1><ul>
+<li>进入 INPUT 的流量不会被 iptable 影响</li>
+<li>出口 OUTPIT 流量会受到 iptable 影响</li>
+</ul>
+<h1 id="ICMP"><a href="#ICMP" class="headerlink" title="ICMP"></a>ICMP</h1><ul>
+<li>ping 默认发 4、5 个包</li>
+<li>traceroute 显示的是不同 AS 之间的跳数。其实一个 AS 内部可能有很多路由器，TTL 与实际跳数是不符合的。</li>
+</ul>
+<h1 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h1><ul>
+<li>三次握手建立连接</li>
+<li>四次分手，等待 2 MSL</li>
+<li>只走一条路径</li>
+</ul>
+<h1 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h1><ul>
+<li>更轻更快</li>
+<li>多条路径同时发送</li>
+</ul>
 
       
     </div>
@@ -761,7 +779,7 @@
                   
                     
                   
-                  <a href="mailto:feiy@seagroup.com" title="E-Mail &rarr; mailto:feiy@seagroup.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                  <a href="mailto:fainyang@foxmail.com" title="E-Mail &rarr; mailto:fainyang@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
                 </span>
               
             </div>
@@ -813,7 +831,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#命令"><span class="nav-number">1.</span> <span class="nav-text">命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iptables"><span class="nav-number">1.1.</span> <span class="nav-text">iptables</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小知识"><span class="nav-number">2.</span> <span class="nav-text">小知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Public-IP"><span class="nav-number">2.1.</span> <span class="nav-text">Public IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Private-IP"><span class="nav-number">2.2.</span> <span class="nav-text">Private IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Loopback-IP"><span class="nav-number">2.3.</span> <span class="nav-text">Loopback IP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设置-NAT-server"><span class="nav-number">3.</span> <span class="nav-text">设置 NAT server</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#命令"><span class="nav-number">1.</span> <span class="nav-text">命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iptables"><span class="nav-number">1.1.</span> <span class="nav-text">iptables</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小知识"><span class="nav-number">2.</span> <span class="nav-text">小知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Public-IP"><span class="nav-number">2.1.</span> <span class="nav-text">Public IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Private-IP"><span class="nav-number">2.2.</span> <span class="nav-text">Private IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Loopback-IP"><span class="nav-number">2.3.</span> <span class="nav-text">Loopback IP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设置-NAT-server"><span class="nav-number">3.</span> <span class="nav-text">设置 NAT server</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tcpdump-抓包分析"><span class="nav-number">4.</span> <span class="nav-text">tcpdump 抓包分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ICMP"><span class="nav-number">5.</span> <span class="nav-text">ICMP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP"><span class="nav-number">6.</span> <span class="nav-text">TCP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UDP"><span class="nav-number">7.</span> <span class="nav-text">UDP</span></a></li></ol></div>
             
 
           </div>
