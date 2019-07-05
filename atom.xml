@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://feiyang233.club/"/>
-  <updated>2019-06-25T08:05:02.721Z</updated>
+  <updated>2019-07-05T04:09:28.449Z</updated>
   <id>http://feiyang233.club/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>运维中踩过的坑</title>
+    <link href="http://feiyang233.club/post/ops-bug/"/>
+    <id>http://feiyang233.club/post/ops-bug/</id>
+    <published>2019-07-05T02:58:36.000Z</published>
+    <updated>2019-07-05T04:09:28.449Z</updated>
+    
+    <content type="html"><![CDATA[<p>仅以本文记录那些年弟弟背过的锅！<br><a id="more"></a>  </p><h1 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h1><ol><li>大部分时候，iptables 只存了 filter 表。 对于 nat 表，我们一旦 restart iptables， nat 表的规则就会被刷新。建议用 reload</li><li>-A INPUT -m state –state RELATED,ESTABLISHED -j ACCEPT 这一条 iptables 的规则也非常重要。Packets in a RELATED or ESTABLISHED state are those ones which belong to an already opened connection; you’ll generally want to accept them, otherwise connections will get established correctly but nothing will be able to flow after the initial handshake. 如果没有这一条，会遇到 DNS 解析失败， curl 失败。 凡是 iptables 没有允许的 IP, 都不能正常的工作。 例如 DNS 查询发包后，三次握手建立。回包收到了，却会被 iptables 阻挡，上层应用无法拿到解析的结果，导致 hang 住。</li><li>tcpdump 抓包分析时， 进入的包都可以抓到，不会受到 iptables, 发出的包会受到 iptables 影响，可能被 iptables 阻挡导致抓包失败。</li></ol><h1 id="python"><a href="#python" class="headerlink" title="python"></a>python</h1><ol><li>tab 键与空格不能混用</li><li>函数不要嵌套，例如 result=A(B(C())) 这样不利于 debug，检查每个函数的返回值</li><li>在 multiprocessing 多进程中 apply_async()  报错不容易定位，最好使用 try catch 把报错写成 log</li></ol><h1 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h1><ol><li>在部署的时候，ansible 一直在 gathering facts 卡住了，直到 timeout。 <a href="https://serverfault.com/questions/630253/ansible-stuck-on-gathering-facts" target="_blank" rel="noopener">网友解答</a> 我遇到的是 <a href="https://docs.ansible.com/ansible/2.4/intro_configuration.html#control-path" target="_blank" rel="noopener">control_path</a> 文件太多了，导致了 jenkins deploy node 卡住，任务无法进行。 需要删除该部署节点下面的 control_path_dir 的文件，清空。</li></ol><h1 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h1><ol><li>docker container IP default  is 172.17.0.0/16  检查 iptables 是否阻挡</li><li>docker -v 挂载出来的时候，要注意文件夹权限问题。</li><li>docker logs 日志文件很大的时候，记得删除。<a href="https://blog.csdn.net/yjk13703623757/article/details/80283729" target="_blank" rel="noopener">Docker容器日志查看与清理</a></li></ol><h1 id="NetworkManager"><a href="#NetworkManager" class="headerlink" title="NetworkManager"></a>NetworkManager</h1><ol><li>报错 bus-manager: could not create org.freedesktop.DBus proxy 直接 stop NetworkManager 就行了。</li></ol><h1 id="文件权限问题"><a href="#文件权限问题" class="headerlink" title="文件权限问题"></a>文件权限问题</h1><ol><li>/tmp permission 又搞我</li><li>对于目录文件来说，可读表示能够读取目录内的文件列表；可写表示能够在目录内新增、删除、重命名文件；可执行表示能够进入该目录。</li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;仅以本文记录那些年弟弟背过的锅！&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Linux" scheme="http://feiyang233.club/categories/Linux/"/>
+    
+    
+      <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
+    
+      <category term="python" scheme="http://feiyang233.club/tags/python/"/>
+    
+      <category term="elk" scheme="http://feiyang233.club/tags/elk/"/>
+    
+      <category term="jenkins" scheme="http://feiyang233.club/tags/jenkins/"/>
+    
+  </entry>
   
   <entry>
     <title>zabbix 从入门到放弃</title>
