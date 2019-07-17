@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="仅以本文记录那些年弟弟背过的锅！">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-11T06:58:29.112Z">
+<meta property="og:updated_time" content="2019-07-17T09:41:30.182Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="运维中踩过的坑">
 <meta name="twitter:description" content="仅以本文记录那些年弟弟背过的锅！">
@@ -439,7 +439,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-11 14:58:29" itemprop="dateModified" datetime="2019-07-11T14:58:29+08:00">2019-07-11</time>
+                <time title="修改时间：2019-07-17 17:41:30" itemprop="dateModified" datetime="2019-07-17T17:41:30+08:00">2019-07-17</time>
               
             
           </span>
@@ -520,6 +520,7 @@
 <li>大部分时候，iptables 只存了 filter 表。 对于 nat 表，我们一旦 restart iptables， nat 表的规则就会被刷新。建议用 reload</li>
 <li>-A INPUT -m state –state RELATED,ESTABLISHED -j ACCEPT 这一条 iptables 的规则也非常重要。Packets in a RELATED or ESTABLISHED state are those ones which belong to an already opened connection; you’ll generally want to accept them, otherwise connections will get established correctly but nothing will be able to flow after the initial handshake. 如果没有这一条，会遇到 DNS 解析失败， curl 失败。 凡是 iptables 没有允许的 IP, 都不能正常的工作。 例如 DNS 查询发包后，三次握手建立。回包收到了，却会被 iptables 阻挡，上层应用无法拿到解析的结果，导致 hang 住。</li>
 <li>tcpdump 抓包分析时， 进入的包都可以抓到，不会受到 iptables, 发出的包会受到 iptables 影响，可能被 iptables 阻挡导致抓包失败。</li>
+<li>如果是命令行添加的规则，例如 iptables -t nat -A OUTPUT -s 172.17.0.3 -p tcp –dport 10050 -j ACCEPT  在使用 reload 后，其规则一样会被刷掉。但 docker 的规则不会被 reload 刷掉，会被 restart 刷掉。这一点又疑问，期待大神给弟弟解惑。</li>
 </ol>
 <h1 id="python"><a href="#python" class="headerlink" title="python"></a>python</h1><ol>
 <li>tab 键与空格不能混用</li>
@@ -543,6 +544,9 @@
 </ol>
 <h1 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h1><ol>
 <li>/etc/resolv.conf 有两个默认的值至关重要，一个是超时的 timeout，一个是重试的 attempts，默认情况下，前者是 5s 后者是 2 次。对于日常的应用来说，包括 web server、mail client、db 以及各种 app server 等等，任何使用 glibc resolver 都需要经过 resolv.conf 文件。对于 libresolv 来说，只认 resolv.conf 的前三个 nameserver，所以写的再多也没什么意义。正常情况下，resolver 会从上至下进行解析，每个 nameserver 等待 timeout 的时间，如果一直到第三个都没结果，resolver 会重复上面的步骤 (attempts – 1) 次。</li>
+</ol>
+<h1 id="Ansible"><a href="#Ansible" class="headerlink" title="Ansible"></a>Ansible</h1><ol>
+<li>user 模块，密码必须要加密。需要用到 <a href="https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-encrypted-passwords-for-the-user-module" target="_blank" rel="noopener">Ansible ad-hoc command</a></li>
 </ol>
 
       
@@ -828,7 +832,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#iptables"><span class="nav-number">1.</span> <span class="nav-text">iptables</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#python"><span class="nav-number">2.</span> <span class="nav-text">python</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jenkins"><span class="nav-number">3.</span> <span class="nav-text">jenkins</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker"><span class="nav-number">4.</span> <span class="nav-text">docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NetworkManager"><span class="nav-number">5.</span> <span class="nav-text">NetworkManager</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件权限问题"><span class="nav-number">6.</span> <span class="nav-text">文件权限问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DNS"><span class="nav-number">7.</span> <span class="nav-text">DNS</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#iptables"><span class="nav-number">1.</span> <span class="nav-text">iptables</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#python"><span class="nav-number">2.</span> <span class="nav-text">python</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jenkins"><span class="nav-number">3.</span> <span class="nav-text">jenkins</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker"><span class="nav-number">4.</span> <span class="nav-text">docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NetworkManager"><span class="nav-number">5.</span> <span class="nav-text">NetworkManager</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件权限问题"><span class="nav-number">6.</span> <span class="nav-text">文件权限问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DNS"><span class="nav-number">7.</span> <span class="nav-text">DNS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ansible"><span class="nav-number">8.</span> <span class="nav-text">Ansible</span></a></li></ol></div>
             
 
           </div>
