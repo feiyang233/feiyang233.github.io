@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://feiyang233.club/"/>
-  <updated>2019-07-24T11:18:34.916Z</updated>
+  <updated>2019-07-27T02:40:26.156Z</updated>
   <id>http://feiyang233.club/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>singtel 路由器踩坑经历</title>
+    <link href="http://feiyang233.club/post/singtel/"/>
+    <id>http://feiyang233.club/post/singtel/</id>
+    <published>2019-07-27T02:00:55.000Z</published>
+    <updated>2019-07-27T02:40:26.156Z</updated>
+    
+    <content type="html"><![CDATA[<p>2019-07-26 搬新家后贫困山区终于通网了。然而当我打算修改路由器的名称(SSID)和密码的时候，却发现被坑了。<br><a id="more"></a></p><h1 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h1><p>singtel 光纤宽带，有一个光模转换器，还有一会 WiFi 路由器。如下图所示：<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190727100707.jpg" alt><br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190727100704.jpg" alt>  </p><h1 id="踩坑过程"><a href="#踩坑过程" class="headerlink" title="踩坑过程"></a>踩坑过程</h1><p>当家里有网后，我想修改一下 WiFi 名称和密码，谷歌一下，<a href="https://www.singtel.com/personal/support/broadband/routers-ont/arcadyan-ac-plus-guide/change-wireless-settings" target="_blank" rel="noopener">答案如下</a>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Step 1</span><br><span class="line">Visit http://192.168.1.254 to view your router configuration page.</span><br><span class="line"></span><br><span class="line">Step 2</span><br><span class="line">Scroll down to Device Info and Internet Connection to find the information.</span><br><span class="line"></span><br><span class="line">Step 3</span><br><span class="line">By default, you will see the 2.4GHz and 5GHz wireless settings, Band Steering and WPS feature..</span><br><span class="line"></span><br><span class="line">Step 4</span><br><span class="line">To apply any changes made to your Wireless settings, click on the Apply button or cancel to disregard the changes.</span><br></pre></td></tr></table></figure></p><p>我按照以上说明操作一下，结果碰到的却是如下的画面：<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190727101742.png" alt><br>当时就懵逼了，账号和密码都不知道。结果看到右上角有一个型号 hg8244h, 谷歌一下 hg8244h default password. 结果如下<br>The default network address is 192.168.1.254 and so within a browser connect to <a href="http://192.168.1.254" target="_blank" rel="noopener">http://192.168.1.254</a>. The root user login’s default password is admin and should be changed.</p><p>登录进去之后，画面如下:<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190727100710.png" alt><br>我仔仔细细找了一圈，都没有发现修改 SSID 的地方。当我点开 Lan devices, 列表里发现了一个 Singtel-ACPlus, 我才意识到我登录到光模装换器的控制台了。在这里我看到了 Singtel-ACPlus 的 mac 地址。我在自己的苹果电脑命令行查询一下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arp -a</span><br><span class="line"></span><br><span class="line">得到的网关 192.168.1.254 mac 地址与 Singtel-ACPlus 的 mac 地址不符合</span><br></pre></td></tr></table></figure></p><p>我的电脑连接的是 WiFi 路由器，结果网关却是光模路由器。其中必有蹊跷！</p><h1 id="解决的办法"><a href="#解决的办法" class="headerlink" title="解决的办法"></a>解决的办法</h1><p>先将光模路由器和 WiFi 路由器之间的网线断开，（一定要）再重启WiFi 路由器。等待一段时间连上 WiFi, 再次访问 <a href="http://192.168.1.254" target="_blank" rel="noopener">http://192.168.1.254</a>. 这次终于大功告成！<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190727100713.png" alt><br>猜测根本原因是：两个路由器之间是桥接模（也许有错）。 WiFi 路由器连上光模路由器了，都没有自己的 IP。 真是卑微，就像我这种菜菜子，不配拥有姓名。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;2019-07-26 搬新家后贫困山区终于通网了。然而当我打算修改路由器的名称(SSID)和密码的时候，却发现被坑了。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="生活" scheme="http://feiyang233.club/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="network" scheme="http://feiyang233.club/tags/network/"/>
+    
+  </entry>
   
   <entry>
     <title>那些年在新加坡吃过的店</title>
@@ -209,9 +231,9 @@
     <link href="http://feiyang233.club/post/links/"/>
     <id>http://feiyang233.club/post/links/</id>
     <published>2018-11-24T16:00:00.000Z</published>
-    <updated>2019-07-12T06:41:10.044Z</updated>
+    <updated>2019-07-26T06:33:43.633Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="站在大佬们的肩膀上"><a href="#站在大佬们的肩膀上" class="headerlink" title="站在大佬们的肩膀上"></a>站在大佬们的肩膀上</h2><p>工作，学习，健身。 其实我蛮担心自己的发际线<br><a id="more"></a>  </p><h3 id="运维博客"><a href="#运维博客" class="headerlink" title="运维博客"></a>运维博客</h3><ol><li><a href="https://www.zsythink.net/" target="_blank" rel="noopener">朱双印博客</a> iptables, ansible, zabbix 都很不错  </li><li><a href="http://www.cnblogs.com/f-ck-need-u/p/7576137.html" target="_blank" rel="noopener">骏马金龙</a> rsync, LVS, nginx, zooKeeper  </li><li><a href="http://www.jinbuguo.com/" target="_blank" rel="noopener">金步国作品集</a> Linux  </li><li><a href="https://wsgzao.github.io/" target="_blank" rel="noopener">HelloDog</a> 大佬同事奥哥的博客 </li></ol><h3 id="实用文档"><a href="#实用文档" class="headerlink" title="实用文档"></a>实用文档</h3><ol><li><a href="https://docs.ansible.com/ansible/latest/index.html" target="_blank" rel="noopener">ansible</a> 批量操作的好帮手  </li><li><a href="https://www.zabbix.com/documentation/current/start" target="_blank" rel="noopener">zabbix</a> 实时监控了解一下  </li><li><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">ELK</a> 收集过滤检索神器  </li><li><a href="https://docs.docker.com/" target="_blank" rel="noopener">Docker</a> 方便快速的容器 </li><li><a href="https://kubernetes.io/zh/docs/" target="_blank" rel="noopener">Kubernetes</a> DevOps 玩转容器部署</li></ol><h3 id="学习一个"><a href="#学习一个" class="headerlink" title="学习一个"></a>学习一个</h3><ol><li><a href="https://www.imooc.com/" target="_blank" rel="noopener">慕课网</a> 程序员的梦工厂</li><li><a href="http://www.runoob.com/" target="_blank" rel="noopener">菜鸟教程</a> 学的不仅是技术，更是梦想   </li><li><a href="http://www.w3school.com.cn/" target="_blank" rel="noopener">w3school</a> Web 技术教程</li></ol><h3 id="提高生产力"><a href="#提高生产力" class="headerlink" title="提高生产力"></a>提高生产力</h3><ol><li><a href="https://trello.com" target="_blank" rel="noopener">任务管理看板</a> Trello 免费无广告</li></ol><h3 id="好书推荐"><a href="#好书推荐" class="headerlink" title="好书推荐"></a>好书推荐</h3><ol><li><a href="http://blog.dploop.org/" target="_blank" rel="noopener">强哥</a> 安利的 <a href="https://vonng.gitbooks.io/ddia-cn/content/" target="_blank" rel="noopener">设计数据密集型应用</a></li><li><a href="https://mp.weixin.qq.com/s/FqYpxGoWd_POdGa63_n_MQ" target="_blank" rel="noopener">这或许是东半球分析十大排序算法最好的一篇文章</a></li></ol>]]></content>
+    <content type="html"><![CDATA[<h2 id="站在大佬们的肩膀上"><a href="#站在大佬们的肩膀上" class="headerlink" title="站在大佬们的肩膀上"></a>站在大佬们的肩膀上</h2><p>工作，学习，健身。 其实我蛮担心自己的发际线<br><a id="more"></a>  </p><h3 id="运维博客"><a href="#运维博客" class="headerlink" title="运维博客"></a>运维博客</h3><ol><li><a href="https://www.zsythink.net/" target="_blank" rel="noopener">朱双印博客</a> iptables, ansible, zabbix 都很不错  </li><li><a href="http://www.cnblogs.com/f-ck-need-u/p/7576137.html" target="_blank" rel="noopener">骏马金龙</a> rsync, LVS, nginx, zooKeeper  </li><li><a href="http://www.jinbuguo.com/" target="_blank" rel="noopener">金步国作品集</a> Linux  </li><li><a href="https://wsgzao.github.io/" target="_blank" rel="noopener">HelloDog</a> 大佬同事奥哥的博客 </li></ol><h3 id="实用文档"><a href="#实用文档" class="headerlink" title="实用文档"></a>实用文档</h3><ol><li><a href="https://docs.ansible.com/ansible/latest/index.html" target="_blank" rel="noopener">ansible</a> 批量操作的好帮手  </li><li><a href="https://www.zabbix.com/documentation/current/start" target="_blank" rel="noopener">zabbix</a> 实时监控了解一下  </li><li><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">ELK</a> 收集过滤检索神器  </li><li><a href="https://docs.docker.com/" target="_blank" rel="noopener">Docker</a> 方便快速的容器 </li><li><a href="https://kubernetes.io/zh/docs/" target="_blank" rel="noopener">Kubernetes</a> DevOps 玩转容器部署</li></ol><h3 id="学习一个"><a href="#学习一个" class="headerlink" title="学习一个"></a>学习一个</h3><ol><li><a href="https://www.imooc.com/" target="_blank" rel="noopener">慕课网</a> 程序员的梦工厂</li><li><a href="http://www.runoob.com/" target="_blank" rel="noopener">菜鸟教程</a> 学的不仅是技术，更是梦想   </li><li><a href="http://www.w3school.com.cn/" target="_blank" rel="noopener">w3school</a> Web 技术教程</li></ol><h3 id="提高生产力"><a href="#提高生产力" class="headerlink" title="提高生产力"></a>提高生产力</h3><ol><li><a href="https://trello.com" target="_blank" rel="noopener">任务管理看板</a> Trello 免费无广告</li><li><a href="https://dbngin.com/" target="_blank" rel="noopener">数据库引擎</a> Free All-in-One Database Version Management Tool</li><li><a href="https://tableplus.io/?utm_source=dbngin" target="_blank" rel="noopener">TablePlus</a> Database management made easy 和 2 中的数据库引擎可以自动关联。</li></ol><h3 id="好书推荐"><a href="#好书推荐" class="headerlink" title="好书推荐"></a>好书推荐</h3><ol><li><a href="http://blog.dploop.org/" target="_blank" rel="noopener">强哥</a> 安利的 <a href="https://vonng.gitbooks.io/ddia-cn/content/" target="_blank" rel="noopener">设计数据密集型应用</a></li><li><a href="https://mp.weixin.qq.com/s/FqYpxGoWd_POdGa63_n_MQ" target="_blank" rel="noopener">这或许是东半球分析十大排序算法最好的一篇文章</a></li></ol>]]></content>
     
     <summary type="html">
     
