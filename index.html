@@ -423,7 +423,7 @@
                 
               
 
-              <time title="创建时间：2019-08-01 00:00:00 / 修改时间：11:57:27" itemprop="dateCreated datePublished" datetime="2019-08-01T00:00:00+08:00">2019-08-01</time>
+              <time title="创建时间：2019-08-01 00:00:00 / 修改时间：12:02:05" itemprop="dateCreated datePublished" datetime="2019-08-01T00:00:00+08:00">2019-08-01</time>
             
 
             
@@ -505,18 +505,19 @@
 
       
         
+          <p>本文记录了一些基础的 docker 知识。<br>
+          <!--noindex-->
           
-            <p>一个“容器”，实际上是一个由 Linux Namespace、Linux Cgroups 和 rootfs 三种技术构建出来的进程的隔离环境。<br>这三种技术介绍？<br>Namespace 的作用是“隔离”，它让应用进程只能看到该 Namespace 内的“世界”；而 Cgroups 的作用是“限制”</p>
-<p>rootfs 只是一个操作系统所包含的文件、配置和目录，并不包括操作系统内核。在 Linux 操作系统中，这两部分是分开存放的，操作系统只有在开机启动时才会加载指定版本的内核镜像。正是由于 rootfs 的存在，容器才有了一个被反复宣传至今的重要特性：一致性。</p>
-<p>docker commit，实际上就是在容器运行起来后，把最上层的“可读写层”，加上原先容器镜像的只读层，打包组成了一个新的镜像。当然，下面这些只读层在宿主机上是共享的，不会占用额外的空间。</p>
-<h1 id="docker-volume"><a href="#docker-volume" class="headerlink" title="docker volume"></a>docker volume</h1><p>镜像的各个层，保存在 /var/lib/docker/aufs/diff 目录下，在容器进程启动后，它们会被联合挂载在 /var/lib/docker/aufs/mnt/ 目录中，这样容器所需的 rootfs 就准备好了。<br>volume /test 挂载出来之后，文件会出现在了宿主机上对应的临时目录里，但是如果你在宿主机上查看该容器的可读写层，虽然可以看到这个 /test 目录，但其内容是空的。<br>而由于使用了联合文件系统，你在容器里对镜像 rootfs 所做的任何修改，都会被操作系统先复制到这个可读写层，然后再修改。这就是所谓的：Copy-on-Write。</p>
-<h1 id="docker-logs"><a href="#docker-logs" class="headerlink" title="docker logs"></a>docker logs</h1><p><a href="https://blog.csdn.net/yjk13703623757/article/details/80283729" target="_blank" rel="noopener">删除 logs</a> 设置 logs <a href="https://docs.docker.com/engine/reference/commandline/dockerd/" target="_blank" rel="noopener">Daemon configuration file</a></p>
-<h1 id="docker-iptables"><a href="#docker-iptables" class="headerlink" title="docker iptables"></a>docker iptables</h1><p>docker 默认会修改 iptables，但有时候会造成 iptables ip 限制失效的问题。如果对 iptables 比较了解的同学，可以 <a href="https://docs.docker.com/network/iptables/" target="_blank" rel="noopener">Prevent Docker from manipulating iptables</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vim /etc/docker/daemon.json</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"iptables"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line"></span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
+            <div class="post-button text-center">
+              <a class="btn" href="/post/docker/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
           
+          <!--/noindex-->
         
       
-    </div>
+    </p></div>
 
     
 
