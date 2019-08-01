@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[docker 学习笔记]]></title>
+    <url>%2Fpost%2Fdocker%2F</url>
+    <content type="text"><![CDATA[一个“容器”，实际上是一个由 Linux Namespace、Linux Cgroups 和 rootfs 三种技术构建出来的进程的隔离环境。这三种技术介绍？Namespace 的作用是“隔离”，它让应用进程只能看到该 Namespace 内的“世界”；而 Cgroups 的作用是“限制” rootfs 只是一个操作系统所包含的文件、配置和目录，并不包括操作系统内核。在 Linux 操作系统中，这两部分是分开存放的，操作系统只有在开机启动时才会加载指定版本的内核镜像。正是由于 rootfs 的存在，容器才有了一个被反复宣传至今的重要特性：一致性。 docker commit，实际上就是在容器运行起来后，把最上层的“可读写层”，加上原先容器镜像的只读层，打包组成了一个新的镜像。当然，下面这些只读层在宿主机上是共享的，不会占用额外的空间。 docker volume镜像的各个层，保存在 /var/lib/docker/aufs/diff 目录下，在容器进程启动后，它们会被联合挂载在 /var/lib/docker/aufs/mnt/ 目录中，这样容器所需的 rootfs 就准备好了。volume /test 挂载出来之后，文件会出现在了宿主机上对应的临时目录里，但是如果你在宿主机上查看该容器的可读写层，虽然可以看到这个 /test 目录，但其内容是空的。而由于使用了联合文件系统，你在容器里对镜像 rootfs 所做的任何修改，都会被操作系统先复制到这个可读写层，然后再修改。这就是所谓的：Copy-on-Write。 docker logs删除 logs 设置 logs Daemon configuration file docker iptablesdocker 默认会修改 iptables，但有时候会造成 iptables ip 限制失效的问题。如果对 iptables 比较了解的同学，可以 Prevent Docker from manipulating iptables 12345678# vim /etc/docker/daemon.json&#123; "iptables": false&#125;systemctl daemon-reloadsystemctl restart docker]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>docker,kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[singtel 路由器踩坑经历]]></title>
     <url>%2Fpost%2Fsingtel%2F</url>
     <content type="text"><![CDATA[2019-07-26 搬新家后贫困山区终于通网了。然而当我打算修改路由器的名称(SSID)和密码的时候，却发现被坑了。 背景介绍singtel 光纤宽带，有一个光模转换器，还有一个 WiFi 路由器。如下图所示： 踩坑过程当家里有网后，我想修改一下 WiFi 名称和密码，谷歌一下，答案如下。Step 1Visit http://192.168.1.254 to view your router configuration page. Step 2Scroll down to Device Info and Internet Connection to find the information. Step 3By default, you will see the 2.4GHz and 5GHz wireless settings, Band Steering and WPS feature.. Step 4To apply any changes made to your Wireless settings, click on the Apply button or cancel to disregard the changes. 我按照以上说明操作一下，结果碰到的却是如下的画面：当时就懵逼了，账号和密码都不知道。结果看到右上角有一个型号 hg8244h, 谷歌一下 hg8244h default password. 结果如下The default network address is 192.168.1.254 and so within a browser connect to http://192.168.1.254. The root user login’s default password is admin and should be changed. 登录进去之后，画面如下:我仔仔细细找了一圈，都没有发现修改 SSID 的地方。当我点开 Lan devices, 列表里发现了一个 Singtel-ACPlus, 我才意识到我登录到光模装换器的控制台了。在这里我看到了 Singtel-ACPlus 的 mac 地址。我在自己的苹果电脑命令行查询一下：1arp -a 得到的网关 192.168.1.254 mac 地址与 Singtel-ACPlus 的 mac 地址不符合 我的电脑连接的是 WiFi 路由器，结果网关却是光模路由器。其中必有蹊跷！ 解决的办法先将光模路由器和 WiFi 路由器之间的网线断开，（一定要）再重启WiFi 路由器。等待一段时间连上 WiFi, 再次访问 http://192.168.1.254. 这次终于大功告成！猜测根本原因是：两个路由器之间是桥接模（也许有错）。 WiFi 路由器连上光模路由器了，都没有自己的 IP。 真是卑微，就像我这种菜菜子，不配拥有姓名。]]></content>
@@ -30,8 +41,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>docker</tag>
         <tag>python</tag>
+        <tag>docker</tag>
         <tag>elk</tag>
         <tag>jenkins</tag>
       </tags>
