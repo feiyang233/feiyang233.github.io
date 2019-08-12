@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://feiyang233.club/post/SG-food/</loc>
+    
+    <lastmod>2019-08-12T07:03:56.524Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://feiyang233.club/post/docker/</loc>
     
     <lastmod>2019-08-08T04:15:27.546Z</lastmod>
@@ -47,13 +54,6 @@
     <loc>http://feiyang233.club/post/links/</loc>
     
     <lastmod>2019-07-26T06:33:43.633Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://feiyang233.club/post/SG-food/</loc>
-    
-    <lastmod>2019-07-24T11:18:34.916Z</lastmod>
     
   </url>
   
