@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://feiyang233.club/post/prometheus/</loc>
+    
+    <lastmod>2019-10-03T11:01:18.521Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://feiyang233.club/post/docker/</loc>
     
-    <lastmod>2019-10-02T11:42:59.292Z</lastmod>
+    <lastmod>2019-10-02T11:54:29.095Z</lastmod>
     
   </url>
   
