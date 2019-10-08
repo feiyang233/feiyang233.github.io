@@ -112,7 +112,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003155435.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003160311.png">
-<meta property="og:updated_time" content="2019-10-03T11:01:18.521Z">
+<meta property="og:updated_time" content="2019-10-04T10:55:26.551Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Prometheus 指南">
 <meta name="twitter:description" content="Prometheus 作为业务级监控告警工具，再配合上可视化工具 Grafana，运维人员能方便的监控所需的指标。本文记录了小白入门学习的过程">
@@ -425,12 +425,24 @@
                 
               
 
-              <time title="创建时间：2019-10-03 15:08:40 / 修改时间：19:01:18" itemprop="dateCreated datePublished" datetime="2019-10-03T15:08:40+08:00">2019-10-03</time>
+              <time title="创建时间：2019-10-03 15:08:40" itemprop="dateCreated datePublished" datetime="2019-10-03T15:08:40+08:00">2019-10-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-04 18:55:26" itemprop="dateModified" datetime="2019-10-04T18:55:26+08:00">2019-10-04</time>
               
             
           </span>
@@ -516,6 +528,7 @@
 <p>安装完成后，即可访问 <a href="http://localhost:9090" target="_blank" rel="noopener">http://localhost:9090</a> 可以在 Graph 查询监控项，在 Status 查看监控了哪些机器，配置文件等。</p>
 <h2 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h2><p>[配置介绍官方文档]<a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/" target="_blank" rel="noopener">https://prometheus.io/docs/prometheus/latest/configuration/configuration/</a>)<br>我是在 Mac 电脑上 docker 安装 prometheus。由于我没有把配置文件挂载出来，只能进入容器去修改。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -u root -it 51ae3954e880 sh</span><br><span class="line"></span><br><span class="line">vi /etc/prometheus/prometheus.yml</span><br></pre></td></tr></table></figure></p>
 <p>配置文件如下所示<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my global config</span></span><br><span class="line"><span class="attr">global:</span></span><br><span class="line"><span class="attr">  scrape_interval:</span>     <span class="number">15</span><span class="string">s</span> <span class="comment"># Set the scrape interval to every 15 seconds. Default is every 1 minute.</span></span><br><span class="line"><span class="attr">  evaluation_interval:</span> <span class="number">15</span><span class="string">s</span> <span class="comment"># Evaluate rules every 15 seconds. The default is every 1 minute.</span></span><br><span class="line">  <span class="comment"># scrape_timeout is set to the global default (10s).</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Alertmanager configuration</span></span><br><span class="line"><span class="attr">alerting:</span></span><br><span class="line"><span class="attr">  alertmanagers:</span></span><br><span class="line"><span class="attr">  - static_configs:</span></span><br><span class="line"><span class="attr">    - targets:</span></span><br><span class="line">      <span class="comment"># - alertmanager:9093</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load rules once and periodically evaluate them according to the global 'evaluation_interval'.</span></span><br><span class="line"><span class="attr">rule_files:</span></span><br><span class="line">  <span class="comment"># - "first_rules.yml"</span></span><br><span class="line">  <span class="comment"># - "second_rules.yml"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A scrape configuration containing exactly one endpoint to scrape:</span></span><br><span class="line"><span class="comment"># Here it's Prometheus itself.</span></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="comment"># The job name is added as a label `job=&lt;job_name&gt;` to any timeseries scraped from this config.</span></span><br><span class="line"><span class="attr">  - job_name:</span> <span class="string">'prometheus'</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># metrics_path defaults to '/metrics'</span></span><br><span class="line">    <span class="comment"># scheme defaults to 'http'.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    static_configs:</span></span><br><span class="line"><span class="attr">    - targets:</span> <span class="string">['localhost:9090']</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  - job_name:</span> <span class="string">'feiy'</span></span><br><span class="line"><span class="attr">    scrape_interval:</span> <span class="number">5</span><span class="string">s</span></span><br><span class="line"><span class="attr">    static_configs:</span></span><br><span class="line"><span class="attr">      - targets:</span> <span class="string">['host.docker.internal:8000']</span></span><br><span class="line"><span class="attr">        labels:</span></span><br><span class="line"><span class="attr">          group:</span> <span class="string">'production'</span></span><br></pre></td></tr></table></figure></p>
+<p>完整的配置例子，请点击<a href="https://github.com/prometheus/prometheus/blob/master/config/testdata/conf.good.yml" target="_blank" rel="noopener">这里</a></p>
 <h2 id="检查结果"><a href="#检查结果" class="headerlink" title="检查结果"></a>检查结果</h2><p>打开 <a href="http://localhost:9090/targets" target="_blank" rel="noopener">http://localhost:9090/targets</a> 我们可以看到如下的结果  </p>
 <p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003155435.png" alt></p>
 <p>图中两个 target，第一个 feiy 是我自己写的一个 django 小程序，暴露出来了我关心的指标，用了<a href="https://github.com/prometheus/client_python" target="_blank" rel="noopener">Prometheus Python Client</a>。第二个则是 Prometheus 服务器自带的监控数据。</p>
@@ -531,7 +544,11 @@
 <li><a href="https://mp.weixin.qq.com/s/1EuTeQKeCX7-B2Ihj85dCA" target="_blank" rel="noopener">详细解读 Prometheus 的指标类型</a></li>
 <li><a href="https://mp.weixin.qq.com/s/WJM-DTUrdl8KFpLD5kabZg" target="_blank" rel="noopener">一文搞懂 Prometheus 的直方图</a></li>
 </ol>
-<h2 id="rules"><a href="#rules" class="headerlink" title="rules"></a>rules</h2><h1 id="采坑区"><a href="#采坑区" class="headerlink" title="采坑区"></a>采坑区</h1>
+<h2 id="rules"><a href="#rules" class="headerlink" title="rules"></a>rules</h2><ol>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/" target="_blank" rel="noopener">官方文档</a><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果有错的话，则那一条规则不会更新。</span></span><br><span class="line">go get github.com/prometheus/prometheus/cmd/promtool</span><br><span class="line">promtool check rules /path/to/example.rules.yml</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h1 id="采坑区"><a href="#采坑区" class="headerlink" title="采坑区"></a>采坑区</h1>
       
     </div>
 
