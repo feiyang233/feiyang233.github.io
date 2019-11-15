@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://feiyang233.club/"/>
-  <updated>2019-10-21T03:42:48.235Z</updated>
+  <updated>2019-11-15T15:30:54.315Z</updated>
   <id>http://feiyang233.club/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>go 学习笔记</title>
+    <link href="http://feiyang233.club/post/golang/"/>
+    <id>http://feiyang233.club/post/golang/</id>
+    <published>2019-11-10T18:12:12.000Z</published>
+    <updated>2019-11-15T15:30:54.315Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文初始化于 2019-11-11 02:12:12，深夜开启学习 golang 的道路。<br><a id="more"></a><br>go 是静态类型的语言，入门推荐<a href="https://tour.go-zh.org/list" target="_blank" rel="noopener">Go 编程语言指南</a></p><h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><p>数组是连续存储在内存中的，每一个切片的底层实现都是绑定着一个数组。当切面的值改变时，底层数组也会跟着改变。当切片的 capacity 增大超过当前数组长度时，go 会自动产生一个新的底层数组，长度为以前的 2 倍，然后再绑定到切片上。当切片 capacity 大于 1000 时，底层数组的增长因子就会有 2 变为 1.25</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文初始化于 2019-11-11 02:12:12，深夜开启学习 golang 的道路。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="学习" scheme="http://feiyang233.club/categories/%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="go" scheme="http://feiyang233.club/tags/go/"/>
+    
+  </entry>
   
   <entry>
     <title>那些年在新加坡吃过的店</title>
@@ -439,28 +461,6 @@
 &lt;li&gt;小组两人在某一天同时迟到，则小组总分再记一分。（连坐）&lt;/li&gt;
 &lt;li&gt;一周内如果每天都迟到，则当事人再扣一分。（太皮了）&lt;/li&gt;
 &lt;/ol&gt;
-    
-    </summary>
-    
-      <category term="学习" scheme="http://feiyang233.club/categories/%E5%AD%A6%E4%B9%A0/"/>
-    
-    
-      <category term="python" scheme="http://feiyang233.club/tags/python/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>时间求差值timestampdiff</title>
-    <link href="http://feiyang233.club/post/timestampdiff/"/>
-    <id>http://feiyang233.club/post/timestampdiff/</id>
-    <published>2018-02-22T16:00:00.000Z</published>
-    <updated>2019-03-15T09:17:29.989Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="问题背景介绍"><a href="#问题背景介绍" class="headerlink" title="问题背景介绍"></a>问题背景介绍</h2><p>因为Prof想知道每个building里的average-dwell时间，NUS-WiFi数据库提供了current-time，<br>first-time。思路就是根据两者时间的差值来估计stay in building的时间。</p><a id="more"></a><p><img src="/img/time1.png" alt="数据时间格式"></p><h2 id="人生苦短，首选python"><a href="#人生苦短，首选python" class="headerlink" title="人生苦短，首选python"></a>人生苦短，首选python</h2><p>第一想法当然是用python，用python包：<code>time</code>, <code>datetime</code>.<br>代码如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">difftime</span><span class="params">(begintime,endtime)</span>:</span></span><br><span class="line">date1=time.strptime(begintime,<span class="string">'%Y-%m-%d %H:%M:%S'</span>) </span><br><span class="line">date2=time.strptime(endtime,<span class="string">'%Y-%m-%d %H:%M:%S'</span>)</span><br><span class="line"><span class="comment">#y两位数的年份表示（00-99）</span></span><br><span class="line"><span class="comment">#Y四位数的年份表示（000-9999）</span></span><br><span class="line">date3=datetime.datetime(</span><br><span class="line">date1[<span class="number">0</span>],date1[<span class="number">1</span>],date1[<span class="number">2</span>],date1[<span class="number">3</span>],date1[<span class="number">4</span>],date1[<span class="number">5</span>]) </span><br><span class="line">date4=datetime.datetime(</span><br><span class="line">date2[<span class="number">0</span>],date2[<span class="number">1</span>],date2[<span class="number">2</span>],date2[<span class="number">3</span>],date2[<span class="number">4</span>],date2[<span class="number">5</span>])</span><br><span class="line">minutes=(date4-date3).seconds/<span class="number">60</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> minutes</span><br></pre></td></tr></table></figure><p>结果如下图：</p><p><img src="/img/time3.png" alt="结果展示"></p><h2 id="MySQL-表示不服"><a href="#MySQL-表示不服" class="headerlink" title="MySQL 表示不服"></a><code>MySQL</code> 表示不服</h2><p>上学期我用python做的统计工作，例如每分钟有多少device，或者每个device在building里停留了多少分钟.<br>用python至少得写30+行代码去读写csv文件，在MySQL就是一行代码的事情，相见恨晚。<br><code>无知限制了我的生产力！</code><br>MySQL的数据类型里有时间戳格式timestamp。也有专门计算时间差值的<code>timestampdiff</code>函数。<br>TIMESTAMPDIFF(unit,begin,end);返回end-begin的时间差值。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select timestampdiff(minute,firstime,curtime)</span><br></pre></td></tr></table></figure><p>结果如下图：</p><p><img src="/img/time2.png" alt="结果展示"></p><h2 id="INSERT遇到问题了"><a href="#INSERT遇到问题了" class="headerlink" title="INSERT遇到问题了"></a>INSERT遇到问题了</h2><p>我想把timestampdiff返回的值插入在表的最后，先创建一个字段（列），再用insert插入，结果遇到了问题。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into test (diff)  select timestampdiff(minute,firstime,curtime)  from test;</span><br></pre></td></tr></table></figure><p><img src="/img/issue.png" alt="插入问题"></p><p>如图所示，结果是插在了diff列，但直接插在表的后面，没有覆盖原有的值。经过思考后，我尝试了 update的方法。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update test set diff=timestampdiff(minute,firstime,curtime);</span><br></pre></td></tr></table></figure><p>终于成功了！</p><p><img src="/img/time4.png" alt="成功了"></p><h2 id="咸鱼的叹息"><a href="#咸鱼的叹息" class="headerlink" title="咸鱼的叹息"></a>咸鱼的叹息</h2><p>python定义了一个函数来计算，用MySQL就是一句话的事情。光找这句话我就花了好久，还得好好学习。<br>还是在项目中体会得多，光看书是不行的，纸上得来终觉浅。</p><p>很惭愧，连一点微小的工作都没有做，打扰了。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;问题背景介绍&quot;&gt;&lt;a href=&quot;#问题背景介绍&quot; class=&quot;headerlink&quot; title=&quot;问题背景介绍&quot;&gt;&lt;/a&gt;问题背景介绍&lt;/h2&gt;&lt;p&gt;因为Prof想知道每个building里的average-dwell时间，NUS-WiFi数据库提供了current-time，&lt;br&gt;first-time。思路就是根据两者时间的差值来估计stay in building的时间。&lt;/p&gt;
     
     </summary>
     
