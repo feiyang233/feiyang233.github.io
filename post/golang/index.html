@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="本文初始化于 2019-11-11 02:12:12，深夜开启学习 golang 的道路。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-28T09:57:34.599Z">
+<meta property="og:updated_time" content="2019-12-02T15:53:45.783Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="go 学习笔记">
 <meta name="twitter:description" content="本文初始化于 2019-11-11 02:12:12，深夜开启学习 golang 的道路。">
@@ -439,7 +439,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-28 17:57:34" itemprop="dateModified" datetime="2019-11-28T17:57:34+08:00">2019-11-28</time>
+                <time title="修改时间：2019-12-02 23:53:45" itemprop="dateModified" datetime="2019-12-02T23:53:45+08:00">2019-12-02</time>
               
             
           </span>
@@ -516,6 +516,13 @@
 
       
         <p>本文初始化于 2019-11-11 02:12:12，深夜开启学习 golang 的道路。<br><a id="more"></a><br>go 是静态类型的语言，入门推荐<a href="https://tour.go-zh.org/list" target="_blank" rel="noopener">Go 编程语言指南</a><br>还有一个极客时间的课程<a href="https://github.com/hyper0x/Golang_Puzzlers/blob/master/mapping_table.md" target="_blank" rel="noopener">示例代码</a></p>
+<h1 id="GOROOT-GOPATH"><a href="#GOROOT-GOPATH" class="headerlink" title="GOROOT GOPATH"></a>GOROOT GOPATH</h1><ol>
+<li>GOROOT：Go 语言安装根目录的路径，也就是 GO 语言的安装路径。</li>
+<li>GOPATH：若干工作区目录的路径。是我们自己定义的工作空间。 <a href="https://golang.org/doc/code.html#GOPATH" target="_blank" rel="noopener">官方解释</a></li>
+<li>GOBIN：GO 程序生成的可执行文件（executable file）的路径。</li>
+</ol>
+<h1 id="命令源码文件"><a href="#命令源码文件" class="headerlink" title="命令源码文件"></a>命令源码文件</h1><p>命令源码文件的用途是什么，怎样编写它？<br>命令源码文件是程序的运行入口，是每个可独立运行的程序必须拥有的。我们可以通过构建或安装，生成与其对应的可执行文件，后者一般会与该命令源码文件的直接父目录同名。<br>如果一个源码文件声明属于main包，并且包含一个无参数声明且无结果声明的main函数，那么它就是命令源码文件。<br>在同一个目录下的源码文件都需要被声明为属于同一个代码包。源码文件声明的包名可以与其所在目录的名称不同，只要这些文件声明的包名一致就可以。</p>
+<h1 id="库源码文件"><a href="#库源码文件" class="headerlink" title="库源码文件"></a>库源码文件</h1><p>库源码文件是不能被直接运行的源码文件，它仅用于存放程序实体，这些程序实体可以被其他代码使用（只要遵从 Go 语言规范的话）。<br>第一条规则，同目录下的源码文件的代码包声明语句要一致。也就是说，它们要同属于一个代码包。这对于所有源码文件都是适用的。如果目录中有命令源码文件，那么其他种类的源码文件也应该声明属于main包。这也是我们能够成功构建和运行它们的前提。<br>第二条规则，源码文件声明的代码包的名称可以与其所在的目录的名称不同。在针对代码包进行构建时，生成的结果文件的主名称与其父目录的名称一致。对于命令源码文件而言，构建生成的可执行文件的主名称会与其父目录的名称相同。</p>
 <h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><p>数组是连续存储在内存中的，每一个切片的底层实现都是绑定着一个数组。当切面的值改变时，底层数组也会跟着改变。当切片的 capacity 增大超过当前数组长度时，go 会自动产生一个新的底层数组，长度为以前的 2 倍，然后再绑定到切片上。当切片 capacity 大于 1000 时，底层数组的增长因子就会有 2 变为 1.25</p>
 <p>Go 语言经典知识总结<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">基于混合线程的并发编程模型自然不必多说。</span><br><span class="line"></span><br><span class="line">在数据类型方面有：</span><br><span class="line">基于底层数组的切片；</span><br><span class="line">用来传递数据的通道；</span><br><span class="line">作为一等类型的函数；</span><br><span class="line">可实现面向对象的结构体；</span><br><span class="line">能无侵入实现的接口等。</span><br><span class="line"></span><br><span class="line">在语法方面有：</span><br><span class="line">异步编程神器go语句；</span><br><span class="line">函数的最后关卡defer语句；</span><br><span class="line">可做类型判断的switch语句；</span><br><span class="line">多通道操作利器select语句；</span><br><span class="line">非常有特色的异常处理函数panic和recover。</span><br><span class="line"></span><br><span class="line">测试 Go 程序的主要方式。这涉及了 Go 语言自带的程序测试套件，相关的概念和工具包括：</span><br><span class="line">独立的测试源码文件；</span><br><span class="line">三种功用不同的测试函数；</span><br><span class="line">专用的testing代码包；</span><br><span class="line">功能强大的go test命令。</span><br><span class="line"></span><br><span class="line">Go 语言提供的那些同步工具。它们也是 Go 语言并发编程工具箱中不可或缺的一部分。这包括了：</span><br><span class="line">经典的互斥锁；</span><br><span class="line">读写锁；</span><br><span class="line">条件变量；</span><br><span class="line">原子操作。</span><br><span class="line"></span><br><span class="line">以及Go 语言特有的一些数据类型，即：</span><br><span class="line">单次执行小助手sync.Once；</span><br><span class="line">临时对象池sync.Pool；</span><br><span class="line">帮助我们实现多 goroutine 协作流程的sync.WaitGroup、context.Context；</span><br><span class="line">一种高效的并发安全字典sync.Map。</span><br></pre></td></tr></table></figure></p>
 
@@ -564,8 +571,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/post/algo/" rel="prev" title="algo">
-                algo <i class="fa fa-chevron-right"></i>
+              <a href="/post/algo/" rel="prev" title="Algorithm">
+                Algorithm <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -802,7 +809,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数组"><span class="nav-number">1.</span> <span class="nav-text">数组</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GOROOT-GOPATH"><span class="nav-number">1.</span> <span class="nav-text">GOROOT GOPATH</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#命令源码文件"><span class="nav-number">2.</span> <span class="nav-text">命令源码文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#库源码文件"><span class="nav-number">3.</span> <span class="nav-text">库源码文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数组"><span class="nav-number">4.</span> <span class="nav-text">数组</span></a></li></ol></div>
             
 
           </div>
