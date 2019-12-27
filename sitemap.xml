@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://feiyang233.club/post/linux/</loc>
+    
+    <lastmod>2019-12-27T15:31:22.280Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://feiyang233.club/about/index.html</loc>
+    
+    <lastmod>2019-12-27T09:02:13.876Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://feiyang233.club/post/SG-food/</loc>
     
     <lastmod>2019-12-27T06:25:38.036Z</lastmod>
@@ -12,13 +26,6 @@
     <loc>http://feiyang233.club/post/algo/</loc>
     
     <lastmod>2019-12-27T06:12:32.372Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://feiyang233.club/post/linux/</loc>
-    
-    <lastmod>2019-12-25T14:05:13.625Z</lastmod>
     
   </url>
   
@@ -89,13 +96,6 @@
     <loc>http://feiyang233.club/post/mac/</loc>
     
     <lastmod>2019-09-11T07:27:34.059Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://feiyang233.club/about/index.html</loc>
-    
-    <lastmod>2019-09-11T07:26:47.215Z</lastmod>
     
   </url>
   
