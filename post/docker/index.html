@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="本文记录了一些基础的 docker 知识。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-08T06:57:54.521Z">
+<meta property="og:updated_time" content="2020-01-07T13:50:06.776Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="docker 学习笔记">
 <meta name="twitter:description" content="本文记录了一些基础的 docker 知识。">
@@ -439,7 +439,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-10-08 14:57:54" itemprop="dateModified" datetime="2019-10-08T14:57:54+08:00">2019-10-08</time>
+                <time title="Modified: 2020-01-07 21:50:06" itemprop="dateModified" datetime="2020-01-07T21:50:06+08:00">2020-01-07</time>
               
             
           </span>
@@ -537,6 +537,7 @@
 <ol start="2">
 <li>如果想从容器内部访问 mac，也和 Linux 不同。详情可以看官网<a href="https://docs.docker.com/docker-for-mac/networking/" target="_blank" rel="noopener">docker mac network</a> 在容器内部可以使用 host.docker.internal 就可以访问到 Mac 宿主机啦。 而在 Linux 机器上, 容器可以直接使用宿主机的 IP 来访问宿主机</li>
 </ol>
+<h1 id="docker-proxy"><a href="#docker-proxy" class="headerlink" title="docker-proxy"></a>docker-proxy</h1><p>can refer this (article)[<a href="https://mp.weixin.qq.com/s/S4aMdmQW50HR7Lj2z2-VZQ]" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/S4aMdmQW50HR7Lj2z2-VZQ]</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/docker/daemon.json</span></span><br><span class="line"><span class="comment"># disable docker-proxy</span></span><br><span class="line">“userland-proxy”:<span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -827,7 +828,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装-docker"><span class="nav-number">1.</span> <span class="nav-text">安装 docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-volume"><span class="nav-number">2.</span> <span class="nav-text">docker volume</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-常用命令"><span class="nav-number">3.</span> <span class="nav-text">docker 常用命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-logs"><span class="nav-number">4.</span> <span class="nav-text">docker logs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-iptables"><span class="nav-number">5.</span> <span class="nav-text">docker iptables</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dockerfile"><span class="nav-number">6.</span> <span class="nav-text">Dockerfile</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tag"><span class="nav-number">7.</span> <span class="nav-text">tag</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#network"><span class="nav-number">8.</span> <span class="nav-text">network</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mac-上使用-docker"><span class="nav-number">9.</span> <span class="nav-text">mac 上使用 docker</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装-docker"><span class="nav-number">1.</span> <span class="nav-text">安装 docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-volume"><span class="nav-number">2.</span> <span class="nav-text">docker volume</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-常用命令"><span class="nav-number">3.</span> <span class="nav-text">docker 常用命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-logs"><span class="nav-number">4.</span> <span class="nav-text">docker logs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-iptables"><span class="nav-number">5.</span> <span class="nav-text">docker iptables</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dockerfile"><span class="nav-number">6.</span> <span class="nav-text">Dockerfile</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tag"><span class="nav-number">7.</span> <span class="nav-text">tag</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#network"><span class="nav-number">8.</span> <span class="nav-text">network</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mac-上使用-docker"><span class="nav-number">9.</span> <span class="nav-text">mac 上使用 docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-proxy"><span class="nav-number">10.</span> <span class="nav-text">docker-proxy</span></a></li></ol></div>
             
 
           </div>
