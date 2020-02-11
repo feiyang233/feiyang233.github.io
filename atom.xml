@@ -374,9 +374,9 @@
       <category term="Linux" scheme="http://feiyang233.club/categories/Linux/"/>
     
     
-      <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
-    
       <category term="prometheus" scheme="http://feiyang233.club/tags/prometheus/"/>
+    
+      <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
     
   </entry>
   
