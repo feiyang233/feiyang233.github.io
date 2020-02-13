@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Operation Course Record]]></title>
+    <url>%2Fpost%2Foperation-course%2F</url>
+    <content type="text"><![CDATA[This blog is for record what I learn from this Operation Course shellSHORTCUTSCtrl + r：find the histroyCtrl + l：clear the terminalCtrl + a \ Ctrl + e：move to head\end in rowCtrl + w \ Ctrl + k：delete before\after cursor ZZ : VIM save and quit Ctrl+C: Interrupt (kill) the current foreground process running in in the terminal. This sends the SIGINT signal to the process, which is technically just a request—most processes will honor it, but some may ignore it.Ctrl+Z: Suspend the current foreground process running in bash. This sends the SIGTSTP signal to the process. To return the process to the foreground later, use the fg process_name command.Ctrl+D: Close the bash shell. This sends an EOF (End-of-file) marker to bash, and bash exits when it receives this marker. This is similar to running the exit command. top SHORTCUTS Shift + p：Sort by CPUShift + m：Sort by Memory find large file1234567891011121314151617du -x --max-depth=1 / |sort -k1 -nrdu -x -d 1 -h / |sort -k1 -nr# find which folder has most inodefind -type f | awk -F / -v OFS=/ '&#123;$NF="";dir[$0]++&#125;END&#123;for(i in dir)print dir[i]" "i&#125;'| sort -k1 -nr | head769 ./wrk/obj/openssl-1.1.1b/test/551 ./.cache/mozilla/firefox/hha91z74.default-release/cache2/entries/462 ./wrk/obj/openssl-1.1.1b/doc/man3/229 ./wrk/obj/LuaJIT-2.1.0-beta3/src/212 ./wrk/obj/openssl-1.1.1b/test/certs/207 ./wrk/obj/openssl-1.1.1b/apps/199 ./wrk/obj/openssl-1.1.1b/crypto/asn1/194 ./.cache/gnome-software/icons/185 ./wrk/obj/openssl-1.1.1b/crypto/evp/157 ./wrk/obj/openssl-1.1.1b/test/recipes/ rename123456# find consumer.xml file and replace all aaaaaa to bbbbbbfind ./ -type f -name consumer.xml -exec sed -i "s/aaaaaa/bbbbbb/g" &#123;&#125; \;# find all .txt file and compress then copy to /home/.(find . -name "*.txt"|xargs tar -cvf test.tar) &amp;&amp; cp -f test.tar /home/. network12345# network statusnetstat -n | awk '/^tcp/ &#123;++S[$NF]&#125; END &#123;for(a in S) print a, S[a]&#125;'# get IP ip a|grep "global"|awk '&#123;print $2&#125;'| awk -F/ '&#123;print $1&#125;' nginx]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>shell</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[2019 Reviews]]></title>
     <url>%2Fpost%2Freviews-2019%2F</url>
     <content type="text"><![CDATA[The pasted 2019 is so fast, this blog is to record my progress and regret of 2019. 2019 I migrate from seagroup to shopee due to organize migration, I can learn more complex and advanced architecture. Read 4 books, http, linux security, promethues, golang. I begin to learn algorithm and golang. I have more experience in ELK, Zabbix, Promethues and Network I begin to learn front-end react to develop shopee CDN platform. I also make some difference in my work, Ocha project migrate to new cluster, add more monitors for shopee order team. But there are also some regret. Less chance to gym and exercise, so weight increase. Never go out for travel in 2019. Oral English still so bad, need more practice. No some special area. I plan to deep into ELK What I will do in 2020 ? More exercise, keep weight around 70 kg Learn elk and pass Elastic Certified Engineer Read book 《Advanced Programming in the UNIX Environment》Third Edition Continue to learn algorithm one question one week.]]></content>
@@ -178,8 +189,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>prometheus</tag>
         <tag>docker</tag>
+        <tag>prometheus</tag>
       </tags>
   </entry>
   <entry>

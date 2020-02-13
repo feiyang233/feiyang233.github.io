@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="记录网络相关知识与 Linux 网络相关的命令。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-02-08T02:14:03.278Z">
+<meta property="og:updated_time" content="2020-02-13T11:35:41.273Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计算机网络相关">
 <meta name="twitter:description" content="记录网络相关知识与 Linux 网络相关的命令。">
@@ -439,7 +439,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-02-08 10:14:03" itemprop="dateModified" datetime="2020-02-08T10:14:03+08:00">2020-02-08</time>
+                <time title="Modified: 2020-02-13 19:35:41" itemprop="dateModified" datetime="2020-02-13T19:35:41+08:00">2020-02-13</time>
               
             
           </span>
@@ -530,10 +530,10 @@
 <li><p>查看链接状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">netstat -n | awk <span class="string">'/^tcp/ &#123;++state[$NF]&#125; END &#123;for(key in state) print key,"\t",state[key]&#125;'</span></span><br><span class="line"><span class="comment"># 如下结果</span></span><br><span class="line">FIN_WAIT2 	 5683</span><br><span class="line">SYN_RECV 	 311</span><br><span class="line">CLOSE_WAIT 	 3</span><br><span class="line">TIME_WAIT 	 127952</span><br><span class="line">ESTABLISHED 	 52032</span><br><span class="line">FIN_WAIT1 	 22345</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>What is a TCP Reset <a href="https://www.corvil.com/kb/what-is-a-tcp-reset-rst" target="_blank" rel="noopener">RST</a></p>
-<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">iptables -t  nat  -nL   # 查看 nat 表</span><br><span class="line">iptables -t 表名 -N 自定义链名 # 创建一个链</span><br><span class="line">iptables -t 表名 -L  default filter</span><br><span class="line">iptables -t 表名 -L 链名</span><br><span class="line">iptables -t 表名 -nL --line</span><br><span class="line">iptables -t 表名 -D 链名 要删除的序号</span><br><span class="line">iptables -t 表名 -P 链名 动作    修改默认规则 DROP</span><br><span class="line">-A INPUT -m iprange --src-range x.x.x.x-x.x.x.x  -p tcp --dport 11211 -j ACCEPT #多 IP</span><br><span class="line">-A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT  #多端口</span><br><span class="line">类型匹配 -p tcp udp udplite icmp icmpv6 esp ah sctp mh</span><br><span class="line">转发功能 cat /proc/sys/net/ipv4/ip_forward</span><br></pre></td></tr></table></figure>
+<li><p>What is a TCP Reset <a href="https://www.corvil.com/kb/what-is-a-tcp-reset-rst" target="_blank" rel="noopener">RST</a>  </p>
 </li>
 </ol>
+<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">iptables -t  nat  -nL   # 查看 nat 表</span><br><span class="line">iptables -t 表名 -N 自定义链名 # 创建一个链</span><br><span class="line">iptables -t 表名 -L  default filter</span><br><span class="line">iptables -t 表名 -L 链名</span><br><span class="line">iptables -t 表名 -nL --line</span><br><span class="line">iptables -t 表名 -D 链名 要删除的序号</span><br><span class="line">iptables -t 表名 -P 链名 动作    修改默认规则 DROP</span><br><span class="line">-A INPUT -m iprange --src-range x.x.x.x-x.x.x.x  -p tcp --dport 11211 -j ACCEPT #多 IP</span><br><span class="line">-A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT  #多端口</span><br><span class="line">类型匹配 -p tcp udp udplite icmp icmpv6 esp ah sctp mh</span><br><span class="line">转发功能 cat /proc/sys/net/ipv4/ip_forward</span><br></pre></td></tr></table></figure>
 <h1 id="小知识"><a href="#小知识" class="headerlink" title="小知识"></a>小知识</h1><h2 id="Public-IP"><a href="#Public-IP" class="headerlink" title="Public IP"></a>Public IP</h2><ul>
 <li>Class A: 0.x.x.x ~ 127.x.x.x</li>
 <li>Class B: 128.x.x.x ~ 191.x.x.x</li>
@@ -711,7 +711,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -793,7 +793,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">19</span>
+                      
+                    
+                    <span class="site-state-item-count">20</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
