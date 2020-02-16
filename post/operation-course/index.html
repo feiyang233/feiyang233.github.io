@@ -110,10 +110,12 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="This blog is for record what I learn from this Operation Course">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-02-13T11:35:28.588Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20200216173928.png">
+<meta property="og:updated_time" content="2020-02-16T09:46:13.455Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Operation Course Record">
 <meta name="twitter:description" content="This blog is for record what I learn from this Operation Course">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20200216173928.png">
 
 
 
@@ -422,12 +424,24 @@
                 
               
 
-              <time title="Created: 2020-02-13 18:56:35 / Modified: 19:35:28" itemprop="dateCreated datePublished" datetime="2020-02-13T18:56:35+08:00">2020-02-13</time>
+              <time title="Created: 2020-02-13 18:56:35" itemprop="dateCreated datePublished" datetime="2020-02-13T18:56:35+08:00">2020-02-13</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2020-02-16 17:46:13" itemprop="dateModified" datetime="2020-02-16T17:46:13+08:00">2020-02-16</time>
               
             
           </span>
@@ -513,7 +527,30 @@
 <h2 id="find-large-file"><a href="#find-large-file" class="headerlink" title="find large file"></a>find large file</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">du -x --max-depth=1 / |sort -k1 -nr</span><br><span class="line">du -x -d 1 -h / |sort -k1 -nr</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> find <span class="built_in">which</span> folder has most inode</span></span><br><span class="line">find -type f | awk -F / -v OFS=/ '&#123;$NF="";dir[$0]++&#125;END&#123;for(i in dir)print dir[i]" "i&#125;'| sort -k1 -nr | head</span><br><span class="line"></span><br><span class="line">769 ./wrk/obj/openssl-1.1.1b/test/</span><br><span class="line">551 ./.cache/mozilla/firefox/hha91z74.default-release/cache2/entries/</span><br><span class="line">462 ./wrk/obj/openssl-1.1.1b/doc/man3/</span><br><span class="line">229 ./wrk/obj/LuaJIT-2.1.0-beta3/src/</span><br><span class="line">212 ./wrk/obj/openssl-1.1.1b/test/certs/</span><br><span class="line">207 ./wrk/obj/openssl-1.1.1b/apps/</span><br><span class="line">199 ./wrk/obj/openssl-1.1.1b/crypto/asn1/</span><br><span class="line">194 ./.cache/gnome-software/icons/</span><br><span class="line">185 ./wrk/obj/openssl-1.1.1b/crypto/evp/</span><br><span class="line">157 ./wrk/obj/openssl-1.1.1b/test/recipes/</span><br></pre></td></tr></table></figure>
 <h2 id="rename"><a href="#rename" class="headerlink" title="rename"></a>rename</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> find consumer.xml file and replace all aaaaaa to bbbbbb</span></span><br><span class="line">find ./ -type f -name consumer.xml -exec sed -i "s/aaaaaa/bbbbbb/g" &#123;&#125; \;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> find all .txt file and compress <span class="keyword">then</span> copy to /home/.</span></span><br><span class="line">(find . -name "*.txt"|xargs tar -cvf test.tar) &amp;&amp; cp -f test.tar /home/.</span><br></pre></td></tr></table></figure>
 <h2 id="network"><a href="#network" class="headerlink" title="network"></a>network</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> network status</span></span><br><span class="line">netstat -n | awk '/^tcp/ &#123;++S[$NF]&#125; END &#123;for(a in S) print a, S[a]&#125;'</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> get IP </span></span><br><span class="line">ip a|grep "global"|awk '&#123;print $2&#125;'| awk -F/ '&#123;print $1&#125;'</span><br></pre></td></tr></table></figure>
-<h1 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h1>
+<h1 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h1><h2 id="cpu-affinity"><a href="#cpu-affinity" class="headerlink" title="cpu affinity"></a>cpu affinity</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_cpu_affinity auto</span><br></pre></td></tr></table></figure>
+<p><a href="http://nginx.org/en/docs/ngx_core_module.html#worker_cpu_affinity" target="_blank" rel="noopener">offical document</a></p>
+<h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><p>Add in kernel 2.6</p>
+<ol>
+<li>epoll’s event flow model is thread-safe;</li>
+<li>epoll follow the selection model and improve efficiency;</li>
+<li>epoll is event-driven. You can select the relevant state of the entire file to be scanned according to your needs. epoll avoids replacing the scanned file according to the event. You can directly call the callback function, which is more efficient.</li>
+<li>Removed the maximum limit on the number of file sizes that can be monitored by the temporary process inside the select model (1024). If you have used an earlier version of Apache, the selection model it uses will be delayed when the request exceeds 1000. The request is wrong, and the performance will be significantly improved by using Nginx.</li>
+<li>In addition, an optimization place involved in the events {} configuration is worker_connections, which is also set in events. Through the above learning, we know the role of the worker thread, and the connections supported by each worker thread are Limited, it will be set to 1024 by default here, and when we are dealing with high concurrency scenarios, it is often too low to split worker threads to 1024. It is recommended that you increase the worker_connections, you can refer to the actual business needs Nginx processing Maximum to increase this setting.</li>
+</ol>
+<h2 id="sendfile"><a href="#sendfile" class="headerlink" title="sendfile"></a>sendfile</h2><p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20200216173928.png" alt><br>refer <a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#sendfile" target="_blank" rel="noopener">docs</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">location /video/ &#123;</span><br><span class="line">    sendfile       on;</span><br><span class="line">    tcp_nopush     on;</span><br><span class="line">    aio            on;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="gzip"><a href="#gzip" class="headerlink" title="gzip"></a>gzip</h2><p><a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">docs</a></p>
+<ol>
+<li><code>gzip on</code> is responsible for turning on the compression function of the backend;</li>
+<li><code>gzip_buffer 16 8k</code> means to set the memory space of Nginx when processing file compression;</li>
+<li><code>gzip_comp_level 6</code> indicates the compression level of Nginx when processing compression. Generally, the higher the level, the larger the compression ratio. However, it does not mean that the larger the compression ratio, the better. It is still necessary to choose a suitable compression ratio according to the actual situation. The compression ratio is too large. Affects performance. Compression ratio is too small to achieve the desired effect. Generally, it is recommended that you set it to 6 to be more appropriate.</li>
+<li><code>gzip_http_version 1.1</code> means only compress the HTTP 1.1 version of the protocol;</li>
+<li><code>gzip_min_length 256</code> means that compression is performed only when the length is greater than the minimum 256 bytes, and if it is less than this length, no compression is performed;</li>
+<li><code>gzip_proxied any</code> means that Nginx as a reverse proxy sets some gzip compression policies based on the information returned by the backend server;</li>
+<li><code>gzip_vary on</code> indicates whether to send Vary: Accept_Encoding response header field, to realize that the receiver server is gzip compressed;</li>
+<li><code>application / vnd.ms-fontobject image / x-icon</code>; gip compression type;</li>
+<li>g<code>zip_disable &quot;msie6&quot;</code>; Turn off compression for IE6.</li>
+</ol>
+
       
     </div>
 
@@ -801,7 +838,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#shell"><span class="nav-number">1.</span> <span class="nav-text">shell</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SHORTCUTS"><span class="nav-number">1.1.</span> <span class="nav-text">SHORTCUTS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find-large-file"><span class="nav-number">1.2.</span> <span class="nav-text">find large file</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rename"><span class="nav-number">1.3.</span> <span class="nav-text">rename</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#network"><span class="nav-number">1.4.</span> <span class="nav-text">network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nginx"><span class="nav-number">2.</span> <span class="nav-text">nginx</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#shell"><span class="nav-number">1.</span> <span class="nav-text">shell</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SHORTCUTS"><span class="nav-number">1.1.</span> <span class="nav-text">SHORTCUTS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find-large-file"><span class="nav-number">1.2.</span> <span class="nav-text">find large file</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rename"><span class="nav-number">1.3.</span> <span class="nav-text">rename</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#network"><span class="nav-number">1.4.</span> <span class="nav-text">network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nginx"><span class="nav-number">2.</span> <span class="nav-text">nginx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu-affinity"><span class="nav-number">2.1.</span> <span class="nav-text">cpu affinity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll"><span class="nav-number">2.2.</span> <span class="nav-text">epoll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sendfile"><span class="nav-number">2.3.</span> <span class="nav-text">sendfile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gzip"><span class="nav-number">2.4.</span> <span class="nav-text">gzip</span></a></li></ol></li></ol></div>
             
 
           </div>
