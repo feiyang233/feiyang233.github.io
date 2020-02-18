@@ -111,7 +111,7 @@
 <meta property="og:description" content="This blog is for record what I learn from this Operation Course">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20200216173928.png">
-<meta property="og:updated_time" content="2020-02-16T09:46:13.455Z">
+<meta property="og:updated_time" content="2020-02-18T02:43:26.748Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Operation Course Record">
 <meta name="twitter:description" content="This blog is for record what I learn from this Operation Course">
@@ -441,7 +441,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-02-16 17:46:13" itemprop="dateModified" datetime="2020-02-16T17:46:13+08:00">2020-02-16</time>
+                <time title="Modified: 2020-02-18 10:43:26" itemprop="dateModified" datetime="2020-02-18T10:43:26+08:00">2020-02-18</time>
               
             
           </span>
@@ -550,6 +550,12 @@
 <li><code>application / vnd.ms-fontobject image / x-icon</code>; gip compression type;</li>
 <li>g<code>zip_disable &quot;msie6&quot;</code>; Turn off compression for IE6.</li>
 </ol>
+<h2 id="Timing-Variables"><a href="#Timing-Variables" class="headerlink" title="Timing Variables"></a>Timing Variables</h2><ul>
+<li><a href="https://nginx.org/en/docs/http/ngx_http_core_module.html?&amp;_ga=2.258153418.1195201124.1581934594-512055108.1581845805#var_request_time" target="_blank" rel="noopener">request_time</a> – Full request time, starting when NGINX reads the first byte from the client and ending when NGINX sends the last byte of the response body</li>
+<li><a href="https://nginx.org/en/docs/http/ngx_http_upstream_module.html?&amp;_ga=2.258153418.1195201124.1581934594-512055108.1581845805#var_upstream_connect_time" target="_blank" rel="noopener">upstream_connect_time</a> – Time spent establishing a connection with an upstream server</li>
+<li><a href="https://nginx.org/en/docs/http/ngx_http_upstream_module.html?&amp;_ga=2.57291882.1195201124.1581934594-512055108.1581845805#var_upstream_header_time" target="_blank" rel="noopener">upstream_header_time</a> – Time between establishing a connection to an upstream server and receiving the first byte of the response header</li>
+<li><a href="https://nginx.org/en/docs/http/ngx_http_upstream_module.html?&amp;_ga=2.258153418.1195201124.1581934594-512055108.1581845805#var_upstream_response_time" target="_blank" rel="noopener">upstream_response_time</a> – Time between establishing a connection to an upstream server and receiving the last byte of the response body</li>
+</ul>
 
       
     </div>
@@ -838,7 +844,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#shell"><span class="nav-number">1.</span> <span class="nav-text">shell</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SHORTCUTS"><span class="nav-number">1.1.</span> <span class="nav-text">SHORTCUTS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find-large-file"><span class="nav-number">1.2.</span> <span class="nav-text">find large file</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rename"><span class="nav-number">1.3.</span> <span class="nav-text">rename</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#network"><span class="nav-number">1.4.</span> <span class="nav-text">network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nginx"><span class="nav-number">2.</span> <span class="nav-text">nginx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu-affinity"><span class="nav-number">2.1.</span> <span class="nav-text">cpu affinity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll"><span class="nav-number">2.2.</span> <span class="nav-text">epoll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sendfile"><span class="nav-number">2.3.</span> <span class="nav-text">sendfile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gzip"><span class="nav-number">2.4.</span> <span class="nav-text">gzip</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#shell"><span class="nav-number">1.</span> <span class="nav-text">shell</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SHORTCUTS"><span class="nav-number">1.1.</span> <span class="nav-text">SHORTCUTS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find-large-file"><span class="nav-number">1.2.</span> <span class="nav-text">find large file</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rename"><span class="nav-number">1.3.</span> <span class="nav-text">rename</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#network"><span class="nav-number">1.4.</span> <span class="nav-text">network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nginx"><span class="nav-number">2.</span> <span class="nav-text">nginx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu-affinity"><span class="nav-number">2.1.</span> <span class="nav-text">cpu affinity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll"><span class="nav-number">2.2.</span> <span class="nav-text">epoll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sendfile"><span class="nav-number">2.3.</span> <span class="nav-text">sendfile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gzip"><span class="nav-number">2.4.</span> <span class="nav-text">gzip</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Timing-Variables"><span class="nav-number">2.5.</span> <span class="nav-text">Timing Variables</span></a></li></ol></li></ol></div>
             
 
           </div>
