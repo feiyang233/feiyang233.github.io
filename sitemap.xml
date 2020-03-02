@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://feiyang233.club/about/index.html</loc>
+    
+    <lastmod>2020-03-02T01:07:05.818Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://feiyang233.club/post/linux/</loc>
     
     <lastmod>2020-03-01T04:50:49.189Z</lastmod>
@@ -75,13 +82,6 @@
     <loc>http://feiyang233.club/post/reviews-2019/</loc>
     
     <lastmod>2020-01-26T06:45:07.644Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://feiyang233.club/about/index.html</loc>
-    
-    <lastmod>2019-12-27T09:02:13.876Z</lastmod>
     
   </url>
   

@@ -190,8 +190,8 @@
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>prometheus</tag>
         <tag>docker</tag>
+        <tag>prometheus</tag>
       </tags>
   </entry>
   <entry>
