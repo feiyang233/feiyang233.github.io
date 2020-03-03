@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://feiyang233.club/"/>
-  <updated>2020-03-01T04:46:22.581Z</updated>
+  <updated>2020-03-03T10:00:10.523Z</updated>
   <id>http://feiyang233.club/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Elasticsearch(elk) technology and practice</title>
+    <link href="http://feiyang233.club/post/elk-geek/"/>
+    <id>http://feiyang233.club/post/elk-geek/</id>
+    <published>2020-03-03T03:11:11.000Z</published>
+    <updated>2020-03-03T10:00:10.523Z</updated>
+    
+    <content type="html"><![CDATA[<p>Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java. This blog is record  what I learn from this <a href="https://time.geekbang.org/course/intro/100030501" target="_blank" rel="noopener">geek Course</a><br><a id="more"></a><br>The <a href="https://time.geekbang.org/column/article/104136" target="_blank" rel="noopener">recommendation</a> for learning Elasticsearch. </p><h1 id="Getting-started-with-elasticsearch"><a href="#Getting-started-with-elasticsearch" class="headerlink" title="Getting started with elasticsearch"></a>Getting started with elasticsearch</h1>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java. This blog is record  what I learn from this &lt;a href=&quot;https://time.geekbang.org/course/intro/100030501&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;geek Course&lt;/a&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Linux" scheme="http://feiyang233.club/categories/Linux/"/>
+    
+    
+      <category term="elk" scheme="http://feiyang233.club/tags/elk/"/>
+    
+  </entry>
   
   <entry>
     <title>Operation Course Record</title>
@@ -304,9 +326,9 @@
     
       <category term="python" scheme="http://feiyang233.club/tags/python/"/>
     
-      <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
-    
       <category term="elk" scheme="http://feiyang233.club/tags/elk/"/>
+    
+      <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
     
       <category term="jenkins" scheme="http://feiyang233.club/tags/jenkins/"/>
     
@@ -398,9 +420,9 @@
       <category term="Linux" scheme="http://feiyang233.club/categories/Linux/"/>
     
     
-      <category term="prometheus" scheme="http://feiyang233.club/tags/prometheus/"/>
-    
       <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
+    
+      <category term="prometheus" scheme="http://feiyang233.club/tags/prometheus/"/>
     
   </entry>
   
@@ -422,9 +444,9 @@
       <category term="Linux" scheme="http://feiyang233.club/categories/Linux/"/>
     
     
-      <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
-    
       <category term="elk" scheme="http://feiyang233.club/tags/elk/"/>
+    
+      <category term="docker" scheme="http://feiyang233.club/tags/docker/"/>
     
   </entry>
   
@@ -447,28 +469,6 @@
     
     
       <category term="hexo" scheme="http://feiyang233.club/tags/hexo/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>实用链接分享</title>
-    <link href="http://feiyang233.club/post/links/"/>
-    <id>http://feiyang233.club/post/links/</id>
-    <published>2018-11-24T16:00:00.000Z</published>
-    <updated>2019-07-26T06:33:43.633Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="站在大佬们的肩膀上"><a href="#站在大佬们的肩膀上" class="headerlink" title="站在大佬们的肩膀上"></a>站在大佬们的肩膀上</h2><p>工作，学习，健身。 其实我蛮担心自己的发际线<br><a id="more"></a>  </p><h3 id="运维博客"><a href="#运维博客" class="headerlink" title="运维博客"></a>运维博客</h3><ol><li><a href="https://www.zsythink.net/" target="_blank" rel="noopener">朱双印博客</a> iptables, ansible, zabbix 都很不错  </li><li><a href="http://www.cnblogs.com/f-ck-need-u/p/7576137.html" target="_blank" rel="noopener">骏马金龙</a> rsync, LVS, nginx, zooKeeper  </li><li><a href="http://www.jinbuguo.com/" target="_blank" rel="noopener">金步国作品集</a> Linux  </li><li><a href="https://wsgzao.github.io/" target="_blank" rel="noopener">HelloDog</a> 大佬同事奥哥的博客 </li></ol><h3 id="实用文档"><a href="#实用文档" class="headerlink" title="实用文档"></a>实用文档</h3><ol><li><a href="https://docs.ansible.com/ansible/latest/index.html" target="_blank" rel="noopener">ansible</a> 批量操作的好帮手  </li><li><a href="https://www.zabbix.com/documentation/current/start" target="_blank" rel="noopener">zabbix</a> 实时监控了解一下  </li><li><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">ELK</a> 收集过滤检索神器  </li><li><a href="https://docs.docker.com/" target="_blank" rel="noopener">Docker</a> 方便快速的容器 </li><li><a href="https://kubernetes.io/zh/docs/" target="_blank" rel="noopener">Kubernetes</a> DevOps 玩转容器部署</li></ol><h3 id="学习一个"><a href="#学习一个" class="headerlink" title="学习一个"></a>学习一个</h3><ol><li><a href="https://www.imooc.com/" target="_blank" rel="noopener">慕课网</a> 程序员的梦工厂</li><li><a href="http://www.runoob.com/" target="_blank" rel="noopener">菜鸟教程</a> 学的不仅是技术，更是梦想   </li><li><a href="http://www.w3school.com.cn/" target="_blank" rel="noopener">w3school</a> Web 技术教程</li></ol><h3 id="提高生产力"><a href="#提高生产力" class="headerlink" title="提高生产力"></a>提高生产力</h3><ol><li><a href="https://trello.com" target="_blank" rel="noopener">任务管理看板</a> Trello 免费无广告</li><li><a href="https://dbngin.com/" target="_blank" rel="noopener">数据库引擎</a> Free All-in-One Database Version Management Tool</li><li><a href="https://tableplus.io/?utm_source=dbngin" target="_blank" rel="noopener">TablePlus</a> Database management made easy 和 2 中的数据库引擎可以自动关联。</li></ol><h3 id="好书推荐"><a href="#好书推荐" class="headerlink" title="好书推荐"></a>好书推荐</h3><ol><li><a href="http://blog.dploop.org/" target="_blank" rel="noopener">强哥</a> 安利的 <a href="https://vonng.gitbooks.io/ddia-cn/content/" target="_blank" rel="noopener">设计数据密集型应用</a></li><li><a href="https://mp.weixin.qq.com/s/FqYpxGoWd_POdGa63_n_MQ" target="_blank" rel="noopener">这或许是东半球分析十大排序算法最好的一篇文章</a></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;站在大佬们的肩膀上&quot;&gt;&lt;a href=&quot;#站在大佬们的肩膀上&quot; class=&quot;headerlink&quot; title=&quot;站在大佬们的肩膀上&quot;&gt;&lt;/a&gt;站在大佬们的肩膀上&lt;/h2&gt;&lt;p&gt;工作，学习，健身。 其实我蛮担心自己的发际线&lt;br&gt;
-    
-    </summary>
-    
-      <category term="学习" scheme="http://feiyang233.club/categories/%E5%AD%A6%E4%B9%A0/"/>
-    
-    
-      <category term="links" scheme="http://feiyang233.club/tags/links/"/>
     
   </entry>
   
