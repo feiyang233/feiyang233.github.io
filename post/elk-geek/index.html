@@ -110,7 +110,7 @@
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elastics">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-03-03T10:00:10.523Z">
+<meta property="og:updated_time" content="2020-03-05T04:06:14.271Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Elasticsearch(elk) technology and practice">
 <meta name="twitter:description" content="Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elastics">
@@ -422,12 +422,24 @@
                 
               
 
-              <time title="Created: 2020-03-03 11:11:11 / Modified: 18:00:10" itemprop="dateCreated datePublished" datetime="2020-03-03T11:11:11+08:00">2020-03-03</time>
+              <time title="Created: 2020-03-03 11:11:11" itemprop="dateCreated datePublished" datetime="2020-03-03T11:11:11+08:00">2020-03-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2020-03-05 12:06:14" itemprop="dateModified" datetime="2020-03-05T12:06:14+08:00">2020-03-05</time>
               
             
           </span>
@@ -504,7 +516,84 @@
 
       
         <p>Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java. This blog is record  what I learn from this <a href="https://time.geekbang.org/course/intro/100030501" target="_blank" rel="noopener">geek Course</a><br><a id="more"></a><br>The <a href="https://time.geekbang.org/column/article/104136" target="_blank" rel="noopener">recommendation</a> for learning Elasticsearch. </p>
-<h1 id="Getting-started-with-elasticsearch"><a href="#Getting-started-with-elasticsearch" class="headerlink" title="Getting started with elasticsearch"></a>Getting started with elasticsearch</h1>
+<h1 id="Getting-started-with-elasticsearch"><a href="#Getting-started-with-elasticsearch" class="headerlink" title="Getting started with elasticsearch"></a>Getting started with elasticsearch</h1><p>This course github <a href="https://github.com/geektime-geekbang/geektime-ELK" target="_blank" rel="noopener">https://github.com/geektime-geekbang/geektime-ELK</a><br>Elasticsearch <a href="https://www.elastic.co/" target="_blank" rel="noopener">https://www.elastic.co/</a></p>
+<ul>
+<li>Elasticsearch Certification <a href="https://www.elastic.co/cn/training/certification" target="_blank" rel="noopener">https://www.elastic.co/cn/training/certification</a></li>
+<li>ElasticSearch Engineering I training  <a href="https://www.elastic.co/cn/training/elasticsearch-engineer-1" target="_blank" rel="noopener">https://www.elastic.co/cn/training/elasticsearch-engineer-1</a></li>
+<li>ElasticSearch Engineering II training  <a href="https://www.elastic.co/cn/training/elasticsearch-engineer-2" target="_blank" rel="noopener">https://www.elastic.co/cn/training/elasticsearch-engineer-2</a><h2 id="Install-elasticsearch"><a href="#Install-elasticsearch" class="headerlink" title="Install elasticsearch"></a>Install elasticsearch</h2>Install can refer <a href="https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html" target="_blank" rel="noopener">offical docs</a>  </li>
+</ul>
+<p>From version 7.0, don’t need install java by yourself.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">directory</th>
+<th style="text-align:center">Vaconfig filelue</th>
+<th style="text-align:center">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">bin</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">execution file</td>
+</tr>
+<tr>
+<td style="text-align:center">config</td>
+<td style="text-align:center">elasticsearch.yml</td>
+<td style="text-align:center">es cluster config</td>
+</tr>
+<tr>
+<td style="text-align:center">JDK</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Java env</td>
+</tr>
+<tr>
+<td style="text-align:center">data</td>
+<td style="text-align:center">path.data</td>
+<td style="text-align:center">es data file</td>
+</tr>
+<tr>
+<td style="text-align:center">lib</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Java lib</td>
+</tr>
+<tr>
+<td style="text-align:center">logs</td>
+<td style="text-align:center">path.log</td>
+<td style="text-align:center">log file</td>
+</tr>
+<tr>
+<td style="text-align:center">modules</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">including all es modules</td>
+</tr>
+<tr>
+<td style="text-align:center">plugins</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">including all installed plugins</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># adjust JVM - config/jvm.options</span></span><br><span class="line">default is 1GB</span><br></pre></td></tr></table></figure>
+<p>Config recommendation</p>
+<ol>
+<li>Xms equal to Xmx</li>
+<li>Xmx don’t larger than 50% of memory</li>
+<li>Xmx no larger than 30GB can refer <a href="https://www.elastic.co/blog/a-heap-of-trouble" target="_blank" rel="noopener">https://www.elastic.co/blog/a-heap-of-trouble</a></li>
+</ol>
+<h2 id="plugins"><a href="#plugins" class="headerlink" title="plugins"></a>plugins</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#启动单节点 start single nodes</span></span><br><span class="line">bin/elasticsearch -E node.name=node0 -E cluster.name=geektime -E path.data=node0_data</span><br><span class="line"></span><br><span class="line">bin/elasticsearch-plugin list</span><br><span class="line">bin/elasticsearch-plugin install analysis-icu</span><br><span class="line"></span><br><span class="line"><span class="comment">#start kibana</span></span><br><span class="line">bin/kibana</span><br><span class="line"></span><br><span class="line">bin/kibana-plugin install plugin_location</span><br><span class="line">bin/kibana-plugin list</span><br><span class="line">bin/kibana-plugin remove</span><br><span class="line"></span><br><span class="line"><span class="comment"># dev tools in kibana</span></span><br><span class="line"><span class="comment">#查看安装的插件 check installed plugins</span></span><br><span class="line">GET http://localhost:9200/_cat/plugins?v</span><br><span class="line"><span class="comment">#查看集群 check cluster </span></span><br><span class="line">GET http://localhost:9200</span><br><span class="line"><span class="comment">#查看nodes check nodes</span></span><br><span class="line">GET _cat/nodes</span><br><span class="line">GET _cluster/health</span><br></pre></td></tr></table></figure>
+<p>Run multiple nodes in the same machine<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bin/elasticsearch -E node.name=node0 -E cluster.name=geektime -E path.dat= node0_data -d</span><br><span class="line">bin/elasticsearch -E node.name=node1 -E cluster.name=geektime -E path.dat= node1_data -d</span><br><span class="line">bin/elasticsearch -E node.name=node2 -E cluster.name=geektime -E path.dat= node2_data -d</span><br><span class="line">bin/elasticsearch -E node.name=node3 -E cluster.name=geektime -E path.dat= node3_data -d</span><br></pre></td></tr></table></figure></p>
+<h2 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h2><p>Use docker-compose start cerebro kibana and 2 elasticsearch<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'2.2'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  cerebro:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">lmenezes/cerebro:0.8.5</span></span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">cerebro</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"9000:9000"</span></span><br><span class="line"><span class="attr">    command:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="bullet">-Dhosts.0.host=http://elasticsearch:9200</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">es7net</span></span><br><span class="line"><span class="attr">  kibana:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/kibana/kibana:7.1.0</span></span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">kibana7</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">I18N_LOCALE=zh-CN</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">XPACK_GRAPH_ENABLED=true</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">TIMELION_ENABLED=true</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">XPACK_MONITORING_COLLECTION_ENABLED="true"</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"5601:5601"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">es7net</span></span><br><span class="line"><span class="attr">  elasticsearch:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:7.1.0</span></span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">es7_01</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">cluster.name=geektime</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">node.name=es7_01</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">bootstrap.memory_lock=true</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"ES_JAVA_OPTS=-Xms512m -Xmx512m"</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">discovery.seed_hosts=es7_01,es7_02</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">cluster.initial_master_nodes=es7_01,es7_02</span></span><br><span class="line"><span class="attr">    ulimits:</span></span><br><span class="line"><span class="attr">      memlock:</span></span><br><span class="line"><span class="attr">        soft:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">        hard:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="attr">      - es7data1:</span><span class="string">/usr/share/elasticsearch/data</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">9200</span><span class="string">:9200</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">es7net</span></span><br><span class="line"><span class="attr">  elasticsearch2:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:7.1.0</span></span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">es7_02</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">cluster.name=geektime</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">node.name=es7_02</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">bootstrap.memory_lock=true</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"ES_JAVA_OPTS=-Xms512m -Xmx512m"</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">discovery.seed_hosts=es7_01,es7_02</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">cluster.initial_master_nodes=es7_01,es7_02</span></span><br><span class="line"><span class="attr">    ulimits:</span></span><br><span class="line"><span class="attr">      memlock:</span></span><br><span class="line"><span class="attr">        soft:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">        hard:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="attr">      - es7data2:</span><span class="string">/usr/share/elasticsearch/data</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">es7net</span></span><br><span class="line"></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line"><span class="attr">  es7data1:</span></span><br><span class="line"><span class="attr">    driver:</span> <span class="string">local</span></span><br><span class="line"><span class="attr">  es7data2:</span></span><br><span class="line"><span class="attr">    driver:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr">  es7net:</span></span><br><span class="line"><span class="attr">    driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="logstash"><a href="#logstash" class="headerlink" title="logstash"></a>logstash</h2><blockquote>
+<p>Make sure all the version is the same for elasticsearch logstash and kibana<br>Now the latest version is 7.6, because this course use 7.1, <a href="https://www.elastic.co/downloads/past-releases/logstash-7-1-0" target="_blank" rel="noopener">https://www.elastic.co/downloads/past-releases/logstash-7-1-0</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download logstash，（7.1.0）in mac you need also install JAVA</span></span><br><span class="line"><span class="comment"># cd movielens, modify logstash.conf config</span></span><br><span class="line"><span class="comment"># modify your path of movies.csv</span></span><br><span class="line">input &#123;</span><br><span class="line">  file &#123;</span><br><span class="line">    path =&gt; <span class="string">"YOUR_FULL_PATH_OF_movies.csv"</span></span><br><span class="line">    start_position =&gt; <span class="string">"beginning"</span></span><br><span class="line">    sincedb_path =&gt; <span class="string">"/dev/null"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># First start Elasticsearch cluster，then start logstash </span></span><br><span class="line">sudo ./bin/logstash -f /YOUR_PATH_of_logstash.conf</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Download MovieLens data set：<a href="https://grouplens.org/datasets/movielens/" target="_blank" rel="noopener">https://grouplens.org/datasets/movielens/</a></li>
+<li>Logstash download：<a href="https://www.elastic.co/cn/downloads/logstash" target="_blank" rel="noopener">https://www.elastic.co/cn/downloads/logstash</a></li>
+<li>Logstash docs：<a href="https://www.elastic.co/guide/en/logstash/current/index.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/logstash/current/index.html</a></li>
+</ul>
+
       
     </div>
 
@@ -794,7 +883,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Getting-started-with-elasticsearch"><span class="nav-number">1.</span> <span class="nav-text">Getting started with elasticsearch</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Getting-started-with-elasticsearch"><span class="nav-number">1.</span> <span class="nav-text">Getting started with elasticsearch</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-elasticsearch"><span class="nav-number">1.1.</span> <span class="nav-text">Install elasticsearch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#plugins"><span class="nav-number">1.2.</span> <span class="nav-text">plugins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker"><span class="nav-number">1.3.</span> <span class="nav-text">docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#logstash"><span class="nav-number">1.4.</span> <span class="nav-text">logstash</span></a></li></ol></li></ol></div>
             
 
           </div>
