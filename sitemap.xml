@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://feiyang233.club/post/operation-course/</loc>
+    
+    <lastmod>2020-03-07T12:55:26.512Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://feiyang233.club/post/elk-geek/</loc>
     
     <lastmod>2020-03-06T07:23:40.134Z</lastmod>
@@ -40,13 +47,6 @@
     <loc>http://feiyang233.club/post/linux/</loc>
     
     <lastmod>2020-03-01T04:50:49.189Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://feiyang233.club/post/operation-course/</loc>
-    
-    <lastmod>2020-03-01T04:46:22.581Z</lastmod>
     
   </url>
   
