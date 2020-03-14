@@ -646,3 +646,146 @@ curl -X GET '<jenkinshost>/api/json?pretty=true' -u username:API_TOKEN -o jobs.j
 # get jenkins view
 curl -X GET '<jenkinshost>/view/<viewname>/api/json' -u username:API_TOKEN -o view.json
 ```
+
+# unixbench & fio
+Install unixbench can refer this https://www.ostechnix.com/unixbench-benchmark-suite-unix-like-systems/
+
+```bash
+# for ubuntu
+
+sudo apt-get install libx11-dev libgl1-mesa-dev libxext-dev perl perl-modules make git
+
+git clone https://github.com/kdlucas/byte-unixbench.git
+
+cd byte-unixbench/UnixBench/
+
+./Run
+
+# output 
+root@ubuntu:/tmp/byte-unixbench/UnixBench# ./Run 
+make all
+make[1]: Entering directory '/tmp/byte-unixbench/UnixBench'
+make distr
+make[2]: Entering directory '/tmp/byte-unixbench/UnixBench'
+Checking distribution of files
+./pgms  exists
+./src  exists
+./testdir  exists
+./tmp  exists
+./results  exists
+make[2]: Leaving directory '/tmp/byte-unixbench/UnixBench'
+make programs
+make[2]: Entering directory '/tmp/byte-unixbench/UnixBench'
+make[2]: Nothing to be done for 'programs'.
+make[2]: Leaving directory '/tmp/byte-unixbench/UnixBench'
+make[1]: Leaving directory '/tmp/byte-unixbench/UnixBench'
+sh: 1: 3dinfo: not found
+
+   #    #  #    #  #  #    #          #####   ######  #    #   ####   #    #
+   #    #  ##   #  #   #  #           #    #  #       ##   #  #    #  #    #
+   #    #  # #  #  #    ##            #####   #####   # #  #  #       ######
+   #    #  #  # #  #    ##            #    #  #       #  # #  #       #    #
+   #    #  #   ##  #   #  #           #    #  #       #   ##  #    #  #    #
+    ####   #    #  #  #    #          #####   ######  #    #   ####   #    #
+
+   Version 5.1.3                      Based on the Byte Magazine Unix Benchmark
+
+   Multi-CPU version                  Version 5 revisions by Ian Smith,
+                                      Sunnyvale, CA, USA
+   January 13, 2011                   johantheghost at yahoo period com
+
+------------------------------------------------------------------------------
+   Use directories for:
+      * File I/O tests (named fs***) = /tmp/byte-unixbench/UnixBench/tmp
+      * Results                      = /tmp/byte-unixbench/UnixBench/results
+------------------------------------------------------------------------------
+```
+
+
+Install fio https://github.com/axboe/fio
+```bash
+sudo apt update
+sudo apt install fio
+
+# run write test
+feiyang@ubuntu:~$  fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k --direct=0 --size=512M --numjobs=2 --runtime=240 --group_reporting
+
+randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=1
+...
+fio-3.1
+Starting 2 processes
+randwrite: Laying out IO file (1 file / 512MiB)
+randwrite: Laying out IO file (1 file / 512MiB)
+Jobs: 2 (f=2)
+randwrite: (groupid=0, jobs=2): err= 0: pid=1910: Sat Mar 14 12:48:59 2020
+  write: IOPS=204k, BW=799MiB/s (838MB/s)(1024MiB/1282msec)
+    slat (nsec): min=1929, max=909527, avg=7784.12, stdev=14736.01
+    clat (nsec): min=348, max=1920.9k, avg=613.38, stdev=5441.37
+     lat (usec): min=2, max=1925, avg= 8.50, stdev=15.99
+    clat percentiles (nsec):
+     |  1.00th=[   378],  5.00th=[   386], 10.00th=[   390], 20.00th=[   394],
+     | 30.00th=[   398], 40.00th=[   402], 50.00th=[   410], 60.00th=[   418],
+     | 70.00th=[   430], 80.00th=[   852], 90.00th=[   964], 95.00th=[   988],
+     | 99.00th=[  1336], 99.50th=[  1864], 99.90th=[ 22144], 99.95th=[ 31872],
+     | 99.99th=[209920]
+   bw (  KiB/s): min=432536, max=539248, per=57.01%, avg=466269.00, stdev=49219.22, samples=4
+   iops        : min=108134, max=134812, avg=116567.00, stdev=12304.94, samples=4
+  lat (nsec)   : 500=78.66%, 750=1.10%, 1000=16.26%
+  lat (usec)   : 2=3.64%, 4=0.11%, 10=0.10%, 20=0.03%, 50=0.08%
+  lat (usec)   : 100=0.01%, 250=0.01%, 500=0.01%, 750=0.01%
+  lat (msec)   : 2=0.01%
+  cpu          : usr=1.11%, sys=98.68%, ctx=24, majf=0, minf=18
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwt: total=0,262144,0, short=0,0,0, dropped=0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=1
+
+Run status group 0 (all jobs):
+  WRITE: bw=799MiB/s (838MB/s), 799MiB/s-799MiB/s (838MB/s-838MB/s), io=1024MiB (1074MB), run=1282-1282msec
+
+Disk stats (read/write):
+  sda: ios=0/3020, merge=0/2481, ticks=0/450, in_queue=4, util=30.57%
+
+# run read test
+feiyang@ubuntu:~$  fio --name=randread --ioengine=libaio --iodepth=16 --rw=randread --bs=4k --direct=0 --size=512M --numjobs=4 --runtime=240 --group_reporting
+randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=16
+...
+fio-3.1
+Starting 4 processes
+randread: Laying out IO file (1 file / 512MiB)
+randread: Laying out IO file (1 file / 512MiB)
+randread: Laying out IO file (1 file / 512MiB)
+randread: Laying out IO file (1 file / 512MiB)
+Jobs: 4 (f=4): [r(4)][100.0%][r=81.3MiB/s,w=0KiB/s][r=20.8k,w=0 IOPS][eta 00m:00s]
+randread: (groupid=0, jobs=4): err= 0: pid=1919: Sat Mar 14 12:51:02 2020
+   read: IOPS=20.4k, BW=79.7MiB/s (83.6MB/s)(2048MiB/25686msec)
+    slat (usec): min=65, max=33169, avg=192.80, stdev=110.46
+    clat (usec): min=2, max=48551, avg=2939.25, stdev=573.24
+     lat (usec): min=92, max=49600, avg=3132.50, stdev=601.03
+    clat percentiles (usec):
+     |  1.00th=[ 2606],  5.00th=[ 2671], 10.00th=[ 2704], 20.00th=[ 2737],
+     | 30.00th=[ 2769], 40.00th=[ 2835], 50.00th=[ 2868], 60.00th=[ 2933],
+     | 70.00th=[ 2999], 80.00th=[ 3097], 90.00th=[ 3228], 95.00th=[ 3359],
+     | 99.00th=[ 3621], 99.50th=[ 3752], 99.90th=[ 5342], 99.95th=[ 9503],
+     | 99.99th=[36963]
+   bw (  KiB/s): min=17683, max=22104, per=25.00%, avg=20407.93, stdev=962.56, samples=204
+   iops        : min= 4420, max= 5526, avg=5101.91, stdev=240.65, samples=204
+  lat (usec)   : 4=0.01%, 100=0.01%, 250=0.01%, 500=0.01%, 750=0.01%
+  lat (usec)   : 1000=0.01%
+  lat (msec)   : 2=0.03%, 4=99.74%, 10=0.18%, 20=0.03%, 50=0.02%
+  cpu          : usr=0.04%, sys=63.18%, ctx=452451, majf=0, minf=92
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwt: total=524288,0,0, short=0,0,0, dropped=0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=16
+
+Run status group 0 (all jobs):
+   READ: bw=79.7MiB/s (83.6MB/s), 79.7MiB/s-79.7MiB/s (83.6MB/s-83.6MB/s), io=2048MiB (2147MB), run=25686-25686msec
+
+Disk stats (read/write):
+  sda: ios=523624/5, merge=0/5, ticks=84769/1, in_queue=88, util=99.53%
+```
+
+
