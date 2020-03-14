@@ -83,7 +83,7 @@ deploy:
   type: git
   repo: https://github.com/fainyang/fainyang.github.io.git
   branch: master
-  message: update career sg
+  message: update multi pc sync 
   
 # Others
 archive_generator:
