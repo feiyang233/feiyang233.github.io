@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文记录了 vault 与 kubernetes 集成实验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vault k8s integration">
+<meta property="og:url" content="http://feiyang233.club/post/vault-k8s/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="本文记录了 vault 与 kubernetes 集成实验">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-12-14T07:17:23.000Z">
+<meta property="article:modified_time" content="2021-12-15T01:45:57.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="hashicorp">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://feiyang233.club/post/vault-k8s/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>vault k8s integration | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/vault-k8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vault k8s integration
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-12-14 15:17:23" itemprop="dateCreated datePublished" datetime="2021-12-14T15:17:23+08:00">2021-12-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-12-15 09:45:57" itemprop="dateModified" datetime="2021-12-15T09:45:57+08:00">2021-12-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文记录了 vault 与 kubernetes 集成实验</p>
+<span id="more"></span>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/vault/kubernetes-external-vault">https://learn.hashicorp.com/tutorials/vault/kubernetes-external-vault</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.hashicorp.com/hc/en-us/articles/4404389946387-Kubernetes-auth-method-Permission-Denied-error">https://support.hashicorp.com/hc/en-us/articles/4404389946387-Kubernetes-auth-method-Permission-Denied-error</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.vaultproject.io/api-docs/auth/kubernetes">https://www.vaultproject.io/api-docs/auth/kubernetes</a></li>
+</ul>
+<h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><ul>
+<li>vault cluster version: v1.7.2</li>
+<li>kubernetes cluster version: v1.21.1</li>
+</ul>
+<h1 id="kubernetes-config"><a href="#kubernetes-config" class="headerlink" title="kubernetes config"></a>kubernetes config</h1><p>Below is an example configuration of a working k8s auth.  In this below example:</p>
+<ul>
+<li>vault-auth is the service account with which k8s auth is configured.</li>
+<li>test-cloud is the service account used to login to vault using the k8s auth method</li>
+<li>test is the namespace of the service account test-cloud</li>
+<li>role-tokenreview-binding is the name of the cluster role binding the service accounts (vault-auth and test-cloud) need to be associated with</li>
+</ul>
+<p>这里是准备了 2 个 service account， 一个 vault-auth 是专门用来给 vault 回调 call k8s 验证来自 k8s 的request 的真实性。另外一个 test-cloud 是我们服务运行时， 用这个 test-cloud 的 secrets 向 vault 发起请求。 role-tokenreview-binding 是一个权限增加配置， 运行两个 service account 去 call rbac.authorization.k8s.io 验证身份。<br>这里我的理解是，有点像 AWS 的 role， 互相可以 assume ，验证 role 的身份。如果想更简单，就一个 service account 也是可以的。<br>这里让我联想到了 AWS STS, 每次当 AWS call vault ，vault 都需要验证来访的真实性。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2012-10-17&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;Sid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Stmt1639532537842&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;sts:GetCallerIdentity&quot;</span></span><br><span class="line">      <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;*&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>以下命令，都在 kubernetes 那台机器上执行。 我已经把返回值加#注释</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace test</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">namespace/test created</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: test-cloud</span><br><span class="line">  namespace: test</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line"> name: test-cloud</span><br><span class="line"> namespace: test</span><br><span class="line"> annotations:</span><br><span class="line">   kubernetes.io/service-account.name: test-cloud</span><br><span class="line">type: kubernetes.io/service-account-token</span><br><span class="line">EOF</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">serviceaccount/test-cloud created</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">secret/test-cloud created</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: vault-auth</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: vault-auth</span><br><span class="line">  annotations:</span><br><span class="line">    kubernetes.io/service-account.name: vault-auth</span><br><span class="line">type: kubernetes.io/service-account-token</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: role-tokenreview-binding</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: system:auth-delegator</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: vault-auth</span><br><span class="line">    namespace: default</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: test-cloud</span><br><span class="line">    namespace: test</span><br><span class="line">EOF</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">serviceaccount/vault-auth created</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">secret/vault-auth created</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">clusterrolebinding.rbac.authorization.k8s.io/role-tokenreview-binding created</span></span><br></pre></td></tr></table></figure>
+<p>接下来是得到一些 config 用来给 vault 设置 kubernetes auth integration</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">TOKEN_REVIEW_JWT=$(kubectl get secret vault-auth -o go-template=&#x27;&#123;&#123; .data.token &#125;&#125;&#x27; | base64 --decode) </span><br><span class="line">echo  $TOKEN_REVIEW_JWT</span><br><span class="line">eyJhbGciOiJSUzI1NiIsImtpZCI6IlZNU3F3QURqYThpVndNdXQ0Nmlsc19LanFDM1Z4NzRwVXNxSTY0X3M5VW8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InZhdWx0LWF1dGgiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoidmF1bHQtYXV0aCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjAxNWUzNjU4LWM4MjEtNDQzNi1iMTcwLWNmZTUwMGRmZDMwZCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OnZhdWx0LWF1dGgifQ.R86ZHaSIYK4evpUhT9ayQp5XgJS-Lj_GIsIRT2n1M3Q8cFiO8A3HKx44VI0XToPHKpkyrRvzAX3n-GodR2L7AEcsesr1vQ-qlb2qreb07uh9ZxMo8t8r9bJ91eRaoV-xygW6bu3_dJupKDFL7peuCJSB16VYkPoSONQA_v1gZdXK7hmPe-JSrKtyz31FpsoI5mEhqxCwMTON_7Ew41S2wN089lMR--Rvn1ZtEaLRy1fpzEvJmwiUrN28byGrszZXMnmHTA26UUAHs59fKo-My_jM7EpV029aJGZEytX8czlndwiijPCRnhiuSb7oCJNI8yFLXyTr7LVbe6q7ip6Qqw</span><br><span class="line">echo  $TOKEN_REVIEW_JWT &gt;&gt; TOKEN_REVIEW_JWT</span><br><span class="line"></span><br><span class="line">KUBE_CA_CERT=$(kubectl config view --raw --minify --flatten --output=&#x27;jsonpath=&#123;.clusters[].cluster.certificate-authority-data&#125;&#x27; | base64 --decode)</span><br><span class="line">echo $KUBE_CA_CERT</span><br><span class="line">-----BEGIN CERTIFICATE----- MIIC5zCCAc+gAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl cm5ldGVzMB4XDTIxMDUxMzAxMzAxOFoXDTMxMDUxMTAxMzAxOFowFTETMBEGA1UE AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKjq 3U72Z95kACf7ZbWYN2ktCxQVzcgJiVsD9UP2vm9c0hsI+eQWxodEf3+T6XVMCJce YgrYpLFyM1Mv7W/ZJ5F6UAGaPG4jOrF4CUgnYRV3j39wRjuvguOaf3lSMVFkAkOF GAN2eEO+OVaIeH7IxIbQ+vzC72V3WNTD0RC3OQoJIIQ2nLebcxkbksSTpDgARg+O j34IbHyUAUw3+msaCsKtqF+Tg6cLWGOu+iNekfL27rGJotXD3NCInE2aFX9Ipbmd BjnsvauwcCuBDKkSxxr46kcd7NZ2SFcvokkkuGl/c8AVdlL0TeDOrl8AOz/eUiQj 6ihQ7s07SUdNU3MefIkCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB /wQFMAMBAf8wHQYDVR0OBBYEFFIG5EyHEyWO9GE2Gm1D7nRY7iXFMA0GCSqGSIb3 DQEBCwUAA4IBAQCFcFHMgDAQ3GMfrLX0EudpyeDqJ/+Mj6C5xHet/bxQopMyCbmC ZVVXx2jpRaMSo81U/eDE0hfUSD3JGVUeM6aajivsGrGjqjuF0t/5hUxPJT74lIbc 5OQNXyYYuPeRyRw7Cnx8YpdJh4NJvWI+LBWSOSaDyFjf5yMpWQvT3bfWV4PGvi/0 YHxglWM3Jfpn7JBF6OJPs4P+6E0FPmS88d5ry6znmrAg9/PCOefZ1r93EAIwP1P4 EhWsyF9xemSyTIeDA740X7ZFcCEugkS6mOoswWtXPsL0JURlkx0kRR5HAYcQ01N1 Cv0epL7mgWJpxcwnil9pWXVDRgWTXvFP5aaD -----END CERTIFICATE-----</span><br><span class="line">echo $KUBE_CA_CERT &gt;&gt; KUBE_CA_CERT</span><br><span class="line"></span><br><span class="line">KUBE_HOST=$(kubectl config view --raw --minify --flatten --output=&#x27;jsonpath=&#123;.clusters[].cluster.server&#125;&#x27;)</span><br><span class="line">echo $KUBE_HOST</span><br><span class="line">https://192.168.1.119:6443</span><br><span class="line">echo $KUBE_HOST &gt;&gt; KUBE_HOST</span><br><span class="line"></span><br><span class="line">kubectl get secret  test-cloud -n test -o go-template=&#x27;&#123;&#123; .data.token &#125;&#125;&#x27; | base64 --decode &gt;&gt; test-cloud</span><br><span class="line">cat test-cloud</span><br><span class="line">eyJhbGciOiJSUzI1NiIsImtpZCI6IlZNU3F3QURqYThpVndNdXQ0Nmlsc19LanFDM1Z4NzRwVXNxSTY0X3M5VW8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZXN0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InRlc3QtY2xvdWQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoidGVzdC1jbG91ZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjlkNDE0NjNkLWEyNTctNGRjNy1iZGQwLTVlYmRhODliOGE5NiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDp0ZXN0OnRlc3QtY2xvdWQifQ.MaPfB0w-rj9ymn1nr7Y1IJPfTM1-HpCjRhRF-qqJ8qFbREVeYgMwqg6FCYTL_bH9thLW4oNSFTw80IN8H9-0D-TVlA6UsRQGbp4v6tvb4YZ_rPJ7DRC5iaHproGPPJ0Nr-1cPLbfJVfWZwqvrrkz_pNmF23qM9WliGNGHgxV0n58KOD06lb03wk-IVBAyTKBwRTKgA3yub7SzoR0HeCS_4fvB4T73vGeNUBoaS2kIC1MF7Hlunmr0rzkGv7zs6HseFSXnGg8wZ1jUqOrP0AKuOXpE8eUXoqxd3-t0Y9zAj4pjZMCsJJZQlEVrKxAhuyeTvh_SYy5SCxjIKhpjT8j8A</span><br></pre></td></tr></table></figure>
+
+<h1 id="vault-config"><a href="#vault-config" class="headerlink" title="vault config"></a>vault config</h1><p>这里我们需要把上面从 kubernetes 得到的 TOKEN_REVIEW_JWT KUBE_CA_CERT  KUBE_HOST test-cloud 拷贝到 vault 这台机器上</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">vault auth enable kubernetes</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Success! Enabled kubernetes auth method at: kubernetes/</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">这一步很容易出错，因为 cert 的格式不对， 后面我会讲</span></span><br><span class="line">vault write auth/kubernetes/config   token_reviewer_jwt=&quot;$TOKEN_REVIEW_JWT&quot;   kubernetes_host=&quot;$KUBE_HOST&quot;   kubernetes_ca_cert=&quot;$KUBE_CA_CERT&quot; disable_local_ca_jwt=&quot;true”</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Success! Data written to: auth/kubernetes/config</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">这里 kubernetes_ca_cert 格式不对</span></span><br><span class="line">vault read auth/kubernetes/config</span><br><span class="line">Key                       Value</span><br><span class="line">---                       -----</span><br><span class="line">disable_iss_validation    true</span><br><span class="line">disable_local_ca_jwt      true</span><br><span class="line">issuer                    n/a</span><br><span class="line">kubernetes_ca_cert        -----BEGIN CERTIFICATE----- MIIC5zCCAc+gAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl cm5ldGVzMB4XDTIxMDUxMzAxMzAxOFoXDTMxMDUxMTAxMzAxOFowFTETMBEGA1UE AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKjq 3U72Z95kACf7ZbWYN2ktCxQVzcgJiVsD9UP2vm9c0hsI+eQWxodEf3+T6XVMCJce YgrYpLFyM1Mv7W/ZJ5F6UAGaPG4jOrF4CUgnYRV3j39wRjuvguOaf3lSMVFkAkOF GAN2eEO+OVaIeH7IxIbQ+vzC72V3WNTD0RC3OQoJIIQ2nLebcxkbksSTpDgARg+O j34IbHyUAUw3+msaCsKtqF+Tg6cLWGOu+iNekfL27rGJotXD3NCInE2aFX9Ipbmd BjnsvauwcCuBDKkSxxr46kcd7NZ2SFcvokkkuGl/c8AVdlL0TeDOrl8AOz/eUiQj 6ihQ7s07SUdNU3MefIkCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB /wQFMAMBAf8wHQYDVR0OBBYEFFIG5EyHEyWO9GE2Gm1D7nRY7iXFMA0GCSqGSIb3 DQEBCwUAA4IBAQCFcFHMgDAQ3GMfrLX0EudpyeDqJ/+Mj6C5xHet/bxQopMyCbmC ZVVXx2jpRaMSo81U/eDE0hfUSD3JGVUeM6aajivsGrGjqjuF0t/5hUxPJT74lIbc 5OQNXyYYuPeRyRw7Cnx8YpdJh4NJvWI+LBWSOSaDyFjf5yMpWQvT3bfWV4PGvi/0 YHxglWM3Jfpn7JBF6OJPs4P+6E0FPmS88d5ry6znmrAg9/PCOefZ1r93EAIwP1P4 EhWsyF9xemSyTIeDA740X7ZFcCEugkS6mOoswWtXPsL0JURlkx0kRR5HAYcQ01N1 Cv0epL7mgWJpxcwnil9pWXVDRgWTXvFP5aaD -----END CERTIFICATE-----</span><br><span class="line">kubernetes_host           https://192.168.1.119:6443</span><br><span class="line">pem_keys                  []</span><br><span class="line"></span><br><span class="line">vault policy write devwebapp - &lt;&lt;EOF</span><br><span class="line">path &quot;secret/data/devwebapp/config&quot; &#123;</span><br><span class="line">  capabilities = [&quot;read”]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Success! Uploaded policy: devwebapp</span></span><br><span class="line"></span><br><span class="line">vault write auth/kubernetes/role/devweb-app \</span><br><span class="line">  bound_service_account_names=test-cloud \</span><br><span class="line">  bound_service_account_namespaces=test \</span><br><span class="line">  policies=devwebapp \</span><br><span class="line">  ttl=24h</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Success! Data written to: auth/kubernetes/role/devweb-app</span></span><br></pre></td></tr></table></figure>
+
+<p>最后就是测试 login 了， 在 vault 那台机器上</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:~# curl     --request POST   \</span><br><span class="line">--data &#x27;&#123;&quot;jwt&quot;: &quot;eyJhbGciOiJSUzI1NiIsImtpZCI6IlZNU3F3QURqYThpVndNdXQ0Nmlsc19LanFDM1Z4NzRwVXNxSTY0X3M5VW8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZXN0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InRlc3QtY2xvdWQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoidGVzdC1jbG91ZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjlkNDE0NjNkLWEyNTctNGRjNy1iZGQwLTVlYmRhODliOGE5NiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDp0ZXN0OnRlc3QtY2xvdWQifQ.MaPfB0w-rj9ymn1nr7Y1IJPfTM1-HpCjRhRF-qqJ8qFbREVeYgMwqg6FCYTL_bH9thLW4oNSFTw80IN8H9-0D-TVlA6UsRQGbp4v6tvb4YZ_rPJ7DRC5iaHproGPPJ0Nr-1cPLbfJVfWZwqvrrkz_pNmF23qM9WliGNGHgxV0n58KOD06lb03wk-IVBAyTKBwRTKgA3yub7SzoR0HeCS_4fvB4T73vGeNUBoaS2kIC1MF7Hlunmr0rzkGv7zs6HseFSXnGg8wZ1jUqOrP0AKuOXpE8eUXoqxd3-t0Y9zAj4pjZMCsJJZQlEVrKxAhuyeTvh_SYy5SCxjIKhpjT8j8A&quot;, &quot;role&quot;: &quot;devweb-app&quot;&#125;&#x27;  \</span><br><span class="line">http://192.168.64.3:8200/v1/auth/kubernetes/login |jq</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  % </span><span class="language-bash">Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span></span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100  1574  100   653  100   921  19787  27909 --:--:-- --:--:-- --:--:-- 47696</span><br><span class="line">&#123;</span><br><span class="line">  &quot;request_id&quot;: &quot;2b9978ef-4010-cb5a-38b5-01fdfb4ea5d5&quot;,</span><br><span class="line">  &quot;lease_id&quot;: &quot;&quot;,</span><br><span class="line">  &quot;renewable&quot;: false,</span><br><span class="line">  &quot;lease_duration&quot;: 0,</span><br><span class="line">  &quot;data&quot;: null,</span><br><span class="line">  &quot;wrap_info&quot;: null,</span><br><span class="line">  &quot;warnings&quot;: null,</span><br><span class="line">  &quot;auth&quot;: &#123;</span><br><span class="line">    &quot;client_token&quot;: &quot;s.ElCkHSzi20xOlZj0CfoDuGyv&quot;,</span><br><span class="line">    &quot;accessor&quot;: &quot;mCzG5MoxhCUSVdSNRNfEhdBS&quot;,</span><br><span class="line">    &quot;policies&quot;: [</span><br><span class="line">      &quot;default&quot;,</span><br><span class="line">      &quot;devwebapp&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;token_policies&quot;: [</span><br><span class="line">      &quot;default&quot;,</span><br><span class="line">      &quot;devwebapp&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;metadata&quot;: &#123;</span><br><span class="line">      &quot;role&quot;: &quot;devweb-app&quot;,</span><br><span class="line">      &quot;service_account_name&quot;: &quot;test-cloud&quot;,</span><br><span class="line">      &quot;service_account_namespace&quot;: &quot;test&quot;,</span><br><span class="line">      &quot;service_account_secret_name&quot;: &quot;test-cloud&quot;,</span><br><span class="line">      &quot;service_account_uid&quot;: &quot;9d41463d-a257-4dc7-bdd0-5ebda89b8a96&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;lease_duration&quot;: 86400,</span><br><span class="line">    &quot;renewable&quot;: true,</span><br><span class="line">    &quot;entity_id&quot;: &quot;7ab08e2f-f956-d2c6-c13e-3ec06e4a2cf3&quot;,</span><br><span class="line">    &quot;token_type&quot;: &quot;service&quot;,</span><br><span class="line">    &quot;orphan&quot;: true</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到测试成功，结果返回了我们需要的 vault client_token ，kubernetes 用这个 token 去读取存在 vault 里面的 credentials</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:~# curl --header &quot;X-Vault-Token: s.ElCkHSzi20xOlZj0CfoDuGyv&quot; http://192.168.64.3:8200/v1/secret/devwebapp/config | jq</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  % </span><span class="language-bash">Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span></span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100   205  100   205    0     0   200k      0 --:--:-- --:--:-- --:--:--  200k</span><br><span class="line">&#123;</span><br><span class="line">  &quot;request_id&quot;: &quot;c465525a-4af5-50d2-6a66-67ffb8a48629&quot;,</span><br><span class="line">  &quot;lease_id&quot;: &quot;&quot;,</span><br><span class="line">  &quot;renewable&quot;: false,</span><br><span class="line">  &quot;lease_duration&quot;: 2764800,</span><br><span class="line">  &quot;data&quot;: &#123;</span><br><span class="line">    &quot;password&quot;: &quot;salsa&quot;,</span><br><span class="line">    &quot;username&quot;: &quot;giraffe&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;wrap_info&quot;: null,</span><br><span class="line">  &quot;warnings&quot;: null,</span><br><span class="line">  &quot;auth&quot;: null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h1><ul>
+<li><p>cert 格式不对<br>这个时候， login 返回error 是 {“errors”:[“permission denied”]}，实际上可能是证书格式不对</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">vault read auth/kubernetes/config</span><br><span class="line"></span><br><span class="line">Key                       Value</span><br><span class="line">---                       -----</span><br><span class="line">disable_iss_validation    true</span><br><span class="line">disable_local_ca_jwt      true</span><br><span class="line">issuer                    n/a</span><br><span class="line">kubernetes_ca_cert        -----BEGIN CERTIFICATE----- MIIC5zCCAc+gAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl cm5ldGVzMB4XDTIxMDUxMzAxMzAxOFoXDTMxMDUxMTAxMzAxOFowFTETMBEGA1UE AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKjq 3U72Z95kACf7ZbWYN2ktCxQVzcgJiVsD9UP2vm9c0hsI+eQWxodEf3+T6XVMCJce YgrYpLFyM1Mv7W/ZJ5F6UAGaPG4jOrF4CUgnYRV3j39wRjuvguOaf3lSMVFkAkOF GAN2eEO+OVaIeH7IxIbQ+vzC72V3WNTD0RC3OQoJIIQ2nLebcxkbksSTpDgARg+O j34IbHyUAUw3+msaCsKtqF+Tg6cLWGOu+iNekfL27rGJotXD3NCInE2aFX9Ipbmd BjnsvauwcCuBDKkSxxr46kcd7NZ2SFcvokkkuGl/c8AVdlL0TeDOrl8AOz/eUiQj 6ihQ7s07SUdNU3MefIkCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB /wQFMAMBAf8wHQYDVR0OBBYEFFIG5EyHEyWO9GE2Gm1D7nRY7iXFMA0GCSqGSIb3 DQEBCwUAA4IBAQCFcFHMgDAQ3GMfrLX0EudpyeDqJ/+Mj6C5xHet/bxQopMyCbmC ZVVXx2jpRaMSo81U/eDE0hfUSD3JGVUeM6aajivsGrGjqjuF0t/5hUxPJT74lIbc 5OQNXyYYuPeRyRw7Cnx8YpdJh4NJvWI+LBWSOSaDyFjf5yMpWQvT3bfWV4PGvi/0 YHxglWM3Jfpn7JBF6OJPs4P+6E0FPmS88d5ry6znmrAg9/PCOefZ1r93EAIwP1P4 EhWsyF9xemSyTIeDA740X7ZFcCEugkS6mOoswWtXPsL0JURlkx0kRR5HAYcQ01N1 Cv0epL7mgWJpxcwnil9pWXVDRgWTXvFP5aaD -----END CERTIFICATE-----</span><br><span class="line">kubernetes_host           https://192.168.1.119:6443</span><br><span class="line">pem_keys                  []</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">证书应该是多行</span></span><br><span class="line">kubectl config view --raw --minify codeatten --output=&#x27;jsonpath=&#123;.clusters[].cluster.certificate-authority-data&#125;&#x27; | base64 --dec</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIC5zCCAc+gAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl</span><br><span class="line">cm5ldGVzMB4XDTIxMDUxMzAxMzAxOFoXDTMxMDUxMTAxMzAxOFowFTETMBEGA1UE</span><br><span class="line">AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKjq</span><br><span class="line">3U72Z95kACf7ZbWYN2ktCxQVzcgJiVsD9UP2vm9c0hsI+eQWxodEf3+T6XVMCJce</span><br><span class="line">YgrYpLFyM1Mv7W/ZJ5F6UAGaPG4jOrF4CUgnYRV3j39wRjuvguOaf3lSMVFkAkOF</span><br><span class="line">GAN2eEO+OVaIeH7IxIbQ+vzC72V3WNTD0RC3OQoJIIQ2nLebcxkbksSTpDgARg+O</span><br><span class="line">j34IbHyUAUw3+msaCsKtqF+Tg6cLWGOu+iNekfL27rGJotXD3NCInE2aFX9Ipbmd</span><br><span class="line">BjnsvauwcCuBDKkSxxr46kcd7NZ2SFcvokkkuGl/c8AVdlL0TeDOrl8AOz/eUiQj</span><br><span class="line">6ihQ7s07SUdNU3MefIkCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB</span><br><span class="line">/wQFMAMBAf8wHQYDVR0OBBYEFFIG5EyHEyWO9GE2Gm1D7nRY7iXFMA0GCSqGSIb3</span><br><span class="line">DQEBCwUAA4IBAQCFcFHMgDAQ3GMfrLX0EudpyeDqJ/+Mj6C5xHet/bxQopMyCbmC</span><br><span class="line">ZVVXx2jpRaMSo81U/eDE0hfUSD3JGVUeM6aajivsGrGjqjuF0t/5hUxPJT74lIbc</span><br><span class="line">5OQNXyYYuPeRyRw7Cnx8YpdJh4NJvWI+LBWSOSaDyFjf5yMpWQvT3bfWV4PGvi/0</span><br><span class="line">YHxglWM3Jfpn7JBF6OJPs4P+6E0FPmS88d5ry6znmrAg9/PCOefZ1r93EAIwP1P4</span><br><span class="line">EhWsyF9xemSyTIeDA740X7ZFcCEugkS6mOoswWtXPsL0JURlkx0kRR5HAYcQ01N1</span><br><span class="line">Cv0epL7mgWJpxcwnil9pWXVDRgWTXvFP5aaD</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重新配置后</span></span><br><span class="line">vault read auth/kubernetes/config</span><br><span class="line"></span><br><span class="line">Key                       Value</span><br><span class="line">---                       -----</span><br><span class="line">disable_iss_validation    true</span><br><span class="line">disable_local_ca_jwt      true</span><br><span class="line">issuer                    n/a</span><br><span class="line">kubernetes_ca_cert        -----BEGIN CERTIFICATE-----</span><br><span class="line">MIIC5zCCAc+gAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl</span><br><span class="line">cm5ldGVzMB4XDTIxMDUxMzAxMzAxOFoXDTMxMDUxMTAxMzAxOFowFTETMBEGA1UE</span><br><span class="line">AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKjq</span><br><span class="line">3U72Z95kACf7ZbWYN2ktCxQVzcgJiVsD9UP2vm9c0hsI+eQWxodEf3+T6XVMCJce</span><br><span class="line">YgrYpLFyM1Mv7W/ZJ5F6UAGaPG4jOrF4CUgnYRV3j39wRjuvguOaf3lSMVFkAkOF</span><br><span class="line">GAN2eEO+OVaIeH7IxIbQ+vzC72V3WNTD0RC3OQoJIIQ2nLebcxkbksSTpDgARg+O</span><br><span class="line">j34IbHyUAUw3+msaCsKtqF+Tg6cLWGOu+iNekfL27rGJotXD3NCInE2aFX9Ipbmd</span><br><span class="line">BjnsvauwcCuBDKkSxxr46kcd7NZ2SFcvokkkuGl/c8AVdlL0TeDOrl8AOz/eUiQj</span><br><span class="line">6ihQ7s07SUdNU3MefIkCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB</span><br><span class="line">/wQFMAMBAf8wHQYDVR0OBBYEFFIG5EyHEyWO9GE2Gm1D7nRY7iXFMA0GCSqGSIb3</span><br><span class="line">DQEBCwUAA4IBAQCFcFHMgDAQ3GMfrLX0EudpyeDqJ/+Mj6C5xHet/bxQopMyCbmC</span><br><span class="line">ZVVXx2jpRaMSo81U/eDE0hfUSD3JGVUeM6aajivsGrGjqjuF0t/5hUxPJT74lIbc</span><br><span class="line">5OQNXyYYuPeRyRw7Cnx8YpdJh4NJvWI+LBWSOSaDyFjf5yMpWQvT3bfWV4PGvi/0</span><br><span class="line">YHxglWM3Jfpn7JBF6OJPs4P+6E0FPmS88d5ry6znmrAg9/PCOefZ1r93EAIwP1P4</span><br><span class="line">EhWsyF9xemSyTIeDA740X7ZFcCEugkS6mOoswWtXPsL0JURlkx0kRR5HAYcQ01N1</span><br><span class="line">Cv0epL7mgWJpxcwnil9pWXVDRgWTXvFP5aaD</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">kubernetes_host           https://192.168.1.119:6443</span><br><span class="line">pem_keys                  []</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>kubernetes 里面的 service account 缺少权限， 导致 {“errors”:[“permission denied”]}</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">role-tokenreview-binding</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">system:auth-delegator</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">vault-auth</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">default</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>{“errors”:[“claim &quot;iss&quot; is invalid”]} <a target="_blank" rel="noopener" href="https://discuss.hashicorp.com/t/please-help-me-debug-claim-iss-is-invalid/27815/2">参考问题</a><br>这个是因为没有配置 issuer, 如果你的 kubernetes 高于 1.21.1 你需要设置 issuer 在 vault auth with kubernetes 的时候， 如何得到 issuer 地址，请参考这个<br><a target="_blank" rel="noopener" href="https://www.vaultproject.io/docs/auth/kubernetes#discovering-the-service-account-issuer">Discovering the service account issuer</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/hashicorp/" rel="tag"># hashicorp</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/pki/" rel="prev" title="vault pki 实践">
+      <i class="fa fa-chevron-left"></i> vault pki 实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/context/" rel="next" title="golang 里面的超时取消">
+      golang 里面的超时取消 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kubernetes-config"><span class="nav-number">3.</span> <span class="nav-text">kubernetes config</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vault-config"><span class="nav-number">4.</span> <span class="nav-text">vault config</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="nav-number">5.</span> <span class="nav-text">踩过的坑</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

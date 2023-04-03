@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="为了测试 gitlab CI pipeline， 从而在家里的台式机搭建了测试环境。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gitlab install and CI pipeline">
+<meta property="og:url" content="http://feiyang233.club/post/gitlab/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="为了测试 gitlab CI pipeline， 从而在家里的台式机搭建了测试环境。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210109230805.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/19.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/20.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/21.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/22.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/23.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/26.png">
+<meta property="article:published_time" content="2021-01-09T12:01:53.000Z">
+<meta property="article:modified_time" content="2021-07-13T00:51:56.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210109230805.png">
+
+<link rel="canonical" href="http://feiyang233.club/post/gitlab/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>gitlab install and CI pipeline | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/gitlab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gitlab install and CI pipeline
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-09 20:01:53" itemprop="dateCreated datePublished" datetime="2021-01-09T20:01:53+08:00">2021-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-07-13 08:51:56" itemprop="dateModified" datetime="2021-07-13T08:51:56+08:00">2021-07-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>为了测试 gitlab CI pipeline， 从而在家里的台式机搭建了测试环境。</p>
+<span id="more"></span>
+<p>为什么进行这次实验？因为自己平时只是用到了 gitlab，它对于我来说是一个黑盒。<br>为了搞清楚 CI job 里面的一些 function 用法，自己搭建一套环境。一是方便实验，二是自己不能在公司的环境上实验，担心造成破坏。 </p>
+<h1 id="Update-history"><a href="#Update-history" class="headerlink" title="Update history"></a>Update history</h1><p>2021-07-13 安利学 git 的网站 <a target="_blank" rel="noopener" href="https://learngitbranching.js.org/?locale=zh_CN">Learn Git Branching</a> 和 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/6i5v7yK1__S6j39v6jNWkw">Git 命令太难学？我用一款游戏带你玩转它！</a><br>2021-05-24 终于认识到自己的膨胀了，倍感欣慰<br>2021-01-09 初稿，妹子什么时候才能好好学习呀</p>
+<h1 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h1><p>默认技能：</p>
+<ul>
+<li>docker， 虚拟机上安装 docker 的过程就省略了</li>
+<li>DNS， 因为是自定义的域名，所以需要绑定在本地 hosts</li>
+</ul>
+<p>最开始 Ubuntu 机器只有 2 cpu 4GB， 安装 gitlab 非常卡顿， load 高到 40+， 增加配置后，顺利安装</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Operating system</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>Disk</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>gitlab-main</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>4</td>
+<td>8G</td>
+<td>50G</td>
+<td>192.168.64.3</td>
+</tr>
+<tr>
+<td>gitlab-runner</td>
+<td>CentOS 7.8.2003</td>
+<td>2</td>
+<td>2G</td>
+<td>20G</td>
+<td>192.168.64.4</td>
+</tr>
+<tr>
+<td>gitlab-runner</td>
+<td>Ubuntu 20.04.1 LTS</td>
+<td>2</td>
+<td>4G</td>
+<td>20G</td>
+<td>192.168.64.5</td>
+</tr>
+</tbody></table>
+<h1 id="Install-gitlab"><a href="#Install-gitlab" class="headerlink" title="Install gitlab"></a>Install gitlab</h1><p>官方文档：<a target="_blank" rel="noopener" href="https://docs.gitlab.com/">https://docs.gitlab.com/</a></p>
+<h2 id="gitlab"><a href="#gitlab" class="headerlink" title="gitlab"></a>gitlab</h2><p>本次实验，为了快速安装选择了 docker 模式。 <a target="_blank" rel="noopener" href="https://docs.gitlab.com/omnibus/docker/README.html">https://docs.gitlab.com/omnibus/docker/README.html</a></p>
+<p>本地 <code>22</code> 端口被 SSH 占用了，所以改为了 <code>2222</code>，这里需要注意的是，我用的是 社区版本 <code>ce</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run --detach \</span><br><span class="line">  --hostname gitlab.feiyang.com \</span><br><span class="line">  --publish 443:443 --publish 80:80 --publish 2222:22 \</span><br><span class="line">  --name gitlab \</span><br><span class="line">  --restart always \</span><br><span class="line">  --volume <span class="variable">$GITLAB_HOME</span>/config:/etc/gitlab \</span><br><span class="line">  --volume <span class="variable">$GITLAB_HOME</span>/logs:/var/log/gitlab \</span><br><span class="line">  --volume <span class="variable">$GITLAB_HOME</span>/data:/var/opt/gitlab \</span><br><span class="line">  gitlab/gitlab-ce:latest</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果还需要修改配置，可以 attach 到容器内部，进行修改。</p>
+<p>例如修改 relative URL <a target="_blank" rel="noopener" href="https://docs.gitlab.com/omnibus/settings/configuration.html#enable-relative-url-in-gitlab">https://docs.gitlab.com/omnibus/settings/configuration.html#enable-relative-url-in-gitlab</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it gitlab bash</span><br><span class="line"></span><br><span class="line">vi /etc/gitlab/gitlab.rb</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定host地址</span></span><br><span class="line">external_url <span class="string">&#x27;http://gitlab.feiyang.com&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新加载配置文件并重启服务</span></span><br><span class="line">gitlab-ctl reconfigure</span><br><span class="line">gitlab-ctl restart</span><br></pre></td></tr></table></figure>
+<p>第一次登陆，一定要以 IP 地址登陆，而不是用 localhost。 否则设置 root 新密码就会遇到错误 <strong>8 errors prohibited this user from being saved</strong><br>成功登陆网友以后，我创建了一个新用户，并且设置了 SSH Key，创建了一个 test repo</p>
+<blockquote>
+<p>在这里需要的注意的是，如果没有设置域名  <code>http://gitlab.feiyang.com</code> 那在repo 页面上 git clong 的 url 可能不对，导致无法解析并下载。</p>
+</blockquote>
+<h2 id="runner"><a href="#runner" class="headerlink" title="runner"></a>runner</h2><p>本次实验，为了快速安装选择了 docker 模式。 <a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/install/docker.html">https://docs.gitlab.com/runner/install/docker.html</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker volume create gitlab-runner-config</span><br><span class="line"></span><br><span class="line">docker run -d --name gitlab-runner --restart always \</span><br><span class="line">    -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">    -v gitlab-runner-config:/etc/gitlab-runner \</span><br><span class="line">    gitlab/gitlab-runner:latest</span><br></pre></td></tr></table></figure>
+<p>最好先进入容器设置一下 extra_hosts &#x3D; [“gitlab.feiyang.com:192.168.64.3”] (这里后文有详细介绍 config.toml 可以搜索关键词) 否则注册 runner 的时候，只能输入 IP<br>下一步就是注册，前提你需要去 gitlab 网页上 CI&#x2F;CD section runner 详情页上获得 token</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 jy576]<span class="comment"># docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-runner:latest register</span></span><br><span class="line">Runtime platform                                    <span class="built_in">arch</span>=amd64 os=linux pid=7 revision=943fc252 version=13.7.0</span><br><span class="line">Running <span class="keyword">in</span> system-mode.                            </span><br><span class="line">                                                   </span><br><span class="line">Enter the GitLab instance URL (<span class="keyword">for</span> example, https://gitlab.com/):</span><br><span class="line">http://gitlab.feiyang.com/</span><br><span class="line">Enter the registration token:</span><br><span class="line">kXmj4UA9Z2_NL2sa2Z6z</span><br><span class="line">Enter a description <span class="keyword">for</span> the runner:</span><br><span class="line">[43420abf216d]: centos7       </span><br><span class="line">Enter tags <span class="keyword">for</span> the runner (comma-separated):</span><br><span class="line">ci,ssh</span><br><span class="line">ERROR: Registering runner... failed                 runner=kXmj4UA9 status=couldn<span class="string">&#x27;t execute POST against http://gitlab.feiyang.com/api/v4/runners: Post http://gitlab.feiyang.com/api/v4/runners: dial tcp: lookup gitlab.feiyang.com on 8.8.8.8:53: no such host</span></span><br><span class="line"><span class="string">PANIC: Failed to register the runner. You may be having network problems. </span></span><br><span class="line"><span class="string">[root@centos7 jy576]# docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-runner:latest register</span></span><br><span class="line"><span class="string">Runtime platform                                    arch=amd64 os=linux pid=8 revision=943fc252 version=13.7.0</span></span><br><span class="line"><span class="string">Running in system-mode.                            </span></span><br><span class="line"><span class="string">                                                   </span></span><br><span class="line"><span class="string">Enter the GitLab instance URL (for example, https://gitlab.com/):</span></span><br><span class="line"><span class="string">http://192.168.64.3/</span></span><br><span class="line"><span class="string">Enter the registration token:</span></span><br><span class="line"><span class="string">kXmj4UA9Z2_NL2sa2Z6z</span></span><br><span class="line"><span class="string">Enter a description for the runner:</span></span><br><span class="line"><span class="string">[a7068d34147b]: centos7</span></span><br><span class="line"><span class="string">Enter tags for the runner (comma-separated):</span></span><br><span class="line"><span class="string">ci,ssh</span></span><br><span class="line"><span class="string">Registering runner... succeeded                     runner=kXmj4UA9</span></span><br><span class="line"><span class="string">Enter an executor: custom, virtualbox, docker+machine, docker, docker-ssh, parallels, shell, ssh, docker-ssh+machine, kubernetes:</span></span><br><span class="line"><span class="string">docker</span></span><br><span class="line"><span class="string">Enter the default Docker image (for example, ruby:2.6):</span></span><br><span class="line"><span class="string">python:3.9.1-slim-buster</span></span><br><span class="line"><span class="string">Runner registered successfully. Feel free to start it, but if it&#x27;</span>s running already the config should be automatically reloaded! </span><br><span class="line">[root@centos7 jy576]<span class="comment"># docker ps</span></span><br><span class="line">CONTAINER ID   IMAGE                         COMMAND                  CREATED         STATUS         PORTS     NAMES</span><br><span class="line">926cd5798468   gitlab/gitlab-runner:latest   <span class="string">&quot;/usr/bin/dumb-init …&quot;</span>   7 minutes ago   Up 7 minutes             gitlab-runner</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>回到网页端，我们需要修改一下 runner 设置，勾选上 Run untagged jobs<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210109230805.png"></p>
+<p>因为我们是自定义域名，所以我们需要在 gitlab-runner 里面进行设置，否则 CI job 无法 pull </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Running with gitlab-runner 13.7.0 (943fc252)</span><br><span class="line">  on centos7 FSX9yRiU</span><br><span class="line">Preparing the &quot;docker&quot; executor</span><br><span class="line">00:04</span><br><span class="line">Using Docker executor with image python:3.9.1-slim-buster ...</span><br><span class="line">Pulling docker image python:3.9.1-slim-buster ...</span><br><span class="line">Using docker image sha256:b55839ea7a0e9bb534237d00558cb96dce4013bf7f1092966fe0e27e98f8179f for python:3.9.1-slim-buster with digest python@sha256:4d92968b26bb6b7b62d957244de86fc1054f03793577d49e85c00864eb03ca07 ...</span><br><span class="line">Preparing environment</span><br><span class="line">00:01</span><br><span class="line">Running on runner-fsx9yriu-project-2-concurrent-0 via 926cd5798468...</span><br><span class="line">Getting source from Git repository</span><br><span class="line">00:00</span><br><span class="line">Fetching changes with git depth set to 50...</span><br><span class="line">Initialized empty Git repository in /builds/feiyang/test/.git/</span><br><span class="line">Created fresh repository.</span><br><span class="line">fatal: unable to access &#x27;http://gitlab.feiyang.com/feiyang/test.git/&#x27;: Could not resolve host: gitlab.feiyang.com</span><br><span class="line">ERROR: Job failed: exit code 1</span><br></pre></td></tr></table></figure>
+<p>在这里，我们需要在 runner 里面定义好 domain gitlab.feiyang.com<br>参考文档： <a target="_blank" rel="noopener" href="https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runnersdocker-section">https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runnersdocker-section</a><br>extra_hosts: Specify hosts that should be defined in container environment</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 jy576]# docker exec -it gitlab-runner bash</span><br><span class="line">root@926cd5798468:/# cat /etc/gitlab-runner/config.toml </span><br><span class="line">concurrent = 1</span><br><span class="line">check_interval = 0</span><br><span class="line"></span><br><span class="line">[session_server]</span><br><span class="line">  session_timeout = 1800</span><br><span class="line"></span><br><span class="line">[[runners]]</span><br><span class="line">  name = &quot;centos7&quot;</span><br><span class="line">  url = &quot;http://192.168.64.3/&quot;</span><br><span class="line">  token = &quot;FSX9yRiUGxok94hMPYdt&quot;</span><br><span class="line">  executor = &quot;docker&quot;</span><br><span class="line">  [runners.custom_build_dir]</span><br><span class="line">  [runners.cache]</span><br><span class="line">    [runners.cache.s3]</span><br><span class="line">    [runners.cache.gcs]</span><br><span class="line">    [runners.cache.azure]</span><br><span class="line">  [runners.docker]</span><br><span class="line">    tls_verify = false</span><br><span class="line">    image = &quot;python:3.9.1-slim-buster&quot;</span><br><span class="line">    privileged = true</span><br><span class="line">    disable_entrypoint_overwrite = false</span><br><span class="line">    oom_kill_disable = false</span><br><span class="line">    disable_cache = false</span><br><span class="line">    volumes = [&quot;/cache&quot;]</span><br><span class="line">    shm_size = 0</span><br><span class="line">    extra_hosts   = [&quot;gitlab.feiyang.com:192.168.64.3&quot;]</span><br></pre></td></tr></table></figure>
+
+<h1 id="Test-CI"><a href="#Test-CI" class="headerlink" title="Test CI"></a>Test CI</h1><p>gitlab 和 runner 安装完成以后，我们就可以进行测试</p>
+<h2 id="Job-artifacts"><a href="#Job-artifacts" class="headerlink" title="Job artifacts"></a>Job artifacts</h2><p>文档：<a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/pipelines/job_artifacts.html#defining-artifacts-in-gitlab-ciyml">https://docs.gitlab.com/ee/ci/pipelines/job_artifacts.html#defining-artifacts-in-gitlab-ciyml</a></p>
+<p>test repo 目录结构如下<br>├── .gitlab-ci.yml<br>├── lint.py<br>└── README.md</p>
+<p>lint.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.chdir(os.path.dirname(__file__))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;feiyang test CI&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(os.getcwd())</span><br></pre></td></tr></table></figure>
+
+<p>.gitlab-ci.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">lint</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">image:</span> <span class="string">python:3.9.1-slim-buster</span></span><br><span class="line"></span><br><span class="line"><span class="attr">check_path:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">lint</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">pwd</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">cd</span> <span class="string">/builds/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME</span> <span class="string">&amp;&amp;</span> <span class="string">python</span> <span class="string">lint.py</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build_ami:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apt</span> <span class="string">update</span> <span class="string">&amp;&amp;</span> <span class="string">apt</span> <span class="string">install</span> <span class="string">-y</span> <span class="string">curl</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">$CI_JOB_ID</span> <span class="string">&gt;&gt;</span> <span class="string">ip.json</span> <span class="string">&amp;&amp;</span> <span class="string">curl</span> <span class="string">ipinfo.io</span> <span class="string">&gt;&gt;</span> <span class="string">ip.json</span></span><br><span class="line">  <span class="attr">artifacts:</span></span><br><span class="line">    <span class="attr">expire_in:</span> <span class="number">1</span> <span class="string">year</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ip.json</span></span><br><span class="line"></span><br><span class="line"><span class="attr">read_artifacts:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">pwd</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="string">cat</span> <span class="string">ip.json</span></span><br></pre></td></tr></table></figure>
+
+<p>CI 结果</p>
+<h3 id="lint"><a href="#lint" class="headerlink" title="lint"></a>lint</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Running with gitlab-runner 13.7.0 (943fc252)</span><br><span class="line">  on centos7 FSX9yRiU</span><br><span class="line">Preparing the <span class="string">&quot;docker&quot;</span> executor</span><br><span class="line">00:05</span><br><span class="line">Using Docker executor with image python:3.9.1-slim-buster ...</span><br><span class="line">Pulling docker image python:3.9.1-slim-buster ...</span><br><span class="line">Using docker image sha256:b55839ea7a0e9bb534237d00558cb96dce4013bf7f1092966fe0e27e98f8179f <span class="keyword">for</span> python:3.9.1-slim-buster with digest python@sha256:4d92968b26bb6b7b62d957244de86fc1054f03793577d49e85c00864eb03ca07 ...</span><br><span class="line">Preparing environment</span><br><span class="line">00:00</span><br><span class="line">Running on runner-fsx9yriu-project-2-concurrent-0 via 926cd5798468...</span><br><span class="line">Getting <span class="built_in">source</span> from Git repository</span><br><span class="line">00:01</span><br><span class="line">Fetching changes with git depth <span class="built_in">set</span> to 50...</span><br><span class="line">Reinitialized existing Git repository <span class="keyword">in</span> /builds/feiyang/test/.git/</span><br><span class="line">Checking out b60b95c1 as master...</span><br><span class="line">Removing ip.json</span><br><span class="line">Skipping Git submodules setup</span><br><span class="line">Executing <span class="string">&quot;step_script&quot;</span> stage of the job script</span><br><span class="line">00:00</span><br><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/builds/feiyang/test</span><br><span class="line">$ <span class="built_in">cd</span> /builds/<span class="variable">$CI_PROJECT_NAMESPACE</span>/<span class="variable">$CI_PROJECT_NAME</span> &amp;&amp; python lint.py</span><br><span class="line">feiyang <span class="built_in">test</span> CI</span><br><span class="line">/builds/feiyang/test</span><br><span class="line">Job succeeded</span><br></pre></td></tr></table></figure>
+
+<h3 id="build"><a href="#build" class="headerlink" title="build"></a>build</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br></pre></td><td class="code"><pre><span class="line">Running with gitlab-runner 13.7.0 (943fc252)</span><br><span class="line">  on centos7 FSX9yRiU</span><br><span class="line">Preparing the <span class="string">&quot;docker&quot;</span> executor</span><br><span class="line">00:04</span><br><span class="line">Using Docker executor with image python:3.9.1-slim-buster ...</span><br><span class="line">Pulling docker image python:3.9.1-slim-buster ...</span><br><span class="line">Using docker image sha256:b55839ea7a0e9bb534237d00558cb96dce4013bf7f1092966fe0e27e98f8179f <span class="keyword">for</span> python:3.9.1-slim-buster with digest python@sha256:4d92968b26bb6b7b62d957244de86fc1054f03793577d49e85c00864eb03ca07 ...</span><br><span class="line">Preparing environment</span><br><span class="line">00:00</span><br><span class="line">Running on runner-fsx9yriu-project-2-concurrent-0 via 926cd5798468...</span><br><span class="line">Getting <span class="built_in">source</span> from Git repository</span><br><span class="line">00:01</span><br><span class="line">Fetching changes with git depth <span class="built_in">set</span> to 50...</span><br><span class="line">Reinitialized existing Git repository <span class="keyword">in</span> /builds/feiyang/test/.git/</span><br><span class="line">Checking out b60b95c1 as master...</span><br><span class="line">Skipping Git submodules setup</span><br><span class="line">Executing <span class="string">&quot;step_script&quot;</span> stage of the job script</span><br><span class="line">00:05</span><br><span class="line">$ apt update &amp;&amp; apt install -y curl</span><br><span class="line">WARNING: apt does not have a stable CLI interface. Use with caution <span class="keyword">in</span> scripts.</span><br><span class="line">Get:1 http://security.debian.org/debian-security buster/updates InRelease [65.4 kB]</span><br><span class="line">Get:2 http://deb.debian.org/debian buster InRelease [121 kB]</span><br><span class="line">Get:3 http://deb.debian.org/debian buster-updates InRelease [51.9 kB]</span><br><span class="line">Get:4 http://security.debian.org/debian-security buster/updates/main amd64 Packages [260 kB]</span><br><span class="line">Get:5 http://deb.debian.org/debian buster/main amd64 Packages [7907 kB]</span><br><span class="line">Get:6 http://deb.debian.org/debian buster-updates/main amd64 Packages [7860 B]</span><br><span class="line">Fetched 8414 kB <span class="keyword">in</span> 2s (4381 kB/s)</span><br><span class="line">Reading package lists...</span><br><span class="line">Building dependency tree...</span><br><span class="line">Reading state information...</span><br><span class="line">2 packages can be upgraded. Run <span class="string">&#x27;apt list --upgradable&#x27;</span> to see them.</span><br><span class="line">WARNING: apt does not have a stable CLI interface. Use with caution <span class="keyword">in</span> scripts.</span><br><span class="line">Reading package lists...</span><br><span class="line">Building dependency tree...</span><br><span class="line">Reading state information...</span><br><span class="line">The following additional packages will be installed:</span><br><span class="line">  krb5-locales libcurl4 libgssapi-krb5-2 libk5crypto3 libkeyutils1 libkrb5-3</span><br><span class="line">  libkrb5support0 libldap-2.4-2 libldap-common libnghttp2-14 libpsl5 librtmp1</span><br><span class="line">  libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 publicsuffix</span><br><span class="line">Suggested packages:</span><br><span class="line">  krb5-doc krb5-user libsasl2-modules-gssapi-mit</span><br><span class="line">  | libsasl2-modules-gssapi-heimdal libsasl2-modules-ldap libsasl2-modules-otp</span><br><span class="line">  libsasl2-modules-sql</span><br><span class="line">The following NEW packages will be installed:</span><br><span class="line">  curl krb5-locales libcurl4 libgssapi-krb5-2 libk5crypto3 libkeyutils1</span><br><span class="line">  libkrb5-3 libkrb5support0 libldap-2.4-2 libldap-common libnghttp2-14 libpsl5</span><br><span class="line">  librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1</span><br><span class="line">  publicsuffix</span><br><span class="line">0 upgraded, 18 newly installed, 0 to remove and 2 not upgraded.</span><br><span class="line">Need to get 2470 kB of archives.</span><br><span class="line">After this operation, 5837 kB of additional disk space will be used.</span><br><span class="line">Get:1 http://deb.debian.org/debian buster/main amd64 krb5-locales all 1.17-3+deb10u1 [95.4 kB]</span><br><span class="line">Get:2 http://deb.debian.org/debian buster/main amd64 libkeyutils1 amd64 1.6-6 [15.0 kB]</span><br><span class="line">Get:3 http://deb.debian.org/debian buster/main amd64 libkrb5support0 amd64 1.17-3+deb10u1 [65.8 kB]</span><br><span class="line">Get:4 http://deb.debian.org/debian buster/main amd64 libk5crypto3 amd64 1.17-3+deb10u1 [122 kB]</span><br><span class="line">Get:5 http://deb.debian.org/debian buster/main amd64 libkrb5-3 amd64 1.17-3+deb10u1 [369 kB]</span><br><span class="line">Get:6 http://deb.debian.org/debian buster/main amd64 libgssapi-krb5-2 amd64 1.17-3+deb10u1 [158 kB]</span><br><span class="line">Get:7 http://deb.debian.org/debian buster/main amd64 libsasl2-modules-db amd64 2.1.27+dfsg-1+deb10u1 [69.1 kB]</span><br><span class="line">Get:8 http://deb.debian.org/debian buster/main amd64 libsasl2-2 amd64 2.1.27+dfsg-1+deb10u1 [106 kB]</span><br><span class="line">Get:9 http://deb.debian.org/debian buster/main amd64 libldap-common all 2.4.47+dfsg-3+deb10u4 [89.8 kB]</span><br><span class="line">Get:10 http://deb.debian.org/debian buster/main amd64 libldap-2.4-2 amd64 2.4.47+dfsg-3+deb10u4 [224 kB]</span><br><span class="line">Get:11 http://deb.debian.org/debian buster/main amd64 libnghttp2-14 amd64 1.36.0-2+deb10u1 [85.0 kB]</span><br><span class="line">Get:12 http://deb.debian.org/debian buster/main amd64 libpsl5 amd64 0.20.2-2 [53.7 kB]</span><br><span class="line">Get:13 http://deb.debian.org/debian buster/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2 [60.5 kB]</span><br><span class="line">Get:14 http://deb.debian.org/debian buster/main amd64 libssh2-1 amd64 1.8.0-2.1 [140 kB]</span><br><span class="line">Get:15 http://deb.debian.org/debian buster/main amd64 libcurl4 amd64 7.64.0-4+deb10u1 [331 kB]</span><br><span class="line">Get:16 http://deb.debian.org/debian buster/main amd64 curl amd64 7.64.0-4+deb10u1 [264 kB]</span><br><span class="line">Get:17 http://deb.debian.org/debian buster/main amd64 libsasl2-modules amd64 2.1.27+dfsg-1+deb10u1 [104 kB]</span><br><span class="line">Get:18 http://deb.debian.org/debian buster/main amd64 publicsuffix all 20190415.1030-1 [116 kB]</span><br><span class="line">debconf: delaying package configuration, since apt-utils is not installed</span><br><span class="line">Fetched 2470 kB <span class="keyword">in</span> 0s (5707 kB/s)</span><br><span class="line">Selecting previously unselected package krb5-locales.</span><br><span class="line">(Reading database ... 6829 files and directories currently installed.)</span><br><span class="line">Preparing to unpack .../00-krb5-locales_1.17-3+deb10u1_all.deb ...</span><br><span class="line">Unpacking krb5-locales (1.17-3+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libkeyutils1:amd64.</span><br><span class="line">Preparing to unpack .../01-libkeyutils1_1.6-6_amd64.deb ...</span><br><span class="line">Unpacking libkeyutils1:amd64 (1.6-6) ...</span><br><span class="line">Selecting previously unselected package libkrb5support0:amd64.</span><br><span class="line">Preparing to unpack .../02-libkrb5support0_1.17-3+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libkrb5support0:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libk5crypto3:amd64.</span><br><span class="line">Preparing to unpack .../03-libk5crypto3_1.17-3+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libk5crypto3:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libkrb5-3:amd64.</span><br><span class="line">Preparing to unpack .../04-libkrb5-3_1.17-3+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libkrb5-3:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libgssapi-krb5-2:amd64.</span><br><span class="line">Preparing to unpack .../05-libgssapi-krb5-2_1.17-3+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libgssapi-krb5-2:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libsasl2-modules-db:amd64.</span><br><span class="line">Preparing to unpack .../06-libsasl2-modules-db_2.1.27+dfsg-1+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libsasl2-modules-db:amd64 (2.1.27+dfsg-1+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libsasl2-2:amd64.</span><br><span class="line">Preparing to unpack .../07-libsasl2-2_2.1.27+dfsg-1+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libsasl2-2:amd64 (2.1.27+dfsg-1+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libldap-common.</span><br><span class="line">Preparing to unpack .../08-libldap-common_2.4.47+dfsg-3+deb10u4_all.deb ...</span><br><span class="line">Unpacking libldap-common (2.4.47+dfsg-3+deb10u4) ...</span><br><span class="line">Selecting previously unselected package libldap-2.4-2:amd64.</span><br><span class="line">Preparing to unpack .../09-libldap-2.4-2_2.4.47+dfsg-3+deb10u4_amd64.deb ...</span><br><span class="line">Unpacking libldap-2.4-2:amd64 (2.4.47+dfsg-3+deb10u4) ...</span><br><span class="line">Selecting previously unselected package libnghttp2-14:amd64.</span><br><span class="line">Preparing to unpack .../10-libnghttp2-14_1.36.0-2+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libnghttp2-14:amd64 (1.36.0-2+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libpsl5:amd64.</span><br><span class="line">Preparing to unpack .../11-libpsl5_0.20.2-2_amd64.deb ...</span><br><span class="line">Unpacking libpsl5:amd64 (0.20.2-2) ...</span><br><span class="line">Selecting previously unselected package librtmp1:amd64.</span><br><span class="line">Preparing to unpack .../12-librtmp1_2.4+20151223.gitfa8646d.1-2_amd64.deb ...</span><br><span class="line">Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2) ...</span><br><span class="line">Selecting previously unselected package libssh2-1:amd64.</span><br><span class="line">Preparing to unpack .../13-libssh2-1_1.8.0-2.1_amd64.deb ...</span><br><span class="line">Unpacking libssh2-1:amd64 (1.8.0-2.1) ...</span><br><span class="line">Selecting previously unselected package libcurl4:amd64.</span><br><span class="line">Preparing to unpack .../14-libcurl4_7.64.0-4+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libcurl4:amd64 (7.64.0-4+deb10u1) ...</span><br><span class="line">Selecting previously unselected package curl.</span><br><span class="line">Preparing to unpack .../15-curl_7.64.0-4+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking curl (7.64.0-4+deb10u1) ...</span><br><span class="line">Selecting previously unselected package libsasl2-modules:amd64.</span><br><span class="line">Preparing to unpack .../16-libsasl2-modules_2.1.27+dfsg-1+deb10u1_amd64.deb ...</span><br><span class="line">Unpacking libsasl2-modules:amd64 (2.1.27+dfsg-1+deb10u1) ...</span><br><span class="line">Selecting previously unselected package publicsuffix.</span><br><span class="line">Preparing to unpack .../17-publicsuffix_20190415.1030-1_all.deb ...</span><br><span class="line">Unpacking publicsuffix (20190415.1030-1) ...</span><br><span class="line">Setting up libkeyutils1:amd64 (1.6-6) ...</span><br><span class="line">Setting up libpsl5:amd64 (0.20.2-2) ...</span><br><span class="line">Setting up libsasl2-modules:amd64 (2.1.27+dfsg-1+deb10u1) ...</span><br><span class="line">Setting up libnghttp2-14:amd64 (1.36.0-2+deb10u1) ...</span><br><span class="line">Setting up krb5-locales (1.17-3+deb10u1) ...</span><br><span class="line">Setting up libldap-common (2.4.47+dfsg-3+deb10u4) ...</span><br><span class="line">Setting up libkrb5support0:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Setting up libsasl2-modules-db:amd64 (2.1.27+dfsg-1+deb10u1) ...</span><br><span class="line">Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2) ...</span><br><span class="line">Setting up libk5crypto3:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Setting up libsasl2-2:amd64 (2.1.27+dfsg-1+deb10u1) ...</span><br><span class="line">Setting up libssh2-1:amd64 (1.8.0-2.1) ...</span><br><span class="line">Setting up libkrb5-3:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Setting up publicsuffix (20190415.1030-1) ...</span><br><span class="line">Setting up libldap-2.4-2:amd64 (2.4.47+dfsg-3+deb10u4) ...</span><br><span class="line">Setting up libgssapi-krb5-2:amd64 (1.17-3+deb10u1) ...</span><br><span class="line">Setting up libcurl4:amd64 (7.64.0-4+deb10u1) ...</span><br><span class="line">Setting up curl (7.64.0-4+deb10u1) ...</span><br><span class="line">Processing triggers <span class="keyword">for</span> libc-bin (2.28-10) ...</span><br><span class="line">$ <span class="built_in">echo</span> <span class="variable">$CI_JOB_ID</span> &gt;&gt; ip.json &amp;&amp; curl ipinfo.io &gt;&gt; ip.json</span><br><span class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100   312  100   312    0     0   1362      0 --:--:-- --:--:-- --:--:--  1362</span><br><span class="line">Uploading artifacts <span class="keyword">for</span> successful job</span><br><span class="line">00:00</span><br><span class="line">Uploading artifacts...</span><br><span class="line">ip.json: found 1 matching files and directories    </span><br><span class="line">Uploading artifacts as <span class="string">&quot;archive&quot;</span> to coordinator... ok  <span class="built_in">id</span>=14 responseStatus=201 Created token=AzTM9Cfs</span><br><span class="line">Job succeeded</span><br></pre></td></tr></table></figure>
+
+<h3 id="deploy"><a href="#deploy" class="headerlink" title="deploy"></a>deploy</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">Running with gitlab-runner 13.7.0 (943fc252)</span><br><span class="line">  on centos7 FSX9yRiU</span><br><span class="line">Preparing the <span class="string">&quot;docker&quot;</span> executor</span><br><span class="line">00:04</span><br><span class="line">Using Docker executor with image python:3.9.1-slim-buster ...</span><br><span class="line">Pulling docker image python:3.9.1-slim-buster ...</span><br><span class="line">Using docker image sha256:b55839ea7a0e9bb534237d00558cb96dce4013bf7f1092966fe0e27e98f8179f <span class="keyword">for</span> python:3.9.1-slim-buster with digest python@sha256:4d92968b26bb6b7b62d957244de86fc1054f03793577d49e85c00864eb03ca07 ...</span><br><span class="line">Preparing environment</span><br><span class="line">00:00</span><br><span class="line">Running on runner-fsx9yriu-project-2-concurrent-0 via 926cd5798468...</span><br><span class="line">Getting <span class="built_in">source</span> from Git repository</span><br><span class="line">00:01</span><br><span class="line">Fetching changes with git depth <span class="built_in">set</span> to 50...</span><br><span class="line">Reinitialized existing Git repository <span class="keyword">in</span> /builds/feiyang/test/.git/</span><br><span class="line">Checking out b60b95c1 as master...</span><br><span class="line">Removing ip.json</span><br><span class="line">Skipping Git submodules setup</span><br><span class="line">Downloading artifacts</span><br><span class="line">00:00</span><br><span class="line">Downloading artifacts <span class="keyword">for</span> build_ami (14)...</span><br><span class="line">Downloading artifacts from coordinator... ok        <span class="built_in">id</span>=14 responseStatus=200 OK token=AzTM9Cfs</span><br><span class="line">Executing <span class="string">&quot;step_script&quot;</span> stage of the job script</span><br><span class="line">00:00</span><br><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/builds/feiyang/test</span><br><span class="line">$ <span class="built_in">cat</span> ip.json</span><br><span class="line">14</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;ip&quot;</span>: <span class="string">&quot;x.x.x.x&quot;</span>,</span><br><span class="line">  <span class="string">&quot;hostname&quot;</span>: <span class="string">&quot;singnet.com.sg&quot;</span>,</span><br><span class="line">  <span class="string">&quot;city&quot;</span>: <span class="string">&quot;Singapore&quot;</span>,</span><br><span class="line">  <span class="string">&quot;region&quot;</span>: <span class="string">&quot;Singapore&quot;</span>,</span><br><span class="line">  <span class="string">&quot;country&quot;</span>: <span class="string">&quot;SG&quot;</span>,</span><br><span class="line">  <span class="string">&quot;loc&quot;</span>: <span class="string">&quot;1,103&quot;</span>,</span><br><span class="line">  <span class="string">&quot;org&quot;</span>: <span class="string">&quot;AS9506 Singtel Fibre Broadband&quot;</span>,</span><br><span class="line">  <span class="string">&quot;postal&quot;</span>: <span class="string">&quot;048508&quot;</span>,</span><br><span class="line">  <span class="string">&quot;timezone&quot;</span>: <span class="string">&quot;Asia/Singapore&quot;</span>,</span><br><span class="line">  <span class="string">&quot;readme&quot;</span>: <span class="string">&quot;https://ipinfo.io/missingauth&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">Job succeeded</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>总结 artifacts，前一个 stage 生存的文件，以 artifacts 保存下来，给下一个 stage 使用</p>
+</blockquote>
+<h1 id="CI-x2F-CD"><a href="#CI-x2F-CD" class="headerlink" title="CI&#x2F;CD"></a>CI&#x2F;CD</h1><h2 id="Services"><a href="#Services" class="headerlink" title="Services"></a>Services</h2><ul>
+<li>先看 <a target="_blank" rel="noopener" href="https://juejin.cn/post/6876816474887946253">docker:latest 和 docker:dind 镜像区别</a></li>
+<li>官网文档 <a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-to-build-docker-images">Use Docker to build Docker images</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/services/#passing-cicd-variables-to-services">CI&#x2F;CD services</a> 一句话，service 就是 CI 步骤里面需要的额外服务，比如 MySQL， redis， 或者 docker engine，不懂看完这一节，保证你会明白</li>
+<li><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/services/#passing-cicd-variables-to-services">Passing CI&#x2F;CD variables to services</a> 这个是非常重要的， 因为 CI 的 variables 是不能自动传入到 services 的容器环境</li>
+</ul>
+<h3 id="dind"><a href="#dind" class="headerlink" title="dind"></a>dind</h3><p>dind docker in docker, 在 docker 里面运行 docker，套娃。 我在工作上遇到了，用 gitlab CI docker build image， 我们先看下面的一段 ci.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ------------- sleep 方便检测容器 -----------------</span></span><br><span class="line"><span class="attr">build_docker:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker:latest</span></span><br><span class="line">  <span class="attr">variables:</span></span><br><span class="line">    <span class="attr">DOCKER_HOST:</span> <span class="string">tcp://docker:2375</span></span><br><span class="line">    <span class="comment"># This instructs Docker not to start over TLS.</span></span><br><span class="line">    <span class="attr">DOCKER_TLS_CERTDIR:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">apk</span> <span class="string">add</span> <span class="string">--no-cache</span> <span class="string">curl</span> <span class="string">jq</span> <span class="string">python3</span> <span class="string">py3-pip</span> <span class="string">git</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">head</span> <span class="number">-1</span> <span class="string">/proc/self/cgroup|cut</span> <span class="string">-d/</span> <span class="string">-f3</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">info</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">env</span></span><br><span class="line">  <span class="attr">services:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker:dind</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">head</span> <span class="number">-1</span> <span class="string">/proc/self/cgroup|cut</span> <span class="string">-d/</span> <span class="string">-f3</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">env</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">sre-turtle</span> <span class="string">.</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sleep</span> <span class="number">300</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------- 测试 docker login 和 push ----------------</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build_docker:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker:latest</span></span><br><span class="line">  <span class="attr">variables:</span></span><br><span class="line">    <span class="attr">DOCKER_HOST:</span> <span class="string">tcp://docker:2375</span></span><br><span class="line">    <span class="comment"># This instructs Docker not to start over TLS.</span></span><br><span class="line">    <span class="attr">DOCKER_TLS_CERTDIR:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">$DOCKERPASS</span> <span class="string">|</span> <span class="string">docker</span> <span class="string">login</span> <span class="string">--username</span> <span class="string">$DOCKERUSER</span> <span class="string">--password-stdin</span></span><br><span class="line">  <span class="attr">services:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker:dind</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">export</span> <span class="string">VERSION=$&#123;CI_JOB_ID&#125;_$(echo</span> <span class="string">$CI_COMMIT_SHA</span> <span class="string">|</span> <span class="string">head</span> <span class="string">-c</span> <span class="number">8</span><span class="string">)</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">sre-turtle</span> <span class="string">.</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">tag</span> <span class="string">sre-turtle:latest</span> <span class="string">$DOCKERUSER/turtle:$VERSION</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">$DOCKERUSER/turtle:$VERSION</span></span><br></pre></td></tr></table></figure>
+<p>上面这一段代码的意思：</p>
+<ol>
+<li>启动一个容器1 docker:latest 开始进行 CI</li>
+<li>同时启动一个 service 运行在容器2 docker:dind 里面，service 生命周期仅限于 build_docker 这一步</li>
+<li>当容器1 运行 docker build 的时候，容器1 会自动调用容器2 的 docker engine 。 打一个比方， 容器1 好比你电脑的命令行，容器2 好比你电脑上运行的 docker，当我们在电脑上运行  docker build ， 实际上也是去调用 电脑上运行的 docker 来 build image</li>
+<li>补充知识 <a target="_blank" rel="noopener" href="https://docs.docker.com/network/links/">两容器之间的连接</a></li>
+<li>测试 docker login 和 push 的成果 <a target="_blank" rel="noopener" href="https://hub.docker.com/r/feiyang233/turtle">https://hub.docker.com/r/feiyang233/turtle</a></li>
+</ol>
+<p>下图就很清楚的解释了 gitlab-runner 在运行上面这段代码时，容器的整体情况，会创建 2 个容器，一个负责 CI script， 一个负责 docker engine<br><img src="/img/vm/19.png"> </p>
+<p>为了更有说服力， 我们也亲自 SSH 到机器上面去验证<br>这里 docker:latest 运行所有的 script<br><img src="/img/vm/20.png"> </p>
+<p>这里 docker:dind 运行 docker engine ， 对外提供服务端口 2375<br><img src="/img/vm/21.png"> </p>
+<p>总结图，可以看到 build image 是存放在 docker engine, 在 CI  shell 运行 docker images 可以调用 API 检查<br><img src="/img/vm/22.png"> </p>
+<h3 id="build-image"><a href="#build-image" class="headerlink" title="build image"></a>build image</h3><p>如果在构建镜像的过程中，需要访问一个私有的仓库 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/55929417/how-to-securely-git-clone-pip-install-a-private-repository-into-my-docker-image">How to securely git clone&#x2F;pip install a private repository into my docker image?</a><br>好消息！ docker 官网已经有了答案 <a target="_blank" rel="noopener" href="https://docs.docker.com/develop/develop-images/build_enhancements/#using-ssh-to-access-private-data-in-builds">Using SSH to access private data in builds</a>。但是官网的文档真的不够详细，还是要参考这一细节 <a target="_blank" rel="noopener" href="https://yeasy.gitbook.io/docker_practice/buildx/buildkit#run-mount-type-ssh">BuildKit 镜像构建</a>。看一眼 <a target="_blank" rel="noopener" href="https://www.huaweicloud.com/articles/e76e0af0038321951fc8e4f16e48b417.html">Docker 一篇文章带你理解Dockerfile</a><br>安全的办法是采用 ssh key 访问:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair">Generate an SSH key pair</a> <del>OpenSSH 6.5 introduced ED25519 SSH keys in 2014 and they should be available on most operating systems.</del>  ED25519 有坑！见文末</li>
+<li><a target="_blank" rel="noopener" href="https://pythonspeed.com/articles/docker-build-secrets/">Don’t leak your Docker image’s build secrets</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/user/project/deploy_keys/#differences-between-deploy-keys-and-deploy-tokens">Differences between deploy keys and deploy tokens</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/ci/variables/#cicd-variable-types">用 file type 存 key 到 CI&#x2F;CD variable 里面</a></li>
+</ul>
+<p>如下图所示，当我们在构建镜像的时候，实际上是 Dockerfile 指定的那一个镜像(图中是 python的镜像 )去执行 git clone 或者 pip install, 为了不让 SSH key 存在于我们的镜像中， 确保安全第一，我们必须用新版 docker 提供的 BuildKit， 下一代的镜像构建组件。</p>
+<ul>
+<li>在容器1 运行一个 eval $(ssh-agent)， CI 容器1 中有 SSH key (gitlab deploy key)</li>
+<li>容器1 通过 docker –ssh default&#x3D;$SSH_AUTH_SOCK 配置好  allow the Docker Engine to forward SSH agent connections. </li>
+<li>在 Dockerfile 构建的步骤里，哪一步需要 SSH 代理转发， 就挂载 ssh， RUN –mount&#x3D;type&#x3D;ssh &lt;执行命令&gt;</li>
+</ul>
+<p><img src="/img/vm/23.png"> </p>
+<p>完整的实验代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># syntax=docker/dockerfile:1.2</span></span><br><span class="line"></span><br><span class="line">FROM python:3.9.1-slim-buster</span><br><span class="line"></span><br><span class="line">WORKDIR /app</span><br><span class="line"></span><br><span class="line"><span class="comment">#COPY requirements.txt requirements.txt</span></span><br><span class="line">COPY . .</span><br><span class="line">RUN apt update &amp;&amp; apt install -y openssh-client git dnsutils</span><br><span class="line">RUN <span class="built_in">mkdir</span> -p -m 0700 ~/.ssh &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;[192.168.64.3]:2222 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAs5kvb4yuBB1C5yJfyav7F13MCP5Z4BJpCYq403tz2G/eyUMzJUzW+/FIIlLAffnLZxqkLpKZterXD2Ahn9KvA=&quot;</span> &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line"><span class="comment"># RUN mkdir -p -m 0700 ~/.ssh &amp;&amp; ssh-keyscan gitlab.feiyang.com &gt;&gt; ~/.ssh/known_hosts 但是我自己自定义的域名，无法解析</span></span><br><span class="line">RUN nslookup gitlab.feiyang.com</span><br><span class="line">RUN --mount=<span class="built_in">type</span>=ssh git <span class="built_in">clone</span> ssh://git@192.168.64.3:2222/feiyang/test.git</span><br><span class="line"></span><br><span class="line">RUN <span class="built_in">ls</span> &amp;&amp; <span class="built_in">env</span> &amp;&amp; apt-get purge -y --auto-remove git</span><br><span class="line"></span><br><span class="line">CMD [ <span class="string">&quot;python3&quot;</span>, <span class="string">&quot;-m&quot;</span> , <span class="string">&quot;flask&quot;</span>, <span class="string">&quot;run&quot;</span>, <span class="string">&quot;--host=0.0.0.0&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">build_docker:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker:latest</span></span><br><span class="line">  <span class="attr">variables:</span></span><br><span class="line">    <span class="attr">DOCKER_HOST:</span> <span class="string">tcp://docker:2375</span></span><br><span class="line">    <span class="comment"># This instructs Docker not to start over TLS.</span></span><br><span class="line">    <span class="attr">DOCKER_TLS_CERTDIR:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="attr">PASS_VAR:</span> <span class="string">$FEIYANG</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">apk</span> <span class="string">add</span> <span class="string">--no-cache</span> <span class="string">curl</span> <span class="string">jq</span> <span class="string">python3</span> <span class="string">py3-pip</span> <span class="string">git</span> <span class="string">bind-tools</span> <span class="string">openssh-client</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">$DOCKERPASS</span> <span class="string">|</span> <span class="string">docker</span> <span class="string">login</span> <span class="string">--username</span> <span class="string">$DOCKERUSER</span> <span class="string">--password-stdin</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">-m</span> <span class="number">0700</span> <span class="string">~/.ssh</span></span><br><span class="line">    <span class="comment">#- 这里本来应该是 ssh-keyscan gitlab.feiyang.com &gt;&gt; ~/.ssh/known_hosts 但是我自己自定义的域名，无法解析</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;[192.168.64.3]:2222 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAs5kvb4yuBB1C5yJfyav7F13MCP5Z4BJpCYq403tz2G/eyUMzJUzW+/FIIlLAffnLZxqkLpKZterXD2Ahn9KvA=&quot;</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">600</span> <span class="string">$SSH_TEST</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">cat</span> <span class="string">/etc/hosts</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nslookup</span> <span class="string">gitlab.feiyang.com</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">services:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker:dind</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">export</span> <span class="string">VERSION=$&#123;CI_JOB_ID&#125;_$(echo</span> <span class="string">$CI_COMMIT_SHA</span> <span class="string">|</span> <span class="string">head</span> <span class="string">-c</span> <span class="number">8</span><span class="string">)</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">export</span> <span class="string">DOCKER_BUILDKIT=1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent)</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ssh-add</span> <span class="string">$SSH_TEST</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">sre-turtle</span>  <span class="string">--ssh</span> <span class="string">default=$SSH_AUTH_SOCK</span> <span class="string">.</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">tag</span> <span class="string">sre-turtle:latest</span> <span class="string">$DOCKERUSER/turtle:$VERSION</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">$DOCKERUSER/turtle:$VERSION</span></span><br></pre></td></tr></table></figure>
+
+<p>最后的结果 <a target="_blank" rel="noopener" href="https://hub.docker.com/layers/150841970/feiyang233/turtle/177_0f142bbc/images/sha256-f340ebbc0cf763f43dcc70349cd12f313bfc1849d1489daa008e42ea087fc6ae?context=explore">成品镜像</a></p>
+<p>可以运行如下的命令去检测 SSH key 是否存在于,新构建的镜像中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull feiyang233/turtle:177_0f142bbc</span><br><span class="line">docker run -it feiyang233/turtle:177_0f142bbc bash</span><br><span class="line"><span class="built_in">ls</span>  ~/.ssh/</span><br></pre></td></tr></table></figure>
+<h3 id="bonus-for-sai"><a href="#bonus-for-sai" class="headerlink" title="bonus for sai"></a>bonus for sai</h3><blockquote>
+<p>Maybe you have a question, why we need 2 docker containers, 1 stage task container, 1 service docker engine</p>
+</blockquote>
+<p>The answer is </p>
+<ul>
+<li>It’s easier and faster to use an existing image and run it as an additional container than to install docker engine</li>
+<li>if you use dind image, please remember gitlab CI docker CMD entrypoint is <code>/bin/sh</code>, because CI job you need run script on shell</li>
+</ul>
+<p>But we also can try to test using only 1 container to build docker image:</p>
+<ul>
+<li>because gitlab start this container by <code>/bin/sh</code></li>
+<li>we need manually run docker engine in backend and wait it startup</li>
+<li>we also need change the deafult env of DOCKER_HOST</li>
+</ul>
+<p><img src="/img/vm/26.png"> </p>
+<p>I also manually to test, see the terminal logs:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu20:~<span class="comment"># docker ps</span></span><br><span class="line">CONTAINER ID   IMAGE                         COMMAND                  CREATED          STATUS          PORTS           NAMES</span><br><span class="line">ad978e3c9250   dc8c389414c8                  <span class="string">&quot;dockerd-entrypoint.…&quot;</span>   16 seconds ago   Up 15 seconds   2375-2376/tcp   runner-supzrn4b-project-2-concurrent-0-ef2ee4c879673f88-build-2</span><br><span class="line">dea3a81e5209   gitlab/gitlab-runner:latest   <span class="string">&quot;/usr/bin/dumb-init …&quot;</span>   4 months ago     Up 46 minutes                   gitlab-runner</span><br><span class="line">root@ubuntu20:~<span class="comment"># docker exec -it ad978e3c9250 sh</span></span><br><span class="line">/ <span class="comment"># ps -ef</span></span><br><span class="line">PID   USER     TIME  COMMAND</span><br><span class="line">    1 root      0:00 /bin/sh</span><br><span class="line">   17 root      0:00 /bin/sh</span><br><span class="line">   27 root      0:00 <span class="built_in">sleep</span> 120</span><br><span class="line">   28 root      0:00 sh</span><br><span class="line">   34 root      0:00 ps -ef</span><br><span class="line">/ <span class="comment"># env | grep DOCKER_HOST</span></span><br><span class="line">CI_COMMIT_TITLE=<span class="built_in">export</span> DOCKER_HOST=tcp://127.0.0.1:2375</span><br><span class="line">CI_COMMIT_MESSAGE=<span class="built_in">export</span> DOCKER_HOST=tcp://127.0.0.1:2375</span><br><span class="line">/ <span class="comment"># export  DOCKER_HOST=tcp://127.0.0.1:2375</span></span><br><span class="line">/ <span class="comment"># env | grep DOCKER_HOST</span></span><br><span class="line">CI_COMMIT_TITLE=<span class="built_in">export</span> DOCKER_HOST=tcp://127.0.0.1:2375</span><br><span class="line">DOCKER_HOST=tcp://127.0.0.1:2375</span><br><span class="line">CI_COMMIT_MESSAGE=<span class="built_in">export</span> DOCKER_HOST=tcp://127.0.0.1:2375</span><br><span class="line">/ <span class="comment"># dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 </span></span><br><span class="line">INFO[2021-06-02T15:20:31.852225191Z] Starting up                                  </span><br><span class="line">WARN[2021-06-02T15:20:31.853254325Z] could not change group /var/run/docker.sock to docker: group docker not found </span><br><span class="line">WARN[2021-06-02T15:20:31.853700852Z] Binding to IP address without --tlsverify is insecure and gives root access on this machine to everyone <span class="built_in">who</span> has access to your network.  host=<span class="string">&quot;tcp://0.0.0.0:2375&quot;</span></span><br><span class="line">WARN[2021-06-02T15:20:31.853771630Z] Binding to an IP address, even on localhost, can also give access to scripts run <span class="keyword">in</span> a browser. Be safe out there!  host=<span class="string">&quot;tcp://0.0.0.0:2375&quot;</span></span><br><span class="line">WARN[2021-06-02T15:20:32.857263870Z] Binding to an IP address without --tlsverify is deprecated. Startup is intentionally being slowed down to show this message  host=<span class="string">&quot;tcp://0.0.0.0:2375&quot;</span></span><br><span class="line">WARN[2021-06-02T15:20:32.857418830Z] Please consider generating tls certificates with client validation to prevent exposing unauthenticated root access to your network  host=<span class="string">&quot;tcp://0.0.0.0:2375&quot;</span></span><br><span class="line">WARN[2021-06-02T15:20:32.857466269Z] You can override this by explicitly specifying <span class="string">&#x27;--tls=false&#x27;</span> or <span class="string">&#x27;--tlsverify=false&#x27;</span>  host=<span class="string">&quot;tcp://0.0.0.0:2375&quot;</span></span><br><span class="line">WARN[2021-06-02T15:20:32.857660544Z] Support <span class="keyword">for</span> listening on TCP without authentication or explicit intent to run without authentication will be removed <span class="keyword">in</span> the next release  host=<span class="string">&quot;tcp://0.0.0.0:2375&quot;</span></span><br><span class="line">INFO[2021-06-02T15:20:47.860746924Z] libcontainerd: started new containerd process  pid=48</span><br><span class="line">INFO[2021-06-02T15:20:47.860803013Z] parsed scheme: <span class="string">&quot;unix&quot;</span>                         module=grpc</span><br><span class="line">INFO[2021-06-02T15:20:47.860813924Z] scheme <span class="string">&quot;unix&quot;</span> not registered, fallback to default scheme  module=grpc</span><br><span class="line">INFO[2021-06-02T15:20:47.860830282Z] ccResolverWrapper: sending update to cc: &#123;[&#123;unix:///var/run/docker/containerd/containerd.sock  &lt;nil&gt; 0 &lt;nil&gt;&#125;] &lt;nil&gt; &lt;nil&gt;&#125;  module=grpc</span><br><span class="line">INFO[2021-06-02T15:20:47.860835997Z] ClientConn switching balancer to <span class="string">&quot;pick_first&quot;</span>  module=grpc</span><br><span class="line">INFO[2021-06-02T15:20:47.877826134Z] starting containerd revision=05f951a3781f4f2c1911b05e61c160e9c30eaa8e version=v1.4.4</span><br></pre></td></tr></table></figure>
+
+<p>Finally, share with you the gitlab ci yaml file</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apk</span> <span class="string">add</span> <span class="string">--no-cache</span> <span class="string">curl</span> <span class="string">jq</span> <span class="string">python3</span> <span class="string">py3-pip</span> <span class="string">git</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">-m</span> <span class="number">0600</span> <span class="string">~/.ssh</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;[192.168.64.3]:2222 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAs5kvb4yuBB1C5yJfyav7F13MCP5Z4BJpCYq403tz2G/eyUMzJUzW+/FIIlLAffnLZxqkLpKZterXD2Ahn9KvA=&quot;</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">600</span> <span class="string">$SSH_TEST</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">export</span> <span class="string">DOCKER_HOST=tcp://127.0.0.1:2375</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">nohup</span> <span class="string">dockerd</span> <span class="string">--host=unix:///var/run/docker.sock</span> <span class="string">--host=tcp://0.0.0.0:2375</span> <span class="string">&amp;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">cp</span> <span class="string">$SSH_TEST</span> <span class="string">~/.ssh/id_rsa</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">sleep</span> <span class="number">30</span> <span class="comment"># it&#x27;s hard to set a best vaule</span></span><br><span class="line"></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">export</span> <span class="string">VERSION=$&#123;CI_JOB_ID&#125;_$(echo</span> <span class="string">$CI_COMMIT_SHA</span> <span class="string">|</span> <span class="string">head</span> <span class="string">-c</span> <span class="number">8</span><span class="string">)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">export</span> <span class="string">DOCKER_BUILDKIT=1</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ssh-add</span> <span class="string">$SSH_TEST</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">sre-turtle</span>  <span class="string">--ssh</span> <span class="string">default=$SSH_AUTH_SOCK</span> <span class="string">.</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">docker</span> <span class="string">tag</span> <span class="string">sre-turtle:latest</span> <span class="string">$DOCKERUSER/turtle:$VERSION</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">$DOCKERPASS</span> <span class="string">|</span> <span class="string">docker</span> <span class="string">login</span> <span class="string">--username</span> <span class="string">$DOCKERUSER</span> <span class="string">--password-stdin</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">$DOCKERUSER/turtle:$VERSION</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>gitlab docker in docker</th>
+<th>pros</th>
+<th>cons</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2 containers</td>
+<td>official recommend<br>Automatically wait docker engine startup<br>No need setup env<br>parallel start 2 docker is faster</td>
+<td>Use one more docker</td>
+</tr>
+<tr>
+<td>1 container</td>
+<td>one docker is enough</td>
+<td>slower than 2 dockers<br>need more setup: env<br>unsure how long to wait docker engin startup</td>
+</tr>
+</tbody></table>
+<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><ul>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/skykingf/article/details/95212146">gitlab 自定义 SSH 端口</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/user/packages/container_registry/#authenticate-by-using-gitlab-cicd">gitlab container registry authenticate</a></p>
+</li>
+<li><p>设置 CI&#x2F;CD  变量的时候, 上传 deploy key, 类型选择 file, 切记多留最后一行空白，否则会报错 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error loading key &quot;/root/.ssh/id_rsa&quot;: invalid format</span><br></pre></td></tr></table></figure>
+<p>临时文件会在 runner 容器的 &#x2F;build&#x2F;user&#x2F;project.temp&#x2F; 下面。 比如说 <code>/builds/feiyang/test.tmp/SSH_TEST</code> </p>
+</li>
+<li><p><code>Error loading key &quot;/root/.ssh/id_ed25519&quot;: invalid format</code> deploy key 的类型，最好是 RSA (at least 2048-bit key size), 新的 ED25519 (preferred) 在 docker build 会报错</p>
+</li>
+<li><p>Host key verification failed. 两个容器都需要添加 <code>ssh-keyscan gitlab.feiyang.com &gt;&gt; ~/.ssh/known_hosts</code></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/37510711/installing-ssh-keyscan-on-alpine-linux">Installing ssh-keyscan on Alpine linux?</a> 这里安装包 openssh-client 就足够了， 如果安装 openssh， 就重很多， 自带了 server 功能，不推荐.</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/351725/why-eval-the-output-of-ssh-agent">Why eval the output of ssh-agent?</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/git/" rel="tag"># git</a>
+              <a href="/tags/security/" rel="tag"># security</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/python-basic/" rel="prev" title="Python 基础学习">
+      <i class="fa fa-chevron-left"></i> Python 基础学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/dns/" rel="next" title="DNS">
+      DNS <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Update-history"><span class="nav-number">1.</span> <span class="nav-text">Update history</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Environment"><span class="nav-number">2.</span> <span class="nav-text">Environment</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Install-gitlab"><span class="nav-number">3.</span> <span class="nav-text">Install gitlab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#gitlab"><span class="nav-number">3.1.</span> <span class="nav-text">gitlab</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#runner"><span class="nav-number">3.2.</span> <span class="nav-text">runner</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Test-CI"><span class="nav-number">4.</span> <span class="nav-text">Test CI</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Job-artifacts"><span class="nav-number">4.1.</span> <span class="nav-text">Job artifacts</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lint"><span class="nav-number">4.1.1.</span> <span class="nav-text">lint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#build"><span class="nav-number">4.1.2.</span> <span class="nav-text">build</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deploy"><span class="nav-number">4.1.3.</span> <span class="nav-text">deploy</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CI-x2F-CD"><span class="nav-number">5.</span> <span class="nav-text">CI&#x2F;CD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Services"><span class="nav-number">5.1.</span> <span class="nav-text">Services</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dind"><span class="nav-number">5.1.1.</span> <span class="nav-text">dind</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#build-image"><span class="nav-number">5.1.2.</span> <span class="nav-text">build image</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bonus-for-sai"><span class="nav-number">5.1.3.</span> <span class="nav-text">bonus for sai</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">6.</span> <span class="nav-text">注意事项</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

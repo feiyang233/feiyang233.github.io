@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文记录了一些基础的 docker 知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker 学习笔记">
+<meta property="og:url" content="http://feiyang233.club/post/docker/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="本文记录了一些基础的 docker 知识。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-07-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-21T02:39:37.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://feiyang233.club/post/docker/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>docker 学习笔记 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/docker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          docker 学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-08-01 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-01T00:00:00+08:00">2019-08-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-21 10:39:37" itemprop="dateModified" datetime="2021-06-21T10:39:37+08:00">2021-06-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文记录了一些基础的 docker 知识。</p>
+<span id="more"></span> 
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><ol start="0">
+<li><a target="_blank" rel="noopener" href="https://yeasy.gitbook.io/docker_practice/">Docker —— 从入门到实践</a> 非常不错的一本书，与时俱进</li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/wNCfYERWU3GOBHI2juTpmg">你确定你会写 Dockerfile 吗</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/eZCi73pOFq0sSoMYSVujZw">Docker stop或者Docker kill为何不能停止容器</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HwmBNPaWBmD3-VW5V04MLg">P2P镜像分发Dragonfly使用</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/5Nu9fnH7K-Y6a_pA2z2haA">Docker 数据持久化的三种方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://yeasy.gitbooks.io/docker_practice/content/">Docker — 从入门到实践</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/S4aMdmQW50HR7Lj2z2-VZQ">docker-proxy 存在合理性分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/F8dFqdMBI0pfXJWow5dHhQ">Docker 的原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/bRQUrpSbZyZ5kUg7vfvc1A">Docker 存储驱动与磁盘文件系统</a> 内含格式化磁盘，挂载磁盘</li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/jZN4U10NasdWiOPhiKaNbQ">深入理解 cgroup 中的 cpuset</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/LtgGcS9b8X-TqbfaLfBldQ">一次有趣的 Docker 容器网络排查</a></li>
+</ol>
+<h1 id="安装-docker"><a href="#安装-docker" class="headerlink" title="安装 docker"></a>安装 docker</h1><p>分享一篇<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BCzL57RmJja2gfZ67a2Z9Q">CentOS 7 下 yum 方式安装 Docker 环境</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line"></span><br><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line"></span><br><span class="line">sudo yum install -y docker-ce</span><br><span class="line"></span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<p>一个“容器”，实际上是一个由 Linux Namespace、Linux Cgroups 和 rootfs 三种技术构建出来的进程的隔离环境。<br>这三种技术介绍？<br>Namespace 的作用是“隔离”，它让应用进程只能看到该 Namespace 内的“世界”；而 Cgroups 的作用是“限制”</p>
+<p>rootfs 只是一个操作系统所包含的文件、配置和目录，并不包括操作系统内核。在 Linux 操作系统中，这两部分是分开存放的，操作系统只有在开机启动时才会加载指定版本的内核镜像。正是由于 rootfs 的存在，容器才有了一个被反复宣传至今的重要特性：一致性。</p>
+<p>docker commit，实际上就是在容器运行起来后，把最上层的“可读写层”，加上原先容器镜像的只读层，打包组成了一个新的镜像。当然，下面这些只读层在宿主机上是共享的，不会占用额外的空间。</p>
+<h1 id="docker-volume"><a href="#docker-volume" class="headerlink" title="docker volume"></a>docker volume</h1><p>镜像的各个层，保存在 &#x2F;var&#x2F;lib&#x2F;docker&#x2F;aufs&#x2F;diff 目录下，在容器进程启动后，它们会被联合挂载在 &#x2F;var&#x2F;lib&#x2F;docker&#x2F;aufs&#x2F;mnt&#x2F; 目录中，这样容器所需的 rootfs 就准备好了。<br>volume &#x2F;test 挂载出来之后，文件会出现在了宿主机上对应的临时目录里，但是如果你在宿主机上查看该容器的可读写层，虽然可以看到这个 &#x2F;test 目录，但其内容是空的。<br>而由于使用了联合文件系统，你在容器里对镜像 rootfs 所做的任何修改，都会被操作系统先复制到这个可读写层，然后再修改。这就是所谓的：Copy-on-Write。<br>有些时候，会由于配置文件的出错导致容器运行失败，这个时候不能进入容器修改文件，只能去 &#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;ID&#x2F;diff 下面，找到对应的配置文件进行修改。</p>
+<h1 id="docker-常用命令"><a href="#docker-常用命令" class="headerlink" title="docker 常用命令"></a>docker 常用命令</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 docker 服务 </span></span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl <span class="built_in">enable</span> docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前系统 Docker 信息 </span></span><br><span class="line">docker info</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拉取 docker 镜像 </span></span><br><span class="line">docker pull image_name</span><br><span class="line"><span class="comment"># 从 Docker hub 上下载某个镜像 </span></span><br><span class="line">docker pull centos:latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看宿主机上的镜像，Docker 镜像保存在 / var/lib/docker 目录下:</span></span><br><span class="line">docker images</span><br><span class="line"></span><br><span class="line">REPOSITORY                      TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">mysql                           5.7                 1b30b36ae96a        8 days ago          372MB</span><br><span class="line">zabbix/zabbix-web-nginx-mysql   centos-4.0-latest   8be5f91b2fa1        3 weeks ago         415MB</span><br><span class="line">zabbix/zabbix-server-mysql      centos-4.0-latest   8e5becf45c4e        3 weeks ago         326MB</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除镜像 </span></span><br><span class="line">docker rmi image_name/image_id</span><br><span class="line">docker rmi zabbix/zabbix-web-nginx-mysql:centos-4.0-latest 或者 docker rmi 8be5f91b2fa1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前有哪些容器正在运行 </span></span><br><span class="line">docker ps</span><br><span class="line"><span class="comment"># 查看所有容器 </span></span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line">CONTAINER ID        IMAGE                                             COMMAND                  CREATED             STATUS                       PORTS                           NAMES</span><br><span class="line">b30307ad65be        zabbix/zabbix-web-nginx-mysql:centos-4.0-latest   <span class="string">&quot;docker-entrypoint.sh&quot;</span>   7 days ago          Exited (255) 8 minutes ago   443/tcp, 0.0.0.0:8080-&gt;80/tcp   zabbix-web-nginx-mysql</span><br><span class="line">0ad822cd52b7        zabbix/zabbix-server-mysql:centos-4.0-latest      <span class="string">&quot;docker-entrypoint.sh&quot;</span>   7 days ago          Exited (255) 8 minutes ago   0.0.0.0:10051-&gt;10051/tcp        zabbix-server-mysql</span><br><span class="line">d01c89a112f7        mysql:5.7                                         <span class="string">&quot;docker-entrypoint.s…&quot;</span>   7 days ago          Exited (255) 8 minutes ago   3306/tcp, 33060/tcp             mysql-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动、停止、重启容器命令：</span></span><br><span class="line">docker start container_name/container_id</span><br><span class="line">docker stop container_name/container_id</span><br><span class="line">docker restart container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 后台启动一个容器后，如果想进入到这个容器，可以使用 attach</span></span><br><span class="line">docker attach container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除容器 </span></span><br><span class="line">docker <span class="built_in">rm</span> container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看容器日志 </span></span><br><span class="line">docker logs -f container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看容器 IP 地址 </span></span><br><span class="line">docker inspect container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入容器 </span></span><br><span class="line">docker <span class="built_in">exec</span> -it container_name/container_id bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Docker 容器与宿主机相互传输文件 </span></span><br><span class="line">[root@localhost tmp]<span class="comment"># docker cp --help</span></span><br><span class="line"></span><br><span class="line">Usage:	docker <span class="built_in">cp</span> [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-</span><br><span class="line">	docker <span class="built_in">cp</span> [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH</span><br><span class="line"></span><br><span class="line">Copy files/folders between a container and the <span class="built_in">local</span> filesystem</span><br><span class="line"></span><br><span class="line">docker <span class="built_in">cp</span> zabbix_config.sql mysql-server:/tmp</span><br><span class="line">docker <span class="built_in">cp</span> mysql-server:/tmp/zabbix_config.sql /tmp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量删除所有已经退出的容器 </span></span><br><span class="line">docker <span class="built_in">rm</span> -v $(docker ps -aq -f status=exited)</span><br><span class="line"><span class="comment"># 批量删除所有仅创建并未成功运行的容器 </span></span><br><span class="line">docker <span class="built_in">rm</span> -v $(docker ps -aq -f status=created)</span><br></pre></td></tr></table></figure>
+
+<h1 id="docker-logs"><a href="#docker-logs" class="headerlink" title="docker logs"></a>docker logs</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yjk13703623757/article/details/80283729">删除 logs</a> 设置 logs <a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/commandline/dockerd/">Daemon configuration file</a></p>
+<h1 id="docker-iptables"><a href="#docker-iptables" class="headerlink" title="docker iptables"></a>docker iptables</h1><p>docker 默认会修改 iptables，但有时候会造成 iptables ip 限制失效的问题。如果对 iptables 比较了解的同学，可以 <a target="_blank" rel="noopener" href="https://docs.docker.com/network/iptables/">Prevent Docker from manipulating iptables</a>  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vim /etc/docker/daemon.json</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;iptables&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="string">&quot;log-driver&quot;</span>:<span class="string">&quot;json-file&quot;</span>,</span><br><span class="line">  <span class="string">&quot;log-opts&quot;</span>: &#123;<span class="string">&quot;max-size&quot;</span>:<span class="string">&quot;500m&quot;</span>, <span class="string">&quot;max-file&quot;</span>:<span class="string">&quot;3&quot;</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">max-size=500m，意味着一个容器日志大小上限是500M，</span><br><span class="line">max-file=3，意味着一个容器有三个日志，分别是<span class="built_in">id</span>+.json、<span class="built_in">id</span>+1.json、<span class="built_in">id</span>+2.json。</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line"></span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<p>还有一种办法就是添加 <a target="_blank" rel="noopener" href="https://docs.docker.com/network/iptables/">DOCKER-USER</a>  If you need to add rules which load before Docker’s rules, add them to the DOCKER-USER chain. These rules are loaded before any rules Docker creates automatically.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">*filter</span><br><span class="line">:INPUT DROP [0:0]</span><br><span class="line">:FORWARD ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [0:0]</span><br><span class="line"></span><br><span class="line">:DOCKER-USER - [0:0]</span><br><span class="line">-A FORWARD -j DOCKER-USER</span><br><span class="line">-A DOCKER-USER -s x.x.x.x -p tcp --dport 80 -j RETURN</span><br><span class="line">-A DOCKER-USER -p tcp --dport 80 -j DROP</span><br><span class="line">-A DOCKER-USER -p udp --dport 80 -j DROP</span><br><span class="line">-A DOCKER-USER -j RETURN</span><br><span class="line"></span><br><span class="line">COMMIT</span><br></pre></td></tr></table></figure>
+<h1 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h1><p>首先，安利一下 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/wNCfYERWU3GOBHI2juTpmg">Dockerfile 优化指南</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">FROM python:3.7</span><br><span class="line"></span><br><span class="line">RUN apt-get update \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/*</span><br><span class="line"></span><br><span class="line">WORKDIR /usr/src/app</span><br><span class="line">COPY requirements.txt ./</span><br><span class="line">RUN pip install -r requirements.txt</span><br><span class="line">COPY . .</span><br><span class="line"></span><br><span class="line">EXPOSE 8000</span><br><span class="line">CMD [&quot;python&quot;, &quot;manage.py&quot;, &quot;runserver&quot;, &quot;0.0.0.0:8000&quot;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="tag"><a href="#tag" class="headerlink" title="tag"></a>tag</h1><p>docker 镜像有许多的版本，不同版本间差异需要注意。举个例子，我遇到因为版本不同，ip route get 结尾多了一个 uid 0</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#执行这个命令，在不同 tag 版本的 Python 镜像里，结果会不一样。</span></span><br><span class="line">ip -4 route get 8.8.8.8</span><br><span class="line"></span><br><span class="line"><span class="comment"># 结果多了一个 uid 会导致提取 IP 时出错。</span></span><br><span class="line">8.8.8.8 via 192.168.0.1 dev eth0 src 192.168.0.105 uid 0 </span><br><span class="line"></span><br><span class="line">8.8.8.8 via 192.168.0.1 dev eth0 src 192.168.0.105 </span><br><span class="line"></span><br><span class="line"><span class="comment"># 两者之间的差异是因为 iproute2 版本不一样</span></span><br><span class="line"></span><br><span class="line">root@feiy:/etc/apt<span class="comment"># apt-cache policy iproute2</span></span><br><span class="line">iproute2:</span><br><span class="line">  Installed: 4.9.0-1+deb9u1</span><br><span class="line">  Candidate: 4.9.0-1+deb9u1</span><br><span class="line">  Version table:</span><br><span class="line"> *** 4.9.0-1+deb9u1 500</span><br><span class="line">        500 http://deb.debian.org/debian stretch/main amd64 Packages</span><br><span class="line">        100 /var/lib/dpkg/status</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">root@feiy:/etc/apt<span class="comment"># apt-cache policy iproute2</span></span><br><span class="line">iproute2:</span><br><span class="line">  Installed: 4.20.0-2</span><br><span class="line">  Candidate: 4.20.0-2</span><br><span class="line">  Version table:</span><br><span class="line"> *** 4.20.0-2 500</span><br><span class="line">        500 http://deb.debian.org/debian buster/main amd64 Packages</span><br><span class="line">        100 /var/lib/dpkg/status</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="network"><a href="#network" class="headerlink" title="network"></a>network</h1><p>docker 是基于 iptables 进行流量的转发，添加了一个虚拟的网卡 docker0 。 如果想从容器内部访问宿主机的 IP，比如从 172.17.0.3 访问宿主机的内网地址 192.168.1.10 ， 我们从 tcpdump 在网卡 docker0  抓包可以看到流量。 但是在内网网卡抓包没有结果。猜测原因是：当数据包从网卡 docker0 转发后，直接在内核进入 INPUT 链。所以，如果想访问宿主机的 IP， 需要在 INPUT 添加相关规则，允许访问。  iptables -A INPUT -i docker0 -j ACCEPT</p>
+<h1 id="mac-上使用-docker"><a href="#mac-上使用-docker" class="headerlink" title="mac 上使用 docker"></a>mac 上使用 docker</h1><ol>
+<li>volume 的位置和 linux 不同，解决办法如下</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/Library/Containers/com.docker.docker/Data/vms/0/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接进入 tty</span></span><br><span class="line">screen <span class="built_in">tty</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 tty 可以就可以找到 docker container volume</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /var/lib/docker/volumes/</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>如果想从容器内部访问 mac，也和 Linux 不同。详情可以看官网<a target="_blank" rel="noopener" href="https://docs.docker.com/docker-for-mac/networking/">docker mac network</a> 在容器内部可以使用 host.docker.internal 就可以访问到 Mac 宿主机啦。 而在 Linux 机器上, 容器可以直接使用宿主机的 IP 来访问宿主机<br>NIA_URL&#x3D;<a target="_blank" rel="noopener" href="http://host.docker.internal:5000/">http://host.docker.internal:5000</a></li>
+</ol>
+<h1 id="docker-proxy"><a href="#docker-proxy" class="headerlink" title="docker-proxy"></a>docker-proxy</h1><p>can refer this (article)[<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/S4aMdmQW50HR7Lj2z2-VZQ]">https://mp.weixin.qq.com/s/S4aMdmQW50HR7Lj2z2-VZQ]</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/docker/daemon.json</span></span><br><span class="line"><span class="comment"># disable docker-proxy</span></span><br><span class="line">“userland-proxy”:<span class="literal">false</span> </span><br></pre></td></tr></table></figure>
+
+<h1 id="find-process"><a href="#find-process" class="headerlink" title="find process"></a>find process</h1><p>In one hosts, if we have many dockers, sometimes we need find some proceess belong to which docker.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">pstree -laps [pid]</span><br><span class="line"></span><br><span class="line">pstree -laps 38564</span><br><span class="line">systemd,1</span><br><span class="line">  `-dockerd,171350</span><br><span class="line">      `-docker-containe,171362 --config /var/run/docker/containerd/containerd.toml</span><br><span class="line">          `-docker-containe,332151 -namespace moby -workdir /var/lib/docker/containerd/daemon/io.containerd.runtime.v1.linux/moby/38dfefa95c1f8b4827e0a95834119b3756775d389820ea90d95878d3518eed67 -address /var/run/docker/containerd/docker-containerd.sock -containerd-binary /usr/bin/docker-containerd -runtime-root /var/run/docker/runtime-runc</span><br><span class="line">              `-smb,332174 /usr/local/bin/smb run -e live -c <span class="built_in">id</span> -i sg</span><br><span class="line">                  `-sh,332221 -c gunicorn webapi.wsgi -c webapi/gunicorn_config.py</span><br><span class="line">                      `-gunicorn: maste,332306                                                  </span><br><span class="line">                          `-gunicorn: worke,38564                                                  </span><br><span class="line">                              |-&#123;gunicorn: worke&#125;,38613</span><br><span class="line">                              |-&#123;gunicorn: worke&#125;,83641</span><br><span class="line">                              |-&#123;gunicorn: worke&#125;,83642</span><br><span class="line">                              |-&#123;gunicorn: worke&#125;,83643</span><br><span class="line">                              |-&#123;gunicorn: worke&#125;,83644</span><br><span class="line">                              |-&#123;gunicorn: worke&#125;,83645</span><br><span class="line">                              |-&#123;gunicorn: worke&#125;,83646</span><br><span class="line">                              `-&#123;gunicorn: worke&#125;,83647</span><br><span class="line"></span><br><span class="line"><span class="comment"># 38dfefa95c1f8b4827e0a95834119b3756775d389820ea90d95878d3518eed67 is container ID</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="docker-compose"><a href="#docker-compose" class="headerlink" title="docker-compose"></a>docker-compose</h1><p><a target="_blank" rel="noopener" href="https://wiki.jikexueyuan.com/project/docker-technology-and-combat/commands.html">https://wiki.jikexueyuan.com/project/docker-technology-and-combat/commands.html</a></p>
+<h1 id="docker-cron"><a href="#docker-cron" class="headerlink" title="docker cron"></a>docker cron</h1><p>cron failed <a target="_blank" rel="noopener" href="http://blog.allen-mo.com/2018/04/17/docker_crontab/">http://blog.allen-mo.com/2018/04/17/docker_crontab/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> -R 0600 /var/spool/cron/crontabs</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/singtel/" rel="prev" title="singtel 路由器踩坑经历">
+      <i class="fa fa-chevron-left"></i> singtel 路由器踩坑经历
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/google-script/" rel="next" title="Google Script 学习">
+      Google Script 学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">1.</span> <span class="nav-text">reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-docker"><span class="nav-number">2.</span> <span class="nav-text">安装 docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-volume"><span class="nav-number">3.</span> <span class="nav-text">docker volume</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">docker 常用命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-logs"><span class="nav-number">5.</span> <span class="nav-text">docker logs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-iptables"><span class="nav-number">6.</span> <span class="nav-text">docker iptables</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dockerfile"><span class="nav-number">7.</span> <span class="nav-text">Dockerfile</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tag"><span class="nav-number">8.</span> <span class="nav-text">tag</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#network"><span class="nav-number">9.</span> <span class="nav-text">network</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mac-%E4%B8%8A%E4%BD%BF%E7%94%A8-docker"><span class="nav-number">10.</span> <span class="nav-text">mac 上使用 docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-proxy"><span class="nav-number">11.</span> <span class="nav-text">docker-proxy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#find-process"><span class="nav-number">12.</span> <span class="nav-text">find process</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-compose"><span class="nav-number">13.</span> <span class="nav-text">docker-compose</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-cron"><span class="nav-number">14.</span> <span class="nav-text">docker cron</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

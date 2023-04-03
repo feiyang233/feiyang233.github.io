@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在本地虚拟机环境搭建 consul cluster 实践。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="consul 实践">
+<meta property="og:url" content="http://feiyang233.club/post/consul/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="在本地虚拟机环境搭建 consul cluster 实践。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-05-09T13:52:52.000Z">
+<meta property="article:modified_time" content="2021-05-26T09:27:40.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="hashicorp">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://feiyang233.club/post/consul/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>consul 实践 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/consul/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          consul 实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-05-09 21:52:52" itemprop="dateCreated datePublished" datetime="2021-05-09T21:52:52+08:00">2021-05-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-05-26 17:27:40" itemprop="dateModified" datetime="2021-05-26T17:27:40+08:00">2021-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在本地虚拟机环境搭建 consul cluster 实践。</p>
+<span id="more"></span>
+<h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><p>这三台虚拟机，分别跑在三台笔记本电脑上。这样做的好处是，桥接模式不需要端口映射，在我家的局域网里面尽情的玩耍。</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Operating system</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>Disk</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ubuntu18-119</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>2</td>
+<td>4G</td>
+<td>20G</td>
+<td>192.168.1.119</td>
+</tr>
+<tr>
+<td>ubuntu18-120</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>2</td>
+<td>4G</td>
+<td>10G</td>
+<td>192.168.1.120</td>
+</tr>
+<tr>
+<td>ubuntu18-121</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>2</td>
+<td>4G</td>
+<td>30G</td>
+<td>192.168.1.121</td>
+</tr>
+</tbody></table>
+<p>Ubuntu18 是公司当前线上环境的系统，桌面版有可视化，桌面比服务器版本的命令行方便一点。</p>
+<p>实验环境的搭建，可以参考我的另外一篇博客 <a href="https://feiyang233.club/post/vm/">https://feiyang233.club/post/vm/</a></p>
+<h1 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h1><p>参考文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://computingforgeeks.com/how-to-install-consul-cluster-18-04-lts/">https://computingforgeeks.com/how-to-install-consul-cluster-18-04-lts/</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/consul/get-started-install">https://learn.hashicorp.com/tutorials/consul/get-started-install</a></li>
+</ul>
+<p>分别在三台虚拟机上安装好 consul service</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -</span><br><span class="line"></span><br><span class="line">sudo apt-add-repository <span class="string">&quot;deb [arch=amd64] https://apt.releases.hashicorp.com <span class="subst">$(lsb_release -cs)</span> main&quot;</span></span><br><span class="line"></span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install consul</span><br><span class="line"></span><br><span class="line"><span class="comment">## 验证安装的结果</span></span><br><span class="line">root@ubuntu18-119:/etc/consul.d<span class="comment"># cd </span></span><br><span class="line">root@ubuntu18-119:~<span class="comment"># consul version</span></span><br><span class="line">Consul v1.9.5</span><br><span class="line">Revision 3c1c22679</span><br><span class="line">Protocol 2 spoken by default, understands 2 to 3 (agent will automatically use protocol &gt;2 when speaking to compatible agents)</span><br></pre></td></tr></table></figure>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>在开始配置文件之前，先要生成一个秘钥。 随便在三台中的任意一台机器运行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-121:~<span class="comment"># consul keygen</span></span><br><span class="line">byCHv8NFR6p770xmNNjxlCGdeH9e0YU7CwZFnsnOW8w=</span><br><span class="line"></span><br><span class="line"><span class="comment"># 秘钥很重要，不要随便暴露，这里的秘钥是我临时生成的作示范</span></span><br></pre></td></tr></table></figure>
+<h3 id="node-119"><a href="#node-119" class="headerlink" title="node-119"></a>node-119</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">datacenter = <span class="string">&quot;feiyang&quot;</span></span><br><span class="line">data_dir = <span class="string">&quot;/opt/consul&quot;</span></span><br><span class="line">client_addr = <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line">bind_addr = <span class="string">&quot;192.168.1.119&quot;</span></span><br><span class="line">ui = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">server = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">bootstrap_expect=<span class="number">3</span></span><br><span class="line">encrypt = <span class="string">&quot;byCHv8NFR6p770xmNNjxlCGdeH9e0YU7CwZFnsnOW8w=&quot;</span></span><br><span class="line">retry_join = <span class="punctuation">[</span><span class="string">&quot;192.168.1.119&quot;</span><span class="punctuation">,</span> <span class="string">&quot;192.168.1.120&quot;</span><span class="punctuation">,</span> <span class="string">&quot;192.168.1.121&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="node-120"><a href="#node-120" class="headerlink" title="node-120"></a>node-120</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">datacenter = <span class="string">&quot;feiyang&quot;</span></span><br><span class="line">data_dir = <span class="string">&quot;/opt/consul&quot;</span></span><br><span class="line">client_addr = <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line">bind_addr = <span class="string">&quot;192.168.1.120&quot;</span></span><br><span class="line">ui = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">server = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">bootstrap_expect=<span class="number">3</span></span><br><span class="line">encrypt = <span class="string">&quot;byCHv8NFR6p770xmNNjxlCGdeH9e0YU7CwZFnsnOW8w=&quot;</span></span><br><span class="line">retry_join = <span class="punctuation">[</span><span class="string">&quot;192.168.1.119&quot;</span><span class="punctuation">,</span> <span class="string">&quot;192.168.1.120&quot;</span><span class="punctuation">,</span> <span class="string">&quot;192.168.1.121&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="node-121"><a href="#node-121" class="headerlink" title="node-121"></a>node-121</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">datacenter = <span class="string">&quot;feiyang&quot;</span></span><br><span class="line">data_dir = <span class="string">&quot;/opt/consul&quot;</span></span><br><span class="line">client_addr = <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line">bind_addr = <span class="string">&quot;192.168.1.121&quot;</span></span><br><span class="line">ui = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">server = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">bootstrap_expect=<span class="number">3</span></span><br><span class="line">encrypt = <span class="string">&quot;byCHv8NFR6p770xmNNjxlCGdeH9e0YU7CwZFnsnOW8w=&quot;</span></span><br><span class="line">retry_join = <span class="punctuation">[</span><span class="string">&quot;192.168.1.119&quot;</span><span class="punctuation">,</span> <span class="string">&quot;192.168.1.120&quot;</span><span class="punctuation">,</span> <span class="string">&quot;192.168.1.121&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><p>一切配置好以后，我们可以启动服务，并且设置服务开机自启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start consul</span><br><span class="line"></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> consul</span><br><span class="line"></span><br><span class="line"><span class="comment">## ---------------------------</span></span><br><span class="line"><span class="comment">## Check cluster members</span></span><br><span class="line">root@ubuntu18-119:~<span class="comment"># consul members</span></span><br><span class="line">Node          Address             Status  Type    Build  Protocol  DC       Segment</span><br><span class="line">ubuntu18-119  192.168.1.119:8301  alive   server  1.9.5  2         feiyang  &lt;all&gt;</span><br><span class="line">ubuntu18-120  192.168.1.120:8301  alive   server  1.9.5  2         feiyang  &lt;all&gt;</span><br><span class="line">ubuntu18-121  192.168.1.121:8301  alive   server  1.9.5  2         feiyang  &lt;all&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ui"><a href="#ui" class="headerlink" title="ui"></a>ui</h2><p>任意一台节点的 8500 端口加路径 ui  <a target="_blank" rel="noopener" href="http://node_ip:8500/ui/">http://node_ip:8500/ui/</a><br>举例： <a target="_blank" rel="noopener" href="http://192.168.1.120:8500/ui/">http://192.168.1.120:8500/ui/</a></p>
+<h1 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h1>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/hashicorp/" rel="tag"># hashicorp</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/vault/" rel="prev" title="vault 实践">
+      <i class="fa fa-chevron-left"></i> vault 实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/vm/" rel="next" title="本地虚拟机环境搭建">
+      本地虚拟机环境搭建 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">安装过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#node-119"><span class="nav-number">2.1.1.</span> <span class="nav-text">node-119</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node-120"><span class="nav-number">2.1.2.</span> <span class="nav-text">node-120</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node-121"><span class="nav-number">2.1.3.</span> <span class="nav-text">node-121</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.2.</span> <span class="nav-text">启动服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ui"><span class="nav-number">2.3.</span> <span class="nav-text">ui</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AA%E5%AE%8C%E5%BE%85%E7%BB%AD"><span class="nav-number">3.</span> <span class="nav-text">未完待续</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

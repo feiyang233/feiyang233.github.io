@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在本地虚拟机环境搭建 vault cluster 实践。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vault 实践">
+<meta property="og:url" content="http://feiyang233.club/post/vault/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="在本地虚拟机环境搭建 vault cluster 实践。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-07T22:06:06.000Z">
+<meta property="article:modified_time" content="2021-07-13T06:41:17.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="security">
+<meta property="article:tag" content="hashicorp">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://feiyang233.club/post/vault/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>vault 实践 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/vault/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vault 实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-08 06:06:06" itemprop="dateCreated datePublished" datetime="2021-03-08T06:06:06+08:00">2021-03-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-07-13 14:41:17" itemprop="dateModified" datetime="2021-07-13T14:41:17+08:00">2021-07-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在本地虚拟机环境搭建 vault cluster 实践。</p>
+<span id="more"></span>
+<h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><p>这三台虚拟机，都运行在我的台式机上。</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Operating system</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>Disk</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>node-1</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>4</td>
+<td>8G</td>
+<td>50G</td>
+<td>192.168.64.3</td>
+</tr>
+<tr>
+<td>node-2</td>
+<td>CentOS 7.8.2003</td>
+<td>2</td>
+<td>2G</td>
+<td>20G</td>
+<td>192.168.64.4</td>
+</tr>
+<tr>
+<td>node-3</td>
+<td>Ubuntu 20.04.1 LTS</td>
+<td>2</td>
+<td>4G</td>
+<td>10G</td>
+<td>192.168.64.5</td>
+</tr>
+</tbody></table>
+<p>实验环境的搭建，可以参考我的另外一篇博客 <a href="https://feiyang233.club/post/vm/">https://feiyang233.club/post/vm/</a></p>
+<h1 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h1><p>参考文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://computingforgeeks.com/install-and-configure-vault-server-linux/">https://computingforgeeks.com/install-and-configure-vault-server-linux/</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/vault/getting-started-install?in=vault/getting-started">https://learn.hashicorp.com/tutorials/vault/getting-started-install?in=vault/getting-started</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/vault/raft-storage">https://learn.hashicorp.com/tutorials/vault/raft-storage</a></li>
+</ul>
+<p>分别在三台虚拟机上安装好 vault service</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ubuntu OS</span></span><br><span class="line">curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -</span><br><span class="line"></span><br><span class="line">sudo apt-add-repository <span class="string">&quot;deb [arch=amd64] https://apt.releases.hashicorp.com <span class="subst">$(lsb_release -cs)</span> main&quot;</span></span><br><span class="line"></span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install vault</span><br><span class="line"></span><br><span class="line">root@ubuntu20:/etc/vault.d<span class="comment"># vault --version</span></span><br><span class="line">Vault v1.6.2 (be65a227ef2e80f8588b3b13584b5c0d9238c1d7)</span><br></pre></td></tr></table></figure>
+<p>就下来就是配置 config, 如果没有创建存储的文件夹，还需要创建</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /vault/data</span><br><span class="line"><span class="built_in">chown</span> -R vault:vault /vault</span><br></pre></td></tr></table></figure>
+<p>配置文件如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// node-1</span></span><br><span class="line">root@ubuntu18<span class="number">-108</span><span class="punctuation">:</span>/etc/vault.d# cat /etc/vault.d/vault.hcl</span><br><span class="line">storage <span class="string">&quot;raft&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  path    = <span class="string">&quot;./vault/data&quot;</span></span><br><span class="line">  node_id = <span class="string">&quot;node1&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">listener <span class="string">&quot;tcp&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  address     = <span class="string">&quot;192.168.64.3:8200&quot;</span></span><br><span class="line">  cluster_address = <span class="string">&quot;192.168.64.3:8201&quot;</span></span><br><span class="line">  tls_disable = <span class="string">&quot;true&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">disable_mlock = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">api_addr = <span class="string">&quot;http://192.168.64.3:8200&quot;</span></span><br><span class="line">cluster_addr = <span class="string">&quot;http://192.168.64.3:8201&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//----------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//node2</span></span><br><span class="line"><span class="punctuation">[</span>root@centos7 vault.d<span class="punctuation">]</span># cat /etc/vault.d/vault.hcl</span><br><span class="line">storage <span class="string">&quot;raft&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  path    = <span class="string">&quot;./vault/data&quot;</span></span><br><span class="line">  node_id = <span class="string">&quot;node2&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">listener <span class="string">&quot;tcp&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  address     = <span class="string">&quot;192.168.64.4:8200&quot;</span></span><br><span class="line">  tls_disable = <span class="string">&quot;true&quot;</span></span><br><span class="line">  cluster_address = <span class="string">&quot;192.168.64.4:8201&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">disable_mlock = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">api_addr = <span class="string">&quot;http://192.168.64.4:8200&quot;</span></span><br><span class="line">cluster_addr = <span class="string">&quot;http://192.168.64.4:8201&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ----------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// node-3</span></span><br><span class="line">root@ubuntu20<span class="punctuation">:</span>/etc/vault.d# cat /etc/vault.d/vault.hcl</span><br><span class="line">storage <span class="string">&quot;raft&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  path    = <span class="string">&quot;./vault/data&quot;</span></span><br><span class="line">  node_id = <span class="string">&quot;node3&quot;</span></span><br><span class="line"></span><br><span class="line">  retry_join <span class="punctuation">&#123;</span></span><br><span class="line">    leader_api_addr = <span class="string">&quot;http://192.168.64.3:8200&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">  retry_join <span class="punctuation">&#123;</span></span><br><span class="line">    leader_api_addr = <span class="string">&quot;http://192.168.64.4:8200&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">listener <span class="string">&quot;tcp&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  address     = <span class="string">&quot;192.168.64.5:8200&quot;</span></span><br><span class="line">  cluster_address = <span class="string">&quot;192.168.64.5:8201&quot;</span></span><br><span class="line">  tls_disable = <span class="string">&quot;true&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">api_addr = <span class="string">&quot;http://192.168.64.5:8200&quot;</span></span><br><span class="line">cluster_addr = <span class="string">&quot;http://192.168.64.5:8201&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="init"><a href="#init" class="headerlink" title="init"></a>init</h2><p>配置完成后就是启动 vault， 并且初始化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">systemctl  start vault</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选一台作为 master 开始初始化，这里我选的 node-1</span></span><br><span class="line"><span class="comment"># export 设置 API 地址非常重要</span></span><br><span class="line"><span class="built_in">export</span> VAULT_ADDR=<span class="string">&#x27;http://192.168.64.3:8200&#x27;</span></span><br><span class="line"></span><br><span class="line">root@ubuntu18-108:/etc/vault.d<span class="comment"># vault operator init</span></span><br><span class="line">Unseal Key 1: key1</span><br><span class="line">Unseal Key 2: key2</span><br><span class="line">Unseal Key 3: key3</span><br><span class="line">Unseal Key 4: key4</span><br><span class="line">Unseal Key 5: key5</span><br><span class="line"></span><br><span class="line">Initial Root Token: token</span><br><span class="line"></span><br><span class="line">Vault initialized with 5 key shares and a key threshold of 3. Please securely</span><br><span class="line">distribute the key shares printed above. When the Vault is re-sealed,</span><br><span class="line">restarted, or stopped, you must supply at least 3 of these keys to unseal it</span><br><span class="line">before it can start servicing requests.</span><br><span class="line"></span><br><span class="line">Vault does not store the generated master key. Without at least 3 key to</span><br><span class="line">reconstruct the master key, Vault will remain permanently sealed!</span><br><span class="line"></span><br><span class="line">It is possible to generate new unseal keys, provided you have a quorum of</span><br><span class="line">existing unseal keys shares. See <span class="string">&quot;vault operator rekey&quot;</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="comment"># 以上的初始化产生的 key 和 token 非常重要，一定要妥善安全保管</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果你嫌测试环境 太多 key 麻烦，可以修改参数，产生一个 key</span></span><br><span class="line">vault operator init -key-shares=1 -key-threshold=1</span><br><span class="line"></span><br><span class="line">  -key-shares=&lt;int&gt;</span><br><span class="line">      Number of key shares to <span class="built_in">split</span> the generated master key into. This is</span><br><span class="line">      the number of <span class="string">&quot;unseal keys&quot;</span> to generate. This is aliased as <span class="string">&quot;-n&quot;</span>. The</span><br><span class="line">      default is 5.</span><br><span class="line"></span><br><span class="line">  -key-threshold=&lt;int&gt;</span><br><span class="line">      Number of key shares required to reconstruct the master key. This must</span><br><span class="line">      be less than or equal to -key-shares. This is aliased as <span class="string">&quot;-t&quot;</span>. The</span><br><span class="line">      default is 3.</span><br></pre></td></tr></table></figure>
+
+<h2 id="unseal"><a href="#unseal" class="headerlink" title="unseal"></a>unseal</h2><p>这个时候只是初始化启动了 vault， 还需要我们用 key unseal to reconstruct the master key</p>
+<h3 id="node-1"><a href="#node-1" class="headerlink" title="node-1"></a>node-1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:/etc/vault.d<span class="comment"># vault operator unseal</span></span><br><span class="line">Unseal Key (will be hidden):</span><br><span class="line">Key                Value</span><br><span class="line">---                -----</span><br><span class="line">Seal Type          shamir</span><br><span class="line">Initialized        <span class="literal">true</span></span><br><span class="line">Sealed             <span class="literal">true</span></span><br><span class="line">Total Shares       5</span><br><span class="line">Threshold          3</span><br><span class="line">Unseal Progress    1/3</span><br><span class="line">Unseal Nonce       8950ac41-69ae-2a96-00db-610739dcbeee</span><br><span class="line">Version            1.7.1</span><br><span class="line">Storage Type       raft</span><br><span class="line">HA Enabled         <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">root@ubuntu18-108:/etc/vault.d<span class="comment"># vault operator unseal</span></span><br><span class="line">Unseal Key (will be hidden):</span><br><span class="line">Key                Value</span><br><span class="line">---                -----</span><br><span class="line">Seal Type          shamir</span><br><span class="line">Initialized        <span class="literal">true</span></span><br><span class="line">Sealed             <span class="literal">true</span></span><br><span class="line">Total Shares       5</span><br><span class="line">Threshold          3</span><br><span class="line">Unseal Progress    2/3</span><br><span class="line">Unseal Nonce       8950ac41-69ae-2a96-00db-610739dcbeee</span><br><span class="line">Version            1.7.1</span><br><span class="line">Storage Type       raft</span><br><span class="line">HA Enabled         <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">root@ubuntu18-108:/etc/vault.d<span class="comment"># vault operator unseal</span></span><br><span class="line">Unseal Key (will be hidden):</span><br><span class="line">Key                     Value</span><br><span class="line">---                     -----</span><br><span class="line">Seal Type               shamir</span><br><span class="line">Initialized             <span class="literal">true</span></span><br><span class="line">Sealed                  <span class="literal">false</span></span><br><span class="line">Total Shares            5</span><br><span class="line">Threshold               3</span><br><span class="line">Version                 1.7.1</span><br><span class="line">Storage Type            raft</span><br><span class="line">Cluster Name            vault-cluster-0618ae06</span><br><span class="line">Cluster ID              feca826b-0ffd-838f-412d-0c6687feee60</span><br><span class="line">HA Enabled              <span class="literal">true</span></span><br><span class="line">HA Cluster              n/a</span><br><span class="line">HA Mode                 standby</span><br><span class="line">Active Node Address     &lt;none&gt;</span><br><span class="line">Raft Committed Index    24</span><br><span class="line">Raft Applied Index      24</span><br></pre></td></tr></table></figure>
+<p>这个时候 vault 才算是真正的启动，开始提供服务了，我们可以来验证一下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># login</span></span><br><span class="line">root@ubuntu18-108:/etc/vault.d<span class="comment"># vault login token-for-login</span></span><br><span class="line">Success! You are now authenticated. The token information displayed below</span><br><span class="line">is already stored <span class="keyword">in</span> the token helper. You <span class="keyword">do</span> NOT need to run <span class="string">&quot;vault login&quot;</span></span><br><span class="line">again. Future Vault requests will automatically use this token.</span><br><span class="line"></span><br><span class="line">Key                  Value</span><br><span class="line">---                  -----</span><br><span class="line">token                token-for-login</span><br><span class="line">token_accessor       xxxxxxxxxxx</span><br><span class="line">token_duration       ∞</span><br><span class="line">token_renewable      <span class="literal">false</span></span><br><span class="line">token_policies       [<span class="string">&quot;root&quot;</span>]</span><br><span class="line">identity_policies    []</span><br><span class="line">policies             [<span class="string">&quot;root&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># check nodes, 我这里设置好之后，如果此时你只安装好 node-1 列表只有一个</span></span><br><span class="line">root@ubuntu18-108:/etc/vault.d<span class="comment"># vault operator raft list-peers</span></span><br><span class="line">Node     Address              State       Voter</span><br><span class="line">----     -------              -----       -----</span><br><span class="line">node1    192.168.64.3:8201    leader      <span class="literal">true</span></span><br><span class="line">node2    192.168.64.4:8201    follower    <span class="literal">false</span></span><br><span class="line">node3    192.168.64.5:8201    follower    <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h3 id="node-2"><a href="#node-2" class="headerlink" title="node-2"></a>node-2</h3><p>follower 节点稍微多一步，需要先加入 cluster<br><code>vault operator raft join http://192.168.64.3:8200</code></p>
+<p>为了方便，避免重复，可以采用 shell 脚本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vim init.sh</span><br><span class="line"><span class="built_in">chmod</span> 755 init.sh</span><br><span class="line"><span class="built_in">export</span> VAULT_ADDR=<span class="string">&#x27;http://192.168.64.4:8200&#x27;</span></span><br><span class="line">vault operator raft <span class="built_in">join</span> http://192.168.64.3:8200</span><br><span class="line">vault operator unseal key1</span><br><span class="line">vault operator unseal key3</span><br><span class="line">vault operator unseal key5</span><br><span class="line">vault login token-for-login</span><br><span class="line"></span><br><span class="line"><span class="comment">#-----------------</span></span><br><span class="line">bash init.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="node-3"><a href="#node-3" class="headerlink" title="node-3"></a>node-3</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> VAULT_ADDR=<span class="string">&#x27;http://192.168.64.5:8200&#x27;</span> \</span><br><span class="line">&amp;&amp; vault operator raft <span class="built_in">join</span> http://192.168.64.3:8200 \</span><br><span class="line">&amp;&amp; vault operator unseal key1 \</span><br><span class="line">&amp;&amp; vault operator unseal key3 \</span><br><span class="line">&amp;&amp; vault operator unseal key5 \</span><br><span class="line">vault login token-for-login</span><br></pre></td></tr></table></figure>
+
+<h3 id="unseal-script"><a href="#unseal-script" class="headerlink" title="unseal-script"></a>unseal-script</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">feiyang-vault() &#123;</span><br><span class="line">for i in 1 2 3</span><br><span class="line">do</span><br><span class="line">   ssh win$i sudo bash /etc/vault.d/feiyang.sh</span><br><span class="line">done</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Enable-Audit-Logging"><a href="#Enable-Audit-Logging" class="headerlink" title="Enable Audit Logging"></a>Enable Audit Logging</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /var/log/vault</span><br><span class="line"></span><br><span class="line"><span class="built_in">chown</span> -R vault:vault /var/log/vault</span><br><span class="line"></span><br><span class="line">vault audit <span class="built_in">enable</span> file file_path=/var/log/vault/vault-audit.log</span><br><span class="line">Success! Enabled the file audit device at: file/</span><br><span class="line"></span><br><span class="line"><span class="comment"># check the log</span></span><br><span class="line">root@ubuntu18-108:/var/log/vault<span class="comment"># cat /var/log/vault/vault-audit.log | jq</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;time&quot;</span>: <span class="string">&quot;2021-06-10T12:55:56.251461725Z&quot;</span>,</span><br><span class="line">  <span class="string">&quot;type&quot;</span>: <span class="string">&quot;request&quot;</span>,</span><br><span class="line">  <span class="string">&quot;auth&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;token_type&quot;</span>: <span class="string">&quot;default&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;request&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="string">&quot;facaae9e-b62a-0a5e-e486-3737252ca003&quot;</span>,</span><br><span class="line">    <span class="string">&quot;operation&quot;</span>: <span class="string">&quot;update&quot;</span>,</span><br><span class="line">    <span class="string">&quot;namespace&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;id&quot;</span>: <span class="string">&quot;root&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;path&quot;</span>: <span class="string">&quot;sys/audit/test&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;time&quot;</span>: <span class="string">&quot;2021-06-10T12:55:56.255890481Z&quot;</span>,</span><br><span class="line">  <span class="string">&quot;type&quot;</span>: <span class="string">&quot;response&quot;</span>,</span><br><span class="line">  <span class="string">&quot;auth&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;client_token&quot;</span>: <span class="string">&quot;hmac-sha256:4ee53ef44a84288b7e08f4cb5d3cee7a8169f953e18fe0dd5074aaac477000b8&quot;</span>,</span><br><span class="line">    <span class="string">&quot;accessor&quot;</span>: <span class="string">&quot;hmac-sha256:1632d2bc5c5b4bf88ed7c2fab22f9932cf31470a95f111bc22fbe34737d56322&quot;</span>,</span><br><span class="line">    <span class="string">&quot;display_name&quot;</span>: <span class="string">&quot;root&quot;</span>,</span><br><span class="line">    <span class="string">&quot;policies&quot;</span>: [</span><br><span class="line">      <span class="string">&quot;root&quot;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&quot;token_policies&quot;</span>: [</span><br><span class="line">      <span class="string">&quot;root&quot;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&quot;token_type&quot;</span>: <span class="string">&quot;service&quot;</span>,</span><br><span class="line">    <span class="string">&quot;token_issue_time&quot;</span>: <span class="string">&quot;2021-05-09T20:42:59+08:00&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;request&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="string">&quot;8b29ec93-b89d-feb9-56e0-47bdb7dea4f0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;operation&quot;</span>: <span class="string">&quot;update&quot;</span>,</span><br><span class="line">    <span class="string">&quot;mount_type&quot;</span>: <span class="string">&quot;system&quot;</span>,</span><br><span class="line">    <span class="string">&quot;client_token&quot;</span>: <span class="string">&quot;hmac-sha256:4ee53ef44a84288b7e08f4cb5d3cee7a8169f953e18fe0dd5074aaac477000b8&quot;</span>,</span><br><span class="line">    <span class="string">&quot;client_token_accessor&quot;</span>: <span class="string">&quot;hmac-sha256:1632d2bc5c5b4bf88ed7c2fab22f9932cf31470a95f111bc22fbe34737d56322&quot;</span>,</span><br><span class="line">    <span class="string">&quot;namespace&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;id&quot;</span>: <span class="string">&quot;root&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;path&quot;</span>: <span class="string">&quot;sys/audit/file&quot;</span>,</span><br><span class="line">    <span class="string">&quot;data&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;description&quot;</span>: <span class="string">&quot;hmac-sha256:9a3dedcf661ac628346b8b4787ff2e1b84e506aa614c359cf8e6500c834aca3d&quot;</span>,</span><br><span class="line">      <span class="string">&quot;local&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">      <span class="string">&quot;options&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;file_path&quot;</span>: <span class="string">&quot;hmac-sha256:1a445f97febdb58c62eee3997a99dac448c7dd32674dda94f8c1366d18c530e5&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;type&quot;</span>: <span class="string">&quot;hmac-sha256:29023c2cba01f448e1052da9d286f10d600f2ed99aaedd46dd98122078faa77a&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;remote_address&quot;</span>: <span class="string">&quot;192.168.64.3&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;response&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;mount_type&quot;</span>: <span class="string">&quot;system&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Rekeying"><a href="#Rekeying" class="headerlink" title="Rekeying"></a>Rekeying</h2><p>如果需要重新生成 unseal  key 的话，可以用 rekey 命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vault operator rekey -init -key-shares=3 -key-threshold=2 \</span><br><span class="line">    -format=json | jq -r <span class="string">&quot;.nonce&quot;</span> &gt; nonce.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 前提是第一次 init 的结果存在 key.txt</span></span><br><span class="line">vault operator rekey -nonce=$(<span class="built_in">cat</span> nonce.txt) \</span><br><span class="line">    $(grep <span class="string">&#x27;Key 1:&#x27;</span> key.txt | awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">vault operator rekey -nonce=$(<span class="built_in">cat</span> nonce.txt) \</span><br><span class="line">    $(grep <span class="string">&#x27;Key 2:&#x27;</span> key.txt | awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">vault operator rekey -nonce=$(<span class="built_in">cat</span> nonce.txt) \</span><br><span class="line">    $(grep <span class="string">&#x27;Key 3:&#x27;</span> key.txt | awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="Rotating"><a href="#Rotating" class="headerlink" title="Rotating"></a>Rotating</h2><p>Rotating the Encryption Key 就非常的简单了，只需要一行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vault operator rotate</span><br></pre></td></tr></table></figure>
+
+<h1 id="nginx-代理转发"><a href="#nginx-代理转发" class="headerlink" title="nginx 代理转发"></a>nginx 代理转发</h1><p>因为我们的 vault 集群是监听在内网上的 192.168.64.0&#x2F;24，而我家里局域网的网段是 192.168.0.0&#x2F;24，因此要设置代理转发一下。</p>
+<ul>
+<li>首先安装 Nginx<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我已经关闭了防火墙的</span></span><br></pre></td></tr></table></figure></li>
+<li>设置代理转发，配置文件如下<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/conf.d/vault.conf</span><br><span class="line"></span><br><span class="line">upstream vault &#123;</span><br><span class="line">    server 192.168.64.3:8200;</span><br><span class="line">    keepalive 15;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line"></span><br><span class="line">    listen 192.168.1.108:8200;</span><br><span class="line">    server_name 192.168.1.108;</span><br><span class="line">    access_log /var/log/nginx/vault.access.log;</span><br><span class="line">    error_log /var/log/nginx/vault.error.log;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">    </span><br><span class="line">        proxy_http_version 1.1;</span><br><span class="line">        proxy_buffer_size 64k;</span><br><span class="line">        proxy_buffers   32 32k;</span><br><span class="line">        proxy_busy_buffers_size 128k;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP       <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For  <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        proxy_set_header Connection <span class="string">&quot;Keep-Alive&quot;</span>;</span><br><span class="line">        proxy_set_header Proxy-Connection <span class="string">&quot;Keep-Alive&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        proxy_pass    http://vault;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">systemctl start nginx</span><br><span class="line">systemctl <span class="built_in">enable</span> nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记得删除 default 的 80 服务，以免和其他服务冲突，这里我这台机器 80 端口已经被 gitlab 占用了</span></span><br><span class="line"><span class="built_in">rm</span> -f /etc/nginx/sites-enabled/default</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>现在我们就可以登录 vault UI 界面了  <a target="_blank" rel="noopener" href="http://192.168.1.108:8200/ui/vault/auth?with=token">http://192.168.1.108:8200/ui/vault/auth?with=token</a></p>
+<h2 id="enable-nginx-failed"><a href="#enable-nginx-failed" class="headerlink" title="enable nginx failed"></a>enable nginx failed</h2><p>我们通过 <code>systemctl enable nginx</code>  已经设置了开机自启动 Nginx， 但是实际环境中缺是失败了。我们检查日志发现了错误</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:/home/feiyang<span class="comment"># systemctl status nginx</span></span><br><span class="line">● nginx.service - A high performance web server and a reverse proxy server</span><br><span class="line">   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)</span><br><span class="line">   Active: failed (Result: exit-code) since Sat 2021-06-12 09:45:56 +08; 1min 12s ago</span><br><span class="line">     Docs: man:nginx(8)</span><br><span class="line">  Process: 1365 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=1/FAILURE)</span><br><span class="line"></span><br><span class="line">Jun 12 09:45:55 ubuntu18-108 systemd[1]: Starting A high performance web server and a reverse proxy server...</span><br><span class="line">Jun 12 09:45:56 ubuntu18-108 nginx[1365]: nginx: [emerg] <span class="built_in">bind</span>() to 192.168.1.108:8200 failed (99: Cannot assign requested address)</span><br><span class="line">Jun 12 09:45:56 ubuntu18-108 nginx[1365]: nginx: configuration file /etc/nginx/nginx.conf <span class="built_in">test</span> failed</span><br><span class="line">Jun 12 09:45:56 ubuntu18-108 systemd[1]: nginx.service: Control process exited, code=exited status=1</span><br><span class="line">Jun 12 09:45:56 ubuntu18-108 systemd[1]: nginx.service: Failed with result <span class="string">&#x27;exit-code&#x27;</span>.</span><br><span class="line">Jun 12 09:45:56 ubuntu18-108 systemd[1]: Failed to start A high performance web server and a reverse proxy server.</span><br><span class="line"></span><br><span class="line"><span class="comment"># journalctl check log</span></span><br><span class="line">root@ubuntu18-108:/home/feiyang<span class="comment"># journalctl -u nginx</span></span><br><span class="line">-- Reboot --</span><br><span class="line">Jun 12 08:42:37 ubuntu18-108 systemd[1]: Starting A high performance web server and a reverse proxy server...</span><br><span class="line">Jun 12 08:42:37 ubuntu18-108 nginx[1348]: nginx: [emerg] <span class="built_in">bind</span>() to 192.168.1.108:8200 failed (99: Cannot assign requested address)</span><br><span class="line">Jun 12 08:42:37 ubuntu18-108 nginx[1348]: nginx: configuration file /etc/nginx/nginx.conf <span class="built_in">test</span> failed</span><br><span class="line">Jun 12 08:42:37 ubuntu18-108 systemd[1]: nginx.service: Control process exited, code=exited status=1</span><br><span class="line">Jun 12 08:42:37 ubuntu18-108 systemd[1]: nginx.service: Failed with result <span class="string">&#x27;exit-code&#x27;</span>.</span><br><span class="line">Jun 12 08:42:37 ubuntu18-108 systemd[1]: Failed to start A high performance web server and a reverse proxy server.</span><br></pre></td></tr></table></figure>
+<p>从日志中，我们可以看出 Nginx 失败的原因是， 没有找到那个 IP 192.168.1.108 , 因为我们这个是双网卡的虚拟机，默认的 primary network interface 是192.168.64.3 , secondary network interface 是 192.168.1.108 , 在此我推测是因为当 Nginx 启动的时候， 第二张网卡还没有准备好。</p>
+<p>这个时候，我们可以采用 <a target="_blank" rel="noopener" href="https://fedoramagazine.org/systemd-unit-dependencies-and-order/">systemd: Unit dependencies and order</a> 来定义 service 之间的依赖项，启动相关顺序。我们先检查一下 Nginx 的 systemd config</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:~<span class="comment"># cat /lib/systemd/system/nginx.service</span></span><br><span class="line"><span class="comment"># Stop dance for nginx</span></span><br><span class="line"><span class="comment"># =======================</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># ExecStop sends SIGSTOP (graceful stop) to the nginx process.</span></span><br><span class="line"><span class="comment"># If, after 5s (--retry QUIT/5) nginx is still running, systemd takes control</span></span><br><span class="line"><span class="comment"># and sends SIGTERM (fast shutdown) to the main process.</span></span><br><span class="line"><span class="comment"># After another 5s (TimeoutStopSec=5), and if nginx is alive, systemd sends</span></span><br><span class="line"><span class="comment"># SIGKILL to all the remaining processes in the process group (KillMode=mixed).</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># nginx signals reference doc:</span></span><br><span class="line"><span class="comment"># http://nginx.org/en/docs/control.html</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=A high performance web server and a reverse proxy server</span><br><span class="line">Documentation=man:nginx(8)</span><br><span class="line">After=network.target <span class="comment"># 启动依赖，问题就在这里</span></span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">PIDFile=/run/nginx.pid</span><br><span class="line">ExecStartPre=/usr/sbin/nginx -t -q -g <span class="string">&#x27;daemon on; master_process on;&#x27;</span></span><br><span class="line">ExecStart=/usr/sbin/nginx -g <span class="string">&#x27;daemon on; master_process on;&#x27;</span></span><br><span class="line">ExecReload=/usr/sbin/nginx -g <span class="string">&#x27;daemon on; master_process on;&#x27;</span> -s reload</span><br><span class="line">ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid</span><br><span class="line">TimeoutStopSec=5</span><br><span class="line">KillMode=mixed</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>从这一行看出， Nginx 是在 <code>After=network.target</code> 之后启动的，但结果却是失败。我们对比了 docker service 的 systemd config 发现 docker 是在 <code>After=network-online.target</code> 后启动的， 我们尝试将 Nginx systemd 配置文件修改为 <code>network-online.target</code> ，终于可以成功开机自启动。</p>
+<h1 id="Auth-Methods"><a href="#Auth-Methods" class="headerlink" title="Auth Methods"></a>Auth Methods</h1><p>认证方式有很多种。 <a target="_blank" rel="noopener" href="https://www.vaultproject.io/docs/auth">https://www.vaultproject.io/docs/auth</a><br>Each auth method serves a different purpose, and some auth methods are better suited for machine authentication rather than used by human users. </p>
+<ul>
+<li><code>machine auth</code> methods include AppRole,</li>
+<li><code>Cloud-based auth</code> methods, tokens, TLS, Kubernetes, and Radius. </li>
+<li><code>human auth</code> methods include Okta, LDAP, GitHub, OIDC, and userpass.</li>
+</ul>
+<h2 id="userpass"><a href="#userpass" class="headerlink" title="userpass"></a>userpass</h2><p>创建一个 user 登录，这样就不需要每次都是 root token 了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 本地编辑一个 sudo policy，保存</span></span><br><span class="line">vim sudo.hcl</span><br><span class="line"></span><br><span class="line">path <span class="string">&quot;*&quot;</span> &#123;</span><br><span class="line">  policy = <span class="string">&quot;sudo&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个名为 sudo 的 policy</span></span><br><span class="line">vault policy write sudo sudo.hcl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 user </span></span><br><span class="line">vault auth <span class="built_in">enable</span> userpass</span><br><span class="line"></span><br><span class="line">vault write auth/userpass/users/feiyang password=<span class="string">&quot;password&quot;</span> policies=<span class="string">&quot;sudo&quot;</span></span><br></pre></td></tr></table></figure>
+<p>这样就可以用 feiyang 和 password 登录了</p>
+<h2 id="AppRole"><a href="#AppRole" class="headerlink" title="AppRole"></a>AppRole</h2><p>AppRole 多用于机器上</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上面 userpass 我们已经创建了 sudo policy</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 my-role</span></span><br><span class="line">vault write auth/approle/role/my-role \</span><br><span class="line">    secret_id_ttl=10m \</span><br><span class="line">    token_ttl=20m \</span><br><span class="line">    token_max_ttl=30m \</span><br><span class="line">    token_policies=[<span class="string">&quot;sudo&quot;</span>] \</span><br><span class="line">    period=0 \</span><br><span class="line">    bind_secret_id=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取 role list</span></span><br><span class="line">vault list /auth/approle/role</span><br><span class="line">Keys</span><br><span class="line">----</span><br><span class="line">my-role</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取 role id</span></span><br><span class="line">vault <span class="built_in">read</span> auth/approle/role/my-role/role-id</span><br><span class="line">Key        Value</span><br><span class="line">---        -----</span><br><span class="line">role_id    8511d740-3e3f-76d4-6084-df02b149e6fb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取 role secret</span></span><br><span class="line"> vault write -f auth/approle/role/my-role/secret-id</span><br><span class="line">Key                   Value</span><br><span class="line">---                   -----</span><br><span class="line">secret_id             3ea8ee03-9239-7c64-ca24-2194d7a10b8d</span><br><span class="line">secret_id_accessor    11d7ddcf-08ea-4e5d-921b-59d9608119ef</span><br><span class="line">secret_id_ttl         10m</span><br></pre></td></tr></table></figure>
+<p>到此，我们有了 role_id 和 secret_id 就可以用于机器上访问 vault 了</p>
+<h1 id="HTTP-API"><a href="#HTTP-API" class="headerlink" title="HTTP API"></a>HTTP API</h1><p>首先为了操作方便，我们需要保持 token 到环境变量 $VAULT_TOKEN</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> VAULT_TOKEN=<span class="string">&quot;s.Ga5jyNq6kNfRMVQk2LY1j9iu&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># HTTP API enable approle</span></span><br><span class="line">curl \</span><br><span class="line">    --header <span class="string">&quot;X-Vault-Token: <span class="variable">$VAULT_TOKEN</span>&quot;</span> \</span><br><span class="line">    --request POST \</span><br><span class="line">    --data <span class="string">&#x27;&#123;&quot;type&quot;: &quot;approle&quot;&#125;&#x27;</span> \</span><br><span class="line">    http://127.0.0.1:8200/v1/sys/auth/approle</span><br><span class="line"></span><br><span class="line"><span class="comment"># create my-policy</span></span><br><span class="line">curl \</span><br><span class="line">    --header <span class="string">&quot;X-Vault-Token: <span class="variable">$VAULT_TOKEN</span>&quot;</span> \</span><br><span class="line">    --request PUT \</span><br><span class="line">    --data <span class="string">&#x27;&#123;&quot;policy&quot;:&quot;# Dev servers have version 2 of KV secrets engine mounted by default, so will\n# need these paths to grant permissions:\npath \&quot;secret/data/*\&quot; &#123;\n  capabilities = [\&quot;create\&quot;, \&quot;update\&quot;]\n&#125;\n\npath \&quot;secret/data/foo\&quot; &#123;\n  capabilities = [\&quot;read\&quot;]\n&#125;\n&quot;&#125;&#x27;</span> \</span><br><span class="line">    http://127.0.0.1:8200/v1/sys/policies/acl/my-policy</span><br><span class="line"></span><br><span class="line"><span class="comment"># enable KV v2 secrets engine at secret/ using API</span></span><br><span class="line">curl \</span><br><span class="line">    --header <span class="string">&quot;X-Vault-Token: <span class="variable">$VAULT_TOKEN</span>&quot;</span> \</span><br><span class="line">    --request POST \</span><br><span class="line">    --data <span class="string">&#x27;&#123; &quot;type&quot;:&quot;kv-v2&quot; &#125;&#x27;</span> \</span><br><span class="line">    http://127.0.0.1:8200/v1/sys/mounts/secret</span><br><span class="line"></span><br><span class="line"><span class="comment"># create my-role</span></span><br><span class="line">curl \</span><br><span class="line">    --header <span class="string">&quot;X-Vault-Token: <span class="variable">$VAULT_TOKEN</span>&quot;</span> \</span><br><span class="line">    --request POST \</span><br><span class="line">    --data <span class="string">&#x27;&#123;&quot;policies&quot;: [&quot;my-policy&quot;]&#125;&#x27;</span> \</span><br><span class="line">    http://127.0.0.1:8200/v1/auth/approle/role/my-role</span><br><span class="line"></span><br><span class="line"><span class="comment"># get role-id</span></span><br><span class="line">curl \</span><br><span class="line">    --header <span class="string">&quot;X-Vault-Token: <span class="variable">$VAULT_TOKEN</span>&quot;</span> \</span><br><span class="line">     http://127.0.0.1:8200/v1/auth/approle/role/my-role/role-id | jq -r <span class="string">&quot;.data&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get secret-id </span></span><br><span class="line">curl \</span><br><span class="line">    --header <span class="string">&quot;X-Vault-Token: <span class="variable">$VAULT_TOKEN</span>&quot;</span> \</span><br><span class="line">    --request POST \</span><br><span class="line">    http://127.0.0.1:8200/v1/auth/approle/role/my-role/secret-id | jq -r <span class="string">&quot;.data&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># auth with the role-id and secret-id </span></span><br><span class="line">curl --request POST \</span><br><span class="line">       --data <span class="string">&#x27;&#123;&quot;role_id&quot;: &quot;3c301960-8a02-d776-f025-c3443d513a18&quot;, &quot;secret_id&quot;: &quot;22d1e0d6-a70b-f91f-f918-a0ee8902666b&quot;&#125;&#x27;</span> \</span><br><span class="line">       http://127.0.0.1:8200/v1/auth/approle/login | jq -r <span class="string">&quot;.auth&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># set new token from my-role auth</span></span><br><span class="line"><span class="built_in">export</span> VAULT_TOKEN=<span class="string">&quot;s.p5NB4dTlsPiUU94RA5IfbzXv&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create a version 1 of secret named creds with a key password and its value set to my-long-password.</span></span><br><span class="line">curl \</span><br><span class="line">    --header <span class="string">&quot;X-Vault-Token: <span class="variable">$VAULT_TOKEN</span>&quot;</span> \</span><br><span class="line">    --request POST \</span><br><span class="line">    --data <span class="string">&#x27;&#123; &quot;data&quot;: &#123;&quot;password&quot;: &quot;my-long-password&quot;&#125; &#125;&#x27;</span> \</span><br><span class="line">    http://127.0.0.1:8200/v1/secret/data/creds | jq -r <span class="string">&quot;.data&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># You can stop the server and unset the VAULT_TOKEN environment variable.</span></span><br><span class="line"><span class="built_in">unset</span> VAULT_TOKEN</span><br></pre></td></tr></table></figure>
+<h1 id="CLI"><a href="#CLI" class="headerlink" title="CLI"></a>CLI</h1><p>Vault Commands <a target="_blank" rel="noopener" href="https://www.vaultproject.io/docs/commands">CLI</a> 除了 API, CLI 也是我常用的</p>
+<ul>
+<li>自动补全 Autocompletion<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vault -autocomplete-install</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><ul>
+<li>每次重启服务，都需要 unseal </li>
+<li>如果需要重新初始化，需要先删除 raft 存储的数据， <code>rm -rf /vault/data/*</code></li>
+<li>enable nginx failed 请看上面 3.1 章节</li>
+</ul>
+<h1 id="vault-考试认证"><a href="#vault-考试认证" class="headerlink" title="vault 考试认证"></a>vault 考试认证</h1><p><a target="_blank" rel="noopener" href="https://www.hashicorp.com/certification/vault-associate">HashiCorp Certified: Vault Associate</a></p>
+<p>我买了这个练习题 <a target="_blank" rel="noopener" href="https://www.udemy.com/course/hashicorp-certified-vault-associate-practice-exam/">HashiCorp Certified: Vault Associate Practice Exam 2021</a> ，还是不错的。 虽然不是原题，但对考试，还是非常有帮助的。<br>最终通过了考试 <a target="_blank" rel="noopener" href="https://www.credly.com/badges/27d38b38-2b08-4023-9932-d7567a0e0d11/public_url">HashiCorp Certified: Vault Associate</a></p>
+<h1 id="vault-agent"><a href="#vault-agent" class="headerlink" title="vault-agent"></a>vault-agent</h1><p>安装都是一样的，<a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/vault/getting-started-install">Install Vault</a> , 只是启动的时候用 agent 模式</p>
+<p>我们需要做的就是，创建 vault-agent.service 以便于 systemd 托管控制</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">root@ubuntu18-119:/etc/vault.d#</span> <span class="string">cat</span>  <span class="string">/lib/systemd/system/vault-agent.service</span></span><br><span class="line">  </span><br><span class="line">[<span class="string">Unit</span>]</span><br><span class="line"><span class="string">Description=Vault</span> <span class="string">agent</span></span><br><span class="line"><span class="string">Requires=network-online.target</span></span><br><span class="line"></span><br><span class="line">[<span class="string">Service</span>]</span><br><span class="line"><span class="string">Environment=VAULT_ADDR=http://192.168.1.108:8200</span></span><br><span class="line"><span class="string">Restart=on-failure</span></span><br><span class="line"><span class="string">ExecStart=/usr/bin/vault</span> <span class="string">agent</span> <span class="string">-log-level=info</span> <span class="string">-config=/etc/vault.d/vault-agent.conf</span></span><br><span class="line"><span class="string">User=vault</span></span><br><span class="line"><span class="string">Group=vault</span></span><br><span class="line"></span><br><span class="line">[<span class="string">Install</span>]</span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br></pre></td></tr></table></figure>
+<p>记得 reload 一下配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+
+<p>还有就是创建配置文件 </p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18<span class="number">-119</span><span class="punctuation">:</span>/etc/vault.d# cat vault-agent.conf </span><br><span class="line">        </span><br><span class="line">pid_file = <span class="string">&quot;/var/run/vault-agent/vault-agent.pid&quot;</span></span><br><span class="line"></span><br><span class="line">auto_auth <span class="punctuation">&#123;</span></span><br><span class="line">  method <span class="string">&quot;approle&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">    mount_path = <span class="string">&quot;auth/approle&quot;</span></span><br><span class="line">    config = <span class="punctuation">&#123;</span></span><br><span class="line">      role_id_file_path = <span class="string">&quot;/etc/vault.d/role_id&quot;</span></span><br><span class="line">      secret_id_file_path = <span class="string">&quot;/etc/vault.d/secret_id&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">  sink <span class="string">&quot;file&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">    config = <span class="punctuation">&#123;</span></span><br><span class="line">      path = <span class="string">&quot;/var/run/vault-agent/vault-agent.token&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">cache <span class="punctuation">&#123;</span></span><br><span class="line">  use_auto_auth_token = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line">listener <span class="string">&quot;unix&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  address = <span class="string">&quot;/var/run/vault-agent/vault-agent.socket&quot;</span></span><br><span class="line">  tls_disable = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line">listener <span class="string">&quot;tcp&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  address = <span class="string">&quot;127.0.0.1:8200&quot;</span></span><br><span class="line">  tls_disable = <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>需要创建的文件：并且保证 User&#x3D;vault Group&#x3D;vault 有读写权限这些文件</p>
+<ul>
+<li>&#x2F;var&#x2F;run&#x2F;vault-agent&#x2F;vault-agent.pid</li>
+<li>&#x2F;etc&#x2F;vault.d&#x2F;role_id</li>
+<li>&#x2F;etc&#x2F;vault.d&#x2F;secret_id</li>
+<li>&#x2F;var&#x2F;run&#x2F;vault-agent&#x2F;vault-agent.token</li>
+<li>&#x2F;var&#x2F;run&#x2F;vault-agent&#x2F;vault-agent.socket</li>
+</ul>
+<p>接下来我们就可以来测试一下，</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">systemctl start vault-agent </span><br><span class="line"></span><br><span class="line">systemctl status vault-agent</span><br><span class="line">root@ubuntu18-119:/etc/vault.d# systemctl status vault-agent</span><br><span class="line">● vault-agent.service - Vault agent</span><br><span class="line">   Loaded: loaded (/lib/systemd/system/vault-agent.service; disabled; vendor preset: enabled)</span><br><span class="line">   Active: active (running) since Tue 2021-07-13 11:51:08 +08; 2h 32min ago</span><br><span class="line"> Main PID: 51688 (vault)</span><br><span class="line">    Tasks: 8 (limit: 4631)</span><br><span class="line">   CGroup: /system.slice/vault-agent.service</span><br><span class="line">           └─51688 /usr/bin/vault agent -log-level=info -config=/etc/vault.d/vault-agent.conf</span><br><span class="line"></span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]: 2021-07-13T14:20:48.288+0800 [INFO]  auth.handler: authenticating</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]: 2021-07-13T14:20:48.294+0800 [ERROR] auth.handler: error authenticating:</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:   error=</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:   | Error making API request.</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:   |</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:   | URL: PUT http://192.168.1.108:8200/v1/auth/approle/login</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:   | Code: 400. Errors:</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:   |</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:   | * invalid secret id</span><br><span class="line">Jul 13 14:20:48 ubuntu18-119 vault[51688]:    backoff=4m2.47s</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">这是 token 过期了，最大期限应该是 token_max_ttl=30m ， 所以需要重新生成</span></span><br><span class="line">root@ubuntu18-108:~# vault write -f auth/approle/role/my-role/secret-id</span><br><span class="line">Key                   Value</span><br><span class="line">---                   -----</span><br><span class="line">secret_id             63859ef3-7906-7eff-0586-a4ebb97ab20c</span><br><span class="line">secret_id_accessor    3125d535-b357-097e-1a8d-68370f03327c</span><br><span class="line">secret_id_ttl         10m</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">把 secret_id 放入 /etc/vault.d/secret_id</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重启 vault agent</span></span><br><span class="line">systemctl restart  vault-agent</span><br><span class="line">root@ubuntu18-119:/etc/vault.d# systemctl status vault-agent</span><br><span class="line">● vault-agent.service - Vault agent</span><br><span class="line">   Loaded: loaded (/lib/systemd/system/vault-agent.service; disabled; vendor preset: enabled)</span><br><span class="line">   Active: active (running) since Tue 2021-07-13 14:25:53 +08; 1s ago</span><br><span class="line"> Main PID: 128325 (vault)</span><br><span class="line">    Tasks: 7 (limit: 4631)</span><br><span class="line">   CGroup: /system.slice/vault-agent.service</span><br><span class="line">           └─128325 /usr/bin/vault agent -log-level=info -config=/etc/vault.d/vault-agent.conf</span><br><span class="line"></span><br><span class="line">Jul 13 14:25:53 ubuntu18-119 vault[128325]: 2021-07-13T14:25:53.962+0800 [INFO]  sink.file: file sink configured: path=/var/run/vault-agent/vault-agent.token mode=-rw-r-----</span><br><span class="line">Jul 13 14:25:53 ubuntu18-119 vault[128325]: 2021-07-13T14:25:53.981+0800 [INFO]  auth.handler: starting auth handler</span><br><span class="line">Jul 13 14:25:53 ubuntu18-119 vault[128325]: 2021-07-13T14:25:53.981+0800 [INFO]  auth.handler: authenticating</span><br><span class="line">Jul 13 14:25:53 ubuntu18-119 vault[128325]: 2021-07-13T14:25:53.984+0800 [INFO]  sink.server: starting sink server</span><br><span class="line">Jul 13 14:25:53 ubuntu18-119 vault[128325]: 2021-07-13T14:25:53.984+0800 [INFO]  template.server: starting template server</span><br><span class="line">Jul 13 14:25:53 ubuntu18-119 vault[128325]: 2021-07-13T14:25:53.984+0800 [INFO]  template.server: no templates found</span><br><span class="line">Jul 13 14:25:54 ubuntu18-119 vault[128325]: 2021-07-13T14:25:54.000+0800 [INFO]  auth.handler: authentication successful, sending token to sinks</span><br><span class="line">Jul 13 14:25:54 ubuntu18-119 vault[128325]: 2021-07-13T14:25:54.000+0800 [INFO]  auth.handler: starting renewal process</span><br><span class="line">Jul 13 14:25:54 ubuntu18-119 vault[128325]: 2021-07-13T14:25:54.001+0800 [INFO]  sink.file: token written: path=/var/run/vault-agent/vault-agent.token</span><br><span class="line">Jul 13 14:25:54 ubuntu18-119 vault[128325]: 2021-07-13T14:25:54.008+0800 [INFO]  auth.handler: renewed auth token</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">test</span></span></span><br><span class="line">root@ubuntu18-119:/etc/vault.d# curl  http://127.0.0.1:8200/v1/sys/health</span><br><span class="line">&#123;&quot;initialized&quot;:true,&quot;sealed&quot;:false,&quot;standby&quot;:false,&quot;performance_standby&quot;:false,&quot;replication_performance_mode&quot;:&quot;disabled&quot;,&quot;replication_dr_mode&quot;:&quot;disabled&quot;,&quot;server_time_utc&quot;:1626158428,&quot;version&quot;:&quot;1.7.2&quot;,&quot;cluster_name&quot;:&quot;vault-cluster-0618ae06&quot;,&quot;cluster_id&quot;:&quot;feca826b-0ffd-838f-412d-0c6687feee60&quot;&#125;</span><br><span class="line"></span><br><span class="line">root@ubuntu18-119:/etc/vault.d# curl  http://127.0.0.1:8200/v1/sys/leader</span><br><span class="line">&#123;&quot;ha_enabled&quot;:true,&quot;is_self&quot;:true,&quot;active_time&quot;:&quot;2021-07-13T02:11:43.591625814Z&quot;,&quot;leader_address&quot;:&quot;http://192.168.64.3:8200&quot;,&quot;leader_cluster_address&quot;:&quot;https://192.168.64.3:8201&quot;,&quot;performance_standby&quot;:false,&quot;performance_standby_last_remote_wal&quot;:0,&quot;raft_committed_index&quot;:13017,&quot;raft_applied_index&quot;:13017&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h1>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/security/" rel="tag"># security</a>
+              <a href="/tags/hashicorp/" rel="tag"># hashicorp</a>
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/dns/" rel="prev" title="DNS">
+      <i class="fa fa-chevron-left"></i> DNS
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/consul/" rel="next" title="consul 实践">
+      consul 实践 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">安装过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#init"><span class="nav-number">2.1.</span> <span class="nav-text">init</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unseal"><span class="nav-number">2.2.</span> <span class="nav-text">unseal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#node-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">node-1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node-2"><span class="nav-number">2.2.2.</span> <span class="nav-text">node-2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node-3"><span class="nav-number">2.2.3.</span> <span class="nav-text">node-3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unseal-script"><span class="nav-number">2.2.4.</span> <span class="nav-text">unseal-script</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Enable-Audit-Logging"><span class="nav-number">2.2.5.</span> <span class="nav-text">Enable Audit Logging</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rekeying"><span class="nav-number">2.3.</span> <span class="nav-text">Rekeying</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rotating"><span class="nav-number">2.4.</span> <span class="nav-text">Rotating</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nginx-%E4%BB%A3%E7%90%86%E8%BD%AC%E5%8F%91"><span class="nav-number">3.</span> <span class="nav-text">nginx 代理转发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#enable-nginx-failed"><span class="nav-number">3.1.</span> <span class="nav-text">enable nginx failed</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Auth-Methods"><span class="nav-number">4.</span> <span class="nav-text">Auth Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#userpass"><span class="nav-number">4.1.</span> <span class="nav-text">userpass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AppRole"><span class="nav-number">4.2.</span> <span class="nav-text">AppRole</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP-API"><span class="nav-number">5.</span> <span class="nav-text">HTTP API</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CLI"><span class="nav-number">6.</span> <span class="nav-text">CLI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">7.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vault-%E8%80%83%E8%AF%95%E8%AE%A4%E8%AF%81"><span class="nav-number">8.</span> <span class="nav-text">vault 考试认证</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vault-agent"><span class="nav-number">9.</span> <span class="nav-text">vault-agent</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AA%E5%AE%8C%E5%BE%85%E7%BB%AD"><span class="nav-number">10.</span> <span class="nav-text">未完待续</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

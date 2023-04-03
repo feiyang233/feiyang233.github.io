@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="分享自己在家搭建 Linux 虚拟机的经验。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="本地虚拟机环境搭建">
+<meta property="og:url" content="http://feiyang233.club/post/vm/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="分享自己在家搭建 Linux 虚拟机的经验。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://feiyang233.club/img/vm/1.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/11.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/12.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/13.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/17.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/2.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/3.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/4.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/5.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/6.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/7.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/8.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/9.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/10.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/14.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/15.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/27.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/28.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/29.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/30.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/18.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/31.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/25.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/24.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/16.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/vm/32.png">
+<meta property="og:image" content="http://feiyang233.club/img/vm/33.png">
+<meta property="article:published_time" content="2021-05-11T22:06:06.000Z">
+<meta property="article:modified_time" content="2021-06-20T15:13:40.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="mac">
+<meta property="article:tag" content="tools">
+<meta property="article:tag" content="ansible">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://feiyang233.club/img/vm/1.jpg">
+
+<link rel="canonical" href="http://feiyang233.club/post/vm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>本地虚拟机环境搭建 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/vm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          本地虚拟机环境搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-05-12 06:06:06" itemprop="dateCreated datePublished" datetime="2021-05-12T06:06:06+08:00">2021-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-20 23:13:40" itemprop="dateModified" datetime="2021-06-20T23:13:40+08:00">2021-06-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>分享自己在家搭建 Linux 虚拟机的经验。</p>
+<span id="more"></span>
+
+<h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>在开始搭设虚拟机前，要求实验者掌握一些基础的知识。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/summary-of-network.html">计算机网络基础知识总结： IP 地址， 路由器知识，交换机知识，NAT协议，DHCP协议</a> </li>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-intro.html">Linux 基础知识</a></li>
+<li><a target="_blank" rel="noopener" href="https://wangdoc.com/ssh/">SSH 教程</a> </li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/87447426">虚拟机三种网络模式</a></li>
+</ul>
+<p>遇到问题会 Google， 百度一下的能力也是很重要的，学会抓住关键词搜索。</p>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>本文分享在家用环境搭建 Linux 虚拟机环境的过程，并且介绍几个虚拟化软件的用法。适合小白入门<br>Linux 内核的常用操作系统有： </p>
+<ul>
+<li>Ubuntu <a target="_blank" rel="noopener" href="https://ubuntu.com/">https://ubuntu.com/</a></li>
+<li>CentOS <a target="_blank" rel="noopener" href="https://www.centos.org/">https://www.centos.org/</a></li>
+</ul>
+<p>新手玩家，强烈推荐 Ubuntu 桌面版，有 UI 界面，上手难度没有那么的大。 <a target="_blank" rel="noopener" href="https://ubuntu.com/desktop">桌面版下载地址</a></p>
+<h1 id="准备过程"><a href="#准备过程" class="headerlink" title="准备过程"></a>准备过程</h1><p>不管你自己的电脑是什么操作， 首先需要你下载官方镜像到自己的电脑上。<br>访问 <a target="_blank" rel="noopener" href="https://ubuntu.com/download/desktop">https://ubuntu.com/download/desktop</a> 下载镜像， 文件名为 ubuntu-20.04.2.0-desktop-amd64.iso</p>
+<h1 id="按操作系统"><a href="#按操作系统" class="headerlink" title="按操作系统"></a>按操作系统</h1><p>日常我们家用的电脑一般就是 Windows 系统或者 macOS 苹果系统。请根据自己电脑的系统，下载相迎的虚拟化软件。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.vmware.com/asean/products/workstation-pro.html">VMware Workstation</a> 适合 Windows，适合新人，推荐</li>
+<li><a target="_blank" rel="noopener" href="https://www.vmware.com/asean/products/fusion/fusion-evaluation.html">VMware Fusion</a> 适合 mac</li>
+<li><a target="_blank" rel="noopener" href="https://www.virtualbox.org/">VirtualBox</a> 适合 mac</li>
+</ul>
+<h2 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h2><p>Windows 系统下面，推荐虚拟化软件 VMware Workstation ， <a target="_blank" rel="noopener" href="https://www.vmware.com/asean/products/workstation-pro.html">官网地址</a><br>安装的过程中，需要输入激活码， VMware Workstation <a target="_blank" rel="noopener" href="https://www.gopojie.net/2349.html">激活码网上随便搜索一下就可以用了</a></p>
+<p><img src="/img/vm/1.jpg"> </p>
+<p>在安装虚拟机之前，我们先看一下 VMware 的网络设置，打开虚拟网络编辑器<br><img src="/img/vm/11.jpg"><br><img src="/img/vm/12.jpg"><br>这里将桥接模式的网络，桥接到自己电脑的网卡，我这里是台式机，其网卡是 Intel(R) Ethernet Connection(7) I219-V ， 这里每个人的情况不同，笔记本电脑的话是 wireless 无线网卡。<br><img src="/img/vm/13.jpg"><br>同时，我们还需要注意到 VMware 创建了三种网络，他们各自的网络地址。 需要注意的是桥接模式的地址，是根据你自己的电脑所在网络的路由器设置的，一般家用路由器都是 <code>192.168.1.0/24</code> 如果是校园 WiFi， 那估计网络规模会大很多。在 windows 查看自己的网络地址， 打开命令提示符 CMD，运行 <code>ipconfig</code><br><img src="/img/vm/17.jpg"></p>
+<p>如上图所示，这里我自己的家用台式机，网络地址就是 IPv4: 192.168.1.77</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th align="right">mode</th>
+<th align="center">CIDR</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VMnet0</td>
+<td align="right">桥接</td>
+<td align="center">192.168.1.0&#x2F;24</td>
+</tr>
+<tr>
+<td>VMnet1</td>
+<td align="right">仅主机</td>
+<td align="center">192.168.230.0&#x2F;24</td>
+</tr>
+<tr>
+<td>VMnet8</td>
+<td align="right">NAT</td>
+<td align="center">192.168.64.0&#x2F;24</td>
+</tr>
+</tbody></table>
+<p>当 VMware Workstation 安装好了之后，我们就可以用 VMware Workstation 提供的快速安装功能，安装 Ubuntu 桌面版虚拟机。<br><img src="/img/vm/2.jpg"> </p>
+<p>我这里是 Ubuntu 18， 如果你下载的是最新版本 ubuntu-20.04.2.0-desktop-amd64.iso ， 选择的镜像不同<br><img src="/img/vm/3.jpg"> </p>
+<p>这里设置好虚拟机的名称，还有登录的账号和密码<br><img src="/img/vm/4.jpg"><br><img src="/img/vm/5.jpg"><br><img src="/img/vm/6.jpg"><br><img src="/img/vm/7.jpg"> </p>
+<p>输入你自己设置的账号密码，登录 Ubuntu<br><img src="/img/vm/8.jpg"></p>
+<p>这里可以安装VMware tools， 插件是为了更好使用，比如窗口的缩放，还有拖拽文件进入虚拟机等<br><img src="/img/vm/9.jpg"></p>
+<p>检查一下 Ubuntu 虚拟机的 IP 地址，因为我的虚拟机是双网卡： ens33 是 NAT 网络的地址， ens38 是桥接网络的地址<br><img src="/img/vm/10.jpg"><br>到此，你已经成功安装了虚拟机，在你探索之前，可以看一看<a href="#%E5%AD%A6%E4%BC%9A%E5%BF%AB%E7%85%A7-snapshot">快照</a> 部分，学会备份，随便折腾</p>
+<p>新手可以跳过。如果你需要双网卡，可以再额外添加一张网卡，我因为第一次初始化设置的网卡是 NAT， 第二次添加的桥接网卡，双网卡的机器一般是拿来当跳板机（堡垒机用）可以看看这篇介绍 <a target="_blank" rel="noopener" href="https://outmanzzq.github.io/2018/11/20/ssh-connect-through-springboard/">ssh 通过跳板机直连跳板机内网服务器</a><br><img src="/img/vm/14.jpg"><br><img src="/img/vm/15.jpg"></p>
+<h2 id="macOS"><a href="#macOS" class="headerlink" title="macOS"></a>macOS</h2><p>苹果系统下面，我尝试了 2 种虚拟化软件</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.virtualbox.org/">VirtualBox</a> 免费的，偶尔程序会崩溃，下图是如何新建一个 NAT 网络<br><img src="/img/vm/27.jpg"><br><img src="/img/vm/28.jpg"><br><img src="/img/vm/29.jpg"><br><img src="/img/vm/30.jpg">  </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.vmware.com/asean/products/fusion/fusion-evaluation.html">VMware Fusion</a> 付费好用。 必看<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/o4lXJzb2gXI2X2wIT4_zpw">Mac上安装VMware Fusion 12虚拟机</a><br><img src="/img/vm/18.jpg"></p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://pupuweb.com/solved-how-to-configure-additional-nat-in-vmware-fusion/">Configure Additional NAT in VMware Fusion</a></p>
+<p>VirtualBox 开源免费的，但桌面窗口的支持没有 VMware Fusion 做的好。VMware Fusion 可以在淘宝很便宜的买到序列码， 我踩坑了：好像淘宝的序列码不支持自建 NAT 网络（因为是非商业版本) non-commercial use only，很坑。 还不如这个<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/o4lXJzb2gXI2X2wIT4_zpw">公众号里面分享的三个注册码</a><br><img src="/img/vm/31.png">  </p>
+<h1 id="按网络环境"><a href="#按网络环境" class="headerlink" title="按网络环境"></a>按网络环境</h1><p>虚拟机三种网络模式, <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/87447426">这篇文章已经讲得比较详细</a>。<br>在家用练习环境中，如果选择自己的网络环境。 以下是我的一些建议</p>
+<ul>
+<li>桥接模式 Bridged：1. 要安装对外提供的服务，自己的实体机想访问虚拟机的服务。2. 只安装一台虚拟机， 新手推荐，快速省事</li>
+<li>网络地址转换模式 NAT：1. 自己的电脑安装几个虚拟机，搭建集群。 2. 虚拟机没有对外开放的服务，不需要端口转发</li>
+</ul>
+<h2 id="桥接模式-Bridged"><a href="#桥接模式-Bridged" class="headerlink" title="桥接模式 Bridged"></a>桥接模式 Bridged</h2><p><img src="/img/vm/25.png"> </p>
+<h2 id="网络地址转换模式-NAT"><a href="#网络地址转换模式-NAT" class="headerlink" title="网络地址转换模式 NAT"></a>网络地址转换模式 NAT</h2><p><img src="/img/vm/24.png"> </p>
+<p>这里我们用 mtr 命令测试一下连通性，并且看沿途经过的节点。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu20:~<span class="comment"># ip -4 a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000</span><br><span class="line">    inet 192.168.64.5/24 brd 192.168.64.255 scope global ens33</span><br><span class="line"></span><br><span class="line"><span class="comment"># -I / --interface 网卡</span></span><br><span class="line"><span class="comment"># -n 不进行域名解析，显示 IP</span></span><br><span class="line"><span class="comment"># -c 定义数据包数量</span></span><br><span class="line"><span class="comment"># -r 生成报告</span></span><br><span class="line"><span class="comment"># --tcp / -T 或者 --udp / -u 或者 -S / --sctp, 默认是 icmp</span></span><br><span class="line"><span class="comment"># --port / -P</span></span><br><span class="line"></span><br><span class="line">root@ubuntu20:~<span class="comment"># mtr -n -c 3 -r --tcp --port 80  192.168.1.108</span></span><br><span class="line">Start: 2021-05-25T11:33:27+0000</span><br><span class="line">HOST: ubuntu20                    Loss%   Snt   Last   Avg  Best  Wrst StDev</span><br><span class="line">  1.|-- 192.168.64.2               0.0%     3    0.2   0.4   0.2   0.7   0.2</span><br><span class="line">  2.|-- 192.168.1.108              0.0%     3    1.0   0.9   0.8   1.0   0.1</span><br><span class="line"></span><br><span class="line">root@ubuntu20:~<span class="comment"># mtr -n -c 3 -r  192.168.1.125 </span></span><br><span class="line">Start: 2021-05-25T11:38:34+0000</span><br><span class="line">HOST: ubuntu20                    Loss%   Snt   Last   Avg  Best  Wrst StDev</span><br><span class="line">  1.|-- 192.168.64.2               0.0%     3    0.3   0.4   0.3   0.5   0.2</span><br><span class="line">  2.|-- 192.168.1.125              0.0%     3  107.3  66.8   4.6 107.3  54.7</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="必备技能"><a href="#必备技能" class="headerlink" title="必备技能"></a>必备技能</h1><h2 id="学会快照-snapshot"><a href="#学会快照-snapshot" class="headerlink" title="学会快照 snapshot"></a>学会快照 snapshot</h2><p>快照 <a target="_blank" rel="noopener" href="https://baike.baidu.com/item/VMware%E5%BF%AB%E7%85%A7">snapshot</a> 就是虚拟机的某一时刻的状态备份。当我们在完成一个重大改变的前后，我们都应该快照。 比如在安装一个软件之前，如果我们不确定担心安装后搞崩了环境，那么我们可以快照一下。大吉大利<br><img src="/img/vm/16.jpg"></p>
+<h1 id="ansible-关机"><a href="#ansible-关机" class="headerlink" title="ansible 关机"></a>ansible 关机</h1><p>因为一共有 6 台虚拟机了，手动关机还有有点 laborious，所以用 ansible 批量关机方便。<br>如果不知道的 ansible 的小白同学，可以先看看 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-ck-need-u/p/7553186.html">Ansible系列</a> <a target="_blank" rel="noopener" href="https://wsgzao.github.io/post/ansible/">奥哥的 Ansible 学习路径</a></p>
+<p>SSH config 别名，方便记忆，快速登录。 还有跳板机的设置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">feiyang@MAC ~ % <span class="built_in">cat</span> .ssh/config </span><br><span class="line"></span><br><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host grab</span><br><span class="line">     HostName 192.168.1.119</span><br><span class="line">     User feiyang</span><br><span class="line"></span><br><span class="line">Host feiyang</span><br><span class="line">     HostName 192.168.1.120</span><br><span class="line">     User feiyang</span><br><span class="line"></span><br><span class="line">Host jingye</span><br><span class="line">     HostName 192.168.1.121</span><br><span class="line">     User feiyang</span><br><span class="line"></span><br><span class="line">Host win1</span><br><span class="line">     HostName 192.168.1.108</span><br><span class="line">     User feiyang</span><br><span class="line"></span><br><span class="line">Host win2</span><br><span class="line">     HostName 192.168.64.4</span><br><span class="line">     User jy576</span><br><span class="line">     ProxyJump win1</span><br><span class="line"></span><br><span class="line">Host win3</span><br><span class="line">     HostName 192.168.64.5</span><br><span class="line">     User feiyang</span><br><span class="line">     ProxyJump win1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/sequence_lookup.html">stride 好像只能递增，不能递减</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_error_handling.html#ignoring-failed-commands">ignore_errors</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html">如何写 hosts 文件</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html#setting-the-batch-size-with-serial">serial 控制批次</a></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># file name: hosts</span></span><br><span class="line"></span><br><span class="line">[<span class="string">all</span>]</span><br><span class="line"></span><br><span class="line">[<span class="string">ubuntu</span>]</span><br><span class="line"><span class="string">feiyang</span></span><br><span class="line"><span class="string">grab</span></span><br><span class="line"><span class="string">jingye</span></span><br><span class="line"></span><br><span class="line">[<span class="string">win</span>]</span><br><span class="line"><span class="string">win3</span></span><br><span class="line"><span class="string">win2</span></span><br><span class="line"><span class="string">win1</span> <span class="comment"># win1 是跳板机，必须最后才关机</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># file name: shutdown.yml</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">serial:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="number">5</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">1</span>        <span class="comment"># win1 是跳板机，必须最后才关机</span></span><br><span class="line">  <span class="attr">become:</span> <span class="literal">yes</span></span><br><span class="line">  <span class="attr">gather_facts:</span> <span class="literal">no</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">shutdown</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">/sbin/shutdown</span> <span class="string">-h</span> <span class="string">now</span></span><br><span class="line">    <span class="attr">ignore_errors:</span> <span class="literal">yes</span></span><br><span class="line">    <span class="attr">ignore_unreachable:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+
+<p>每次如果觉得输入 ansible-playbook 命令还是很麻烦，那就用 alias ，真是懒人促进发展，哈哈哈</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">alias</span> feiyang-shutdown=<span class="string">&#x27;ansible-playbook -i /Users/yang.fei/ansible/hosts /Users/yang.fei/ansible/shutdown.yml&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="打通任督二脉"><a href="#打通任督二脉" class="headerlink" title="打通任督二脉"></a>打通任督二脉</h1><p>从上面的家庭网络架构图得知，我们有两个网络：</p>
+<ul>
+<li>192.168.1.0&#x2F;24   家庭路由器网络</li>
+<li>192.168.64.0&#x2F;24  WIN10 台式机上，Vmware 创建的虚拟 NAT 网络</li>
+</ul>
+<p>接下来，我们要做的就是，打通两个网络。Ubuntu18.04 双网卡实现转发，相当于扮演了一个路由器的角色。先来看一眼架构图，今天的主角就是身负<code>双武魂</code>（斗罗大陆看多了，哈哈）双网卡的 <code>ubuntu18-108</code> , 它的两个网卡 Network interface controller 上的 IP 分别是 <code>ens33</code> 网卡是 <code>192.168.64.3</code> and <code>ens38</code> 网卡是 <code>192.168.1.108</code> 网卡名称和 IP 地址非常重要，请牢记，不要混淆了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:/home/feiyang<span class="comment"># ip -4 a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000</span><br><span class="line">    inet 192.168.64.3/24 brd 192.168.64.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">3: ens38: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000</span><br><span class="line">    inet 192.168.1.108/24 brd 192.168.1.255 scope global noprefixroute ens38</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/vm/32.png"> </p>
+<h2 id="NAT-Server"><a href="#NAT-Server" class="headerlink" title="NAT Server"></a>NAT Server</h2><p>其实我的另外一篇 blog 有介绍 <a href="https://feiyang233.club/post/network/#%E8%AE%BE%E7%BD%AE-NAT-server">NAT server 设置</a>，但这次实验，我们采用的是临时命令行操作，因此有一点不同。在临时命令行后，我们也补充了持久化的文档链接，亲测有效<br>参考了：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/4/html/security_guide/s1-firewall-ipt-fwd">FORWARD AND NAT RULES</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.karlrupp.net/en/computer/nat_tutorial">NAT - Network Address Translation</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hf8051/p/4530906.html">linux – 添加、修改、删除路由</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.justaddpower.com/kb/article/320-adding-a-static-route-to-macos/">Adding a Static Route to macOS</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /proc/sys/net/ipv4/ip_forward</span><br><span class="line">1</span><br><span class="line"><span class="comment"># 如果此处不是 1 ，那就需要手动开启</span></span><br><span class="line">vim /etc/sysctl.conf</span><br><span class="line"></span><br><span class="line">net.ipv4.ip_forward=1 <span class="comment"># 添加此行，开启转发功能</span></span><br><span class="line"></span><br><span class="line">sysctl -p    <span class="comment"># 执行生效</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># iptable 允许转发 </span></span><br><span class="line"><span class="comment"># 允许 ens33: 192.168.64.3/24 到 -&gt; ens38: 192.168.1.108/24</span></span><br><span class="line">iptables -A FORWARD -i ens33 -j ACCEPT</span><br><span class="line">iptables -A FORWARD -o ens38 -j ACCEPT</span><br><span class="line">iptables -t nat -A POSTROUTING -s 192.168.64.0/24 -d 192.168.1.0/24 -o ens38 -j MASQUERADE</span><br><span class="line"></span><br><span class="line"><span class="comment"># 允许 ens38: 192.168.1.108/24 到 -&gt; ens33: 192.168.64.3/24</span></span><br><span class="line">iptables -A FORWARD -i ens38 -j ACCEPT</span><br><span class="line">iptables -A FORWARD -o ens33 -j ACCEPT</span><br><span class="line">iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -d 192.168.64.0/24 -o ens33 -j MASQUERADE</span><br><span class="line"></span><br><span class="line"><span class="comment"># check nat table POSTROUTING chain</span></span><br><span class="line">iptables -t  nat  -L POSTROUTING </span><br><span class="line">Chain POSTROUTING (policy ACCEPT)</span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line">MASQUERADE  all  --  172.17.0.0/16        anywhere            </span><br><span class="line">MASQUERADE  all  --  172.18.0.0/16        anywhere            </span><br><span class="line">MASQUERADE  all  --  192.168.64.0/24      192.168.1.0/24      </span><br><span class="line">MASQUERADE  all  --  192.168.1.0/24       192.168.64.0/24</span><br></pre></td></tr></table></figure>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://linuxconfig.org/how-to-make-iptables-rules-persistent-after-reboot-on-linux">Ubuntu 持久化 iptable</a></li>
+</ul>
+<h2 id="client-server"><a href="#client-server" class="headerlink" title="client server"></a>client server</h2><p>其他的机器，只需要设置一下路由，添加一条路由规则即可。</p>
+<h3 id="mac"><a href="#mac" class="headerlink" title="mac"></a>mac</h3><p>macbook pro 苹果电脑的 IP 是 <code>192.168.1.125</code> 添加一条路由, 指定双网卡机器 192.168.1.108 为 gateway</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo route -n add -net 192.168.64.0/24  192.168.1.108</span><br></pre></td></tr></table></figure>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.centralit-helpdesk.co.uk/index.php?pg=kb.page&id=258">MacOS add a permanent static route</a></li>
+</ul>
+<h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>centos IP 是 192.168.64.4 ， ubuntu20 IP 是 192.168.64.5 。 它们两台都需要设置，添加一条路由, 指定双网卡机器 192.168.64.3 为 gateway</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route add -net 192.168.1.0 netmask 255.255.255.0 gw 192.168.64.3 dev ens33</span><br></pre></td></tr></table></figure>
+<ol>
+<li>(CentOS7的路由配置持久化)[<a target="_blank" rel="noopener" href="https://blog.csdn.net/beeworkshop/article/details/102952759]">https://blog.csdn.net/beeworkshop/article/details/102952759]</a><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysconfig/network-scripts/route-ens33</span><br><span class="line">192.168.1.0/24 via 192.168.64.3 dev ens33</span><br></pre></td></tr></table></figure></li>
+<li><a target="_blank" rel="noopener" href="https://linuxconfig.org/how-to-add-static-route-with-netplan-on-ubuntu-20-04-focal-fossa-linux">add static route with netplan on Ubuntu 20.04</a><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/netplan/00-installer-config.yaml </span><br><span class="line"><span class="comment"># This is the network config written by &#x27;subiquity&#x27;</span></span><br><span class="line">network:</span><br><span class="line">  ethernets: </span><br><span class="line">    ens33:</span><br><span class="line">      addresses: [192.168.64.5/24]</span><br><span class="line">      optional: <span class="literal">true</span></span><br><span class="line">      dhcp4: no</span><br><span class="line">      gateway4: 192.168.64.2</span><br><span class="line">      nameservers:</span><br><span class="line">        addresses: [1.1.1.1,8.8.8.8]</span><br><span class="line">      routes:</span><br><span class="line">      - to: 192.168.1.0/24</span><br><span class="line">        via: 192.168.64.3</span><br><span class="line">  version: 2</span><br><span class="line">  renderer: networkd</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><ol>
+<li><p>mac -&gt; ubuntu20 ,  ubuntu20 开 2 个 terminal， 一个启动 server， 一个 tcpdump 抓包分析，mac telnet 测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># terminal1: start simple http server</span></span><br><span class="line">python3 -m http.server 8000    </span><br><span class="line"></span><br><span class="line">Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># terminal2: tcpdump listen port 8000</span></span><br><span class="line">tcpdump -i any port 8000 -nnn</span><br></pre></td></tr></table></figure>
+<p>然后就是 mac telnet 192.168.64.5 8000</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法一： 用 Telnet 测试</span></span><br><span class="line">telnet 192.168.64.5 8000</span><br><span class="line"></span><br><span class="line">Trying 192.168.64.5...</span><br><span class="line">Connected to 192.168.64.5.</span><br><span class="line">Escape character is <span class="string">&#x27;^]&#x27;</span>.</span><br><span class="line">^]</span><br><span class="line">telnet&gt; q</span><br><span class="line">Connection closed.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二： 用 mtr 测试</span></span><br><span class="line">➜  ~ sudo mtr -n -c 3 -r --tcp --port 8000  192.168.64.5</span><br><span class="line">Password:</span><br><span class="line">Start: 2021-06-20T20:07:35+0800</span><br><span class="line">HOST: FEIYANG-MAC       Loss%   Snt   Last   Avg  Best  Wrst StDev</span><br><span class="line">  1.|-- 192.168.1.108      0.0%     3    6.2  11.2   3.3  24.3  11.4</span><br><span class="line">  2.|-- 192.168.64.5       0.0%     3   10.9   7.7   2.6  10.9   4.5</span><br></pre></td></tr></table></figure>
+<p>检查 ubuntu20 tcpdump 的结果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i any port 8000 -nnn</span><br><span class="line"></span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes</span><br><span class="line">10:49:42.301949 IP 192.168.64.3.55989 &gt; 192.168.64.5.8000: Flags [S], <span class="built_in">seq</span> 2641736153, win 65535, options [mss 1460,nop,wscale 6,nop,nop,TS val 283128122 ecr 0,sackOK,eol], length 0</span><br><span class="line">10:49:42.301991 IP 192.168.64.5.8000 &gt; 192.168.64.3.55989: Flags [S.], <span class="built_in">seq</span> 1529903079, ack 2641736154, win 65160, options [mss 1460,sackOK,TS val 3145755328 ecr 283128122,nop,wscale 7], length 0</span><br><span class="line">10:49:42.303721 IP 192.168.64.3.55989 &gt; 192.168.64.5.8000: Flags [.], ack 1, win 2058, options [nop,nop,TS val 283128124 ecr 3145755328], length 0</span><br><span class="line">10:49:46.519038 IP 192.168.64.3.55989 &gt; 192.168.64.5.8000: Flags [F.], <span class="built_in">seq</span> 1, ack 1, win 2058, options [nop,nop,TS val 283132312 ecr 3145755328], length 0</span><br><span class="line">10:49:46.519205 IP 192.168.64.5.8000 &gt; 192.168.64.3.55989: Flags [F.], <span class="built_in">seq</span> 1, ack 2, win 510, options [nop,nop,TS val 3145759545 ecr 283132312], length 0</span><br><span class="line">10:49:46.521868 IP 192.168.64.3.55989 &gt; 192.168.64.5.8000: Flags [.], ack 2, win 2058, options [nop,nop,TS val 283132315 ecr 3145759545], length 0</span><br></pre></td></tr></table></figure>
+<p>整个过程是<br><code>192.168.1.125</code> -&gt; <code>192.168.1.108</code> -&gt;  <code>192.168.64.3</code> -&gt; <code>192.168.64.5</code></p>
+</li>
+<li><p>centos7 -&gt; mac ,  mac 开 2 个 terminal， 一个启动 server， 一个 tcpdump 抓包分析，centos7 telnet 测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># terminal1: start simple http server</span></span><br><span class="line">python3 -m http.server 8000    </span><br><span class="line"></span><br><span class="line">Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># terminal2: tcpdump listen port 8000</span></span><br><span class="line">tcpdump -i any port 8000 -nnn</span><br></pre></td></tr></table></figure>
+<p>然后就是 centos telnet 192.168.1.125 8000</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方法一： 用 Telnet 测试</span></span><br><span class="line">telnet 192.168.1.125 8000</span><br><span class="line"></span><br><span class="line">Trying 192.168.1.125...</span><br><span class="line">Connected to 192.168.1.125.</span><br><span class="line">Escape character is <span class="string">&#x27;^]&#x27;</span>.</span><br><span class="line">^]</span><br><span class="line"></span><br><span class="line">telnet&gt; q</span><br><span class="line">Connection closed.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二： 用 mtr 测试</span></span><br><span class="line">sudo mtr -n -c 3 -r --tcp --port 8000 192.168.1.125</span><br><span class="line"></span><br><span class="line">Start: Sun Jun 20 08:16:37 2021</span><br><span class="line">HOST: centos7                     Loss%   Snt   Last   Avg  Best  Wrst StDev</span><br><span class="line">  1.|-- 192.168.64.3               0.0%     3    0.4   0.4   0.4   0.5   0.0</span><br><span class="line">  2.|-- 192.168.1.125              0.0%     3  1002. 902.3 201.3 1502. 656.6</span><br></pre></td></tr></table></figure>
+<p>检查 mac tcpdump 的结果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ sudo tcpdump -i any port 8000 -nnn</span><br><span class="line">Password:</span><br><span class="line">tcpdump: data <span class="built_in">link</span> <span class="built_in">type</span> PKTAP</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type PKTAP (Apple DLT_PKTAP), capture size 262144 bytes</span><br><span class="line">18:44:00.166899 IP 192.168.1.108.54120 &gt; 192.168.1.125.8000: Flags [S], <span class="built_in">seq</span> 3298177179, win 29200, options [mss 1460,sackOK,TS val 4138980 ecr 0,nop,wscale 7], length 0</span><br><span class="line">18:44:00.166996 IP 192.168.1.125.8000 &gt; 192.168.1.108.54120: Flags [S.], <span class="built_in">seq</span> 3788626158, ack 3298177180, win 65535, options [mss 1460,nop,wscale 6,nop,nop,TS val 282788376 ecr 4138980,sackOK,eol], length 0</span><br><span class="line">18:44:00.169945 IP 192.168.1.108.54120 &gt; 192.168.1.125.8000: Flags [.], ack 1, win 229, options [nop,nop,TS val 4138982 ecr 282788376], length 0</span><br><span class="line">18:44:00.169966 IP 192.168.1.125.8000 &gt; 192.168.1.108.54120: Flags [.], ack 1, win 2058, options [nop,nop,TS val 282788379 ecr 4138982], length 0</span><br><span class="line">18:44:12.790139 IP 192.168.1.108.54120 &gt; 192.168.1.125.8000: Flags [F.], <span class="built_in">seq</span> 1, ack 1, win 229, options [nop,nop,TS val 4151601 ecr 282788379], length 0</span><br><span class="line">18:44:12.790165 IP 192.168.1.125.8000 &gt; 192.168.1.108.54120: Flags [.], ack 2, win 2058, options [nop,nop,TS val 282800870 ecr 4151601], length 0</span><br><span class="line">18:44:12.790246 IP 192.168.1.125.8000 &gt; 192.168.1.108.54120: Flags [F.], <span class="built_in">seq</span> 1, ack 2, win 2058, options [nop,nop,TS val 282800870 ecr 4151601], length 0</span><br><span class="line">18:44:12.792923 IP 192.168.1.108.54120 &gt; 192.168.1.125.8000: Flags [.], ack 2, win 229, options [nop,nop,TS val 4151606 ecr 282800870], length 0</span><br><span class="line">^C</span><br><span class="line">8 packets captured</span><br><span class="line">2158 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br></pre></td></tr></table></figure>
+<p>整个过程是<br><code>192.168.64.4</code> -&gt; <code>192.168.64.3</code> -&gt;  <code>192.168.1.108</code> -&gt; <code>192.168.1.125</code></p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这下，两个网络之间就实现了互通。让我联想到了 <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html">AWS VPC peering</a> ，又联动上了。 如今 SSH 就不需要跳板机 ProxyJump 了, vault UI 192.168.64.3:8200 也不需要 Nginx 代理了。<br>我们如今只是将 Windows10 VMware 自定义的 NAT 内网和家庭网络连通了起来。 如果家里的其他电脑也创建了 NAT 内网， 那么最终我们可以在家里本地环境，模拟出多个网络，就像 AWS  多个VPC 一样，最终都连通起来。<br><img src="/img/vm/33.png"> </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mac/" rel="tag"># mac</a>
+              <a href="/tags/tools/" rel="tag"># tools</a>
+              <a href="/tags/ansible/" rel="tag"># ansible</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/consul/" rel="prev" title="consul 实践">
+      <i class="fa fa-chevron-left"></i> consul 实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/k8s/" rel="next" title="kubernetes 实验环境搭建">
+      kubernetes 实验环境搭建 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">2.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">准备过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.</span> <span class="nav-text">按操作系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows"><span class="nav-number">4.1.</span> <span class="nav-text">Windows</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#macOS"><span class="nav-number">4.2.</span> <span class="nav-text">macOS</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%89%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83"><span class="nav-number">5.</span> <span class="nav-text">按网络环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F-Bridged"><span class="nav-number">5.1.</span> <span class="nav-text">桥接模式 Bridged</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E6%A8%A1%E5%BC%8F-NAT"><span class="nav-number">5.2.</span> <span class="nav-text">网络地址转换模式 NAT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%85%E5%A4%87%E6%8A%80%E8%83%BD"><span class="nav-number">6.</span> <span class="nav-text">必备技能</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E4%BC%9A%E5%BF%AB%E7%85%A7-snapshot"><span class="nav-number">6.1.</span> <span class="nav-text">学会快照 snapshot</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ansible-%E5%85%B3%E6%9C%BA"><span class="nav-number">7.</span> <span class="nav-text">ansible 关机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%93%E9%80%9A%E4%BB%BB%E7%9D%A3%E4%BA%8C%E8%84%89"><span class="nav-number">8.</span> <span class="nav-text">打通任督二脉</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#NAT-Server"><span class="nav-number">8.1.</span> <span class="nav-text">NAT Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#client-server"><span class="nav-number">8.2.</span> <span class="nav-text">client server</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mac"><span class="nav-number">8.2.1.</span> <span class="nav-text">mac</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linux"><span class="nav-number">8.2.2.</span> <span class="nav-text">linux</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">8.3.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">8.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

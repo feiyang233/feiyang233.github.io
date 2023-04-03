@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Use Infrastructure as Code to provision and manage any cloud, infrastructure, or service 用代码来创建和管理云资源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Terraform 入门">
+<meta property="og:url" content="http://feiyang233.club/post/terraform/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="Use Infrastructure as Code to provision and manage any cloud, infrastructure, or service 用代码来创建和管理云资源">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210116110942.jpg">
+<meta property="article:published_time" content="2020-04-13T01:58:21.000Z">
+<meta property="article:modified_time" content="2021-09-07T01:01:01.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="aws">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210116110942.jpg">
+
+<link rel="canonical" href="http://feiyang233.club/post/terraform/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Terraform 入门 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/terraform/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Terraform 入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-13 09:58:21" itemprop="dateCreated datePublished" datetime="2020-04-13T09:58:21+08:00">2020-04-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-07 09:01:01" itemprop="dateModified" datetime="2021-09-07T09:01:01+08:00">2021-09-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Use Infrastructure as Code to provision and manage any cloud, infrastructure, or service 用代码来创建和管理云资源</p>
+<span id="more"></span>
+<h1 id="入门介绍视频"><a href="#入门介绍视频" class="headerlink" title="入门介绍视频"></a>入门介绍视频</h1><p>这个视频给你一个基础的入门概念。Best video for learn terraform: Terraform Course - Automate your AWS cloud infrastructure <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=SLB_c_ayRMo">https://www.youtube.com/watch?v=SLB_c_ayRMo</a></p>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><p><a target="_blank" rel="noopener" href="https://www.terraform.io/">https://www.terraform.io/</a>  官方文档<br><a target="_blank" rel="noopener" href="https://lonegunmanb.github.io/introduction-terraform/">https://lonegunmanb.github.io/introduction-terraform/</a> 一位有情怀的大佬巨著，必看。<br><a target="_blank" rel="noopener" href="https://www.alibabacloud.com/help/zh/doc-detail/91285.htm?spm=a2c63.p38356.b99.372.8b994d00YwQjZI">https://www.alibabacloud.com/help/zh/doc-detail/91285.htm?spm=a2c63.p38356.b99.372.8b994d00YwQjZI</a> 中文版,阿里云文档<br><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/terraform/getting-started/intro">https://learn.hashicorp.com/terraform/getting-started/intro</a>  小白学习必看<br><a target="_blank" rel="noopener" href="https://whyliyi.github.io/2020/01/27/terraform-resource.html">https://whyliyi.github.io/2020/01/27/terraform-resource.html</a> terraform 中文系列<br><a target="_blank" rel="noopener" href="https://wsgzao.github.io/post/terraform/">https://wsgzao.github.io/post/terraform/</a> 奥哥的大作</p>
+<h1 id="terraform-几种用法"><a href="#terraform-几种用法" class="headerlink" title="terraform 几种用法"></a>terraform 几种用法</h1><ol>
+<li>如果是单人操作，backed 就直接本地存储 state。简单方便</li>
+<li>如果是团队合作，backend 可以设置为 S3，大家共享 state， 也会有锁来确保不会起冲突。</li>
+<li>如果财大气粗，可以花钱购买 terraform enterprise(TFE)，大家的修改都会上传到 TFE, 有一个队列来依次执行。TFE 可视化效果非常好,还可以 discard 一些 change, 或者 lock TF  workspace</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210116110942.jpg"></p>
+<h1 id="基础的命令"><a href="#基础的命令" class="headerlink" title="基础的命令"></a>基础的命令</h1><p>Why not use ansible ? because changes to resources aren’t tracked. terraform code 是存在 git 上的，我们可以轻松检查历史记录，和回退<br>Why didn’t we choose CloudFormation? Its support is limited to AWS. terraform 还支持模块化，复用性可以提升我们效率。而且 terraform 支持多数的云，方便多平台操作。</p>
+<p>Terraform config is code we write, state file is a json file. store these on the remote.<br>Plan is safe to do any where, apply we don’t comment any want. don’t apply locally, don’t apply locally, don’t apply locally!</p>
+<table>
+<thead>
+<tr>
+<th>Commands</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>terraform init</td>
+<td>Initiate Terraform. Terraform must be initiated before you plan&#x2F;apply terraform.</td>
+</tr>
+<tr>
+<td>terraform plan</td>
+<td>You will be able to examine Terraform’s execution plan before you deploy it to AWS.</td>
+</tr>
+<tr>
+<td>terraform apply</td>
+<td>Deploy your final execution plan to AWS.</td>
+</tr>
+<tr>
+<td>terraform init -upgrade</td>
+<td>Update providers.</td>
+</tr>
+<tr>
+<td>terraform state show</td>
+<td>Inspect the current state.</td>
+</tr>
+<tr>
+<td>terraform graph</td>
+<td>Displays the visual dependency graph of Terraform resources according to configuration files in DIR (or the current directory if omitted).</td>
+</tr>
+<tr>
+<td>terraform destroy</td>
+<td>Destroy all resources created by terraform and also destroy the changes in your state file.</td>
+</tr>
+<tr>
+<td>terraform plan-out <name of file></td>
+<td>To save the displayed plan (from the ‘terraform plan’ command) for reference.</td>
+</tr>
+</tbody></table>
+<h1 id="precedence-优先级"><a href="#precedence-优先级" class="headerlink" title="precedence 优先级"></a>precedence 优先级</h1><p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/configuration/variables.html#variable-definition-precedence">https://www.terraform.io/docs/configuration/variables.html#variable-definition-precedence</a></p>
+<h1 id="Local-Values"><a href="#Local-Values" class="headerlink" title="Local Values"></a>Local Values</h1><p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/configuration/locals.html">https://www.terraform.io/docs/configuration/locals.html</a></p>
+<h1 id="Terraform-version-compatibility"><a href="#Terraform-version-compatibility" class="headerlink" title="Terraform version compatibility"></a>Terraform version compatibility</h1><table>
+<thead>
+<tr>
+<th>Terraform Version</th>
+<th>Remote State Version</th>
+<th>Able to read</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0.11.14</td>
+<td>0.12.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.11.14</td>
+<td>0.13.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.11.14</td>
+<td>0.14.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.12.2</td>
+<td>0.11.14</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.12.x</td>
+<td>&gt; 0.12.x</td>
+<td>No</td>
+</tr>
+<tr>
+<td>0.12.30</td>
+<td>0.11.14</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.12.30</td>
+<td>0.12.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.12.30</td>
+<td>0.13.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.12.30</td>
+<td>0.14.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.13.x</td>
+<td>0.11.14</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.13.x</td>
+<td>0.12.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.13.x</td>
+<td>&gt; 0.13.x</td>
+<td>No</td>
+</tr>
+<tr>
+<td>0.13.6</td>
+<td>0.11.14</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.13.6</td>
+<td>0.12.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.13.6</td>
+<td>0.13.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.13.6</td>
+<td>0.14.x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.14.x</td>
+<td>&gt;&#x3D; 0.11.14</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<p>Recommendation:</p>
+<ol>
+<li>Move workspaces to atleast 0.12.30. Once the workspaces are moved to 0.12.30 they will no longer face compatibility issues with different state versions.</li>
+<li>If you are moving to Terraform 0.13, use  &gt;&#x3D; 0.13.6</li>
+<li>All 0.14 states are compatible.</li>
+</ol>
+<h1 id="terraenv"><a href="#terraenv" class="headerlink" title="terraenv"></a>terraenv</h1><p>This is a good multi-version control tools for terraform. <a target="_blank" rel="noopener" href="https://github.com/aaratn/terraenv">https://github.com/aaratn/terraenv</a></p>
+<h1 id="verbose-debug"><a href="#verbose-debug" class="headerlink" title="verbose debug"></a>verbose debug</h1><p>特别是在遇到权限不足的时候，如果想检查是具体哪个 service 权限不足。就需要 debug 输出详细的过程<br><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/internals/debugging.html">https://www.terraform.io/docs/internals/debugging.html</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> TF_LOG=DEBUG</span><br><span class="line">terraform plan</span><br></pre></td></tr></table></figure>
+
+<h1 id="input-variables-几种方式"><a href="#input-variables-几种方式" class="headerlink" title="input variables 几种方式"></a>input variables 几种方式</h1><p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/configuration/variables.html#variable-definition-precedence">https://www.terraform.io/docs/configuration/variables.html#variable-definition-precedence</a></p>
+<h1 id="terraform-modules"><a href="#terraform-modules" class="headerlink" title="terraform modules"></a>terraform modules</h1><p><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/terraform/module?in=terraform/modules">https://learn.hashicorp.com/tutorials/terraform/module?in=terraform/modules</a></p>
+<h1 id="Terraform-Associate"><a href="#Terraform-Associate" class="headerlink" title="Terraform Associate"></a>Terraform Associate</h1><p><a target="_blank" rel="noopener" href="https://www.hashicorp.com/certification/terraform-associate">HashiCorp Certified: Terraform Associate</a><br>因为工作中用到了 terraform ，还算比较熟悉，最终通过了考试 <a target="_blank" rel="noopener" href="https://www.credly.com/badges/d20f3c6a-673a-40cc-aa69-2cb3ac127389/public_url">HashiCorp Certified: Terraform Associate</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/aws/" rel="tag"># aws</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/elk-geek/" rel="prev" title="Elasticsearch(elk) technology and practice">
+      <i class="fa fa-chevron-left"></i> Elasticsearch(elk) technology and practice
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/flask/" rel="next" title="Flask">
+      Flask <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%A5%E9%97%A8%E4%BB%8B%E7%BB%8D%E8%A7%86%E9%A2%91"><span class="nav-number">1.</span> <span class="nav-text">入门介绍视频</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">2.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#terraform-%E5%87%A0%E7%A7%8D%E7%94%A8%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">terraform 几种用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">基础的命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#precedence-%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">5.</span> <span class="nav-text">precedence 优先级</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Local-Values"><span class="nav-number">6.</span> <span class="nav-text">Local Values</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Terraform-version-compatibility"><span class="nav-number">7.</span> <span class="nav-text">Terraform version compatibility</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#terraenv"><span class="nav-number">8.</span> <span class="nav-text">terraenv</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#verbose-debug"><span class="nav-number">9.</span> <span class="nav-text">verbose debug</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#input-variables-%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">10.</span> <span class="nav-text">input variables 几种方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#terraform-modules"><span class="nav-number">11.</span> <span class="nav-text">terraform modules</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Terraform-Associate"><span class="nav-number">12.</span> <span class="nav-text">Terraform Associate</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

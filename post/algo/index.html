@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Record the learning algorithm experience.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Algorithm">
+<meta property="og:url" content="http://feiyang233.club/post/algo/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="Record the learning algorithm experience.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191227141136.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20200830103637.png">
+<meta property="article:published_time" content="2019-12-01T15:07:37.000Z">
+<meta property="article:modified_time" content="2021-06-27T01:13:04.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191227141136.jpeg">
+
+<link rel="canonical" href="http://feiyang233.club/post/algo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Algorithm | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/algo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Algorithm
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-01 23:07:37" itemprop="dateCreated datePublished" datetime="2019-12-01T23:07:37+08:00">2019-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-27 09:13:04" itemprop="dateModified" datetime="2021-06-27T09:13:04+08:00">2021-06-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Record the learning algorithm experience.</p>
+<span id="more"></span>
+<p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191227141136.jpeg"></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/FQ0LCROtEQu3iBZiJb0VBw">背包问题</a></li>
+</ol>
+<h1 id="Math"><a href="#Math" class="headerlink" title="Math"></a>Math</h1><h2 id="Reverse-Integer"><a href="#Reverse-Integer" class="headerlink" title="Reverse Integer"></a>Reverse Integer</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverse</span><span class="params">(x <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    <span class="comment">//math.MinInt32 = -2147483648</span></span><br><span class="line">    <span class="comment">//math.MaxInt32 = 2147483647</span></span><br><span class="line">    <span class="keyword">var</span> result <span class="type">int</span></span><br><span class="line">    <span class="keyword">for</span> x!=<span class="number">0</span>&#123;</span><br><span class="line">        result=result*<span class="number">10</span>+x%<span class="number">10</span></span><br><span class="line">        <span class="keyword">if</span> result &gt; <span class="number">2147483647</span>  || result &lt; <span class="number">-2147483648</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        &#125;</span><br><span class="line">        x/=<span class="number">10</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Evolving-Diﬃculty"><a href="#Evolving-Diﬃculty" class="headerlink" title="Evolving Diﬃculty"></a>Evolving Diﬃculty</h2><p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20200830103637.png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># brute force O(n2)</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">test = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(test):</span><br><span class="line">    n = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">    a = [<span class="built_in">int</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">input</span>().split()]</span><br><span class="line">    begin = time.time()</span><br><span class="line">    result = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n-<span class="number">2</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i+<span class="number">1</span>, n-<span class="number">1</span>):</span><br><span class="line">            result += (a[i]*a[j]*<span class="built_in">sum</span>(a[j+<span class="number">1</span>:]))</span><br><span class="line"></span><br><span class="line">    end = time.time()</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;time is &#123;&#125;&quot;</span>.<span class="built_in">format</span>(end - begin))</span><br><span class="line"></span><br><span class="line"><span class="comment"># -------------------</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">8</span></span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span></span><br><span class="line"><span class="number">4536</span></span><br><span class="line">time <span class="keyword">is</span> <span class="number">3.0994415283203125e-05</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># arithmetic O(n)</span></span><br><span class="line"><span class="keyword">import</span> time </span><br><span class="line"></span><br><span class="line">test = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(test):</span><br><span class="line">    n = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">    a = [<span class="built_in">int</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">input</span>().split()]</span><br><span class="line">    begin = time.time()</span><br><span class="line">    result = <span class="number">0</span></span><br><span class="line">    sumai = a[<span class="number">0</span>] + a[<span class="number">1</span>]</span><br><span class="line">    sumai2 = a[<span class="number">0</span>]**<span class="number">2</span> + a[<span class="number">1</span>]**<span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>,n):</span><br><span class="line">        aiaj = (sumai**<span class="number">2</span> - sumai2) // <span class="number">2</span></span><br><span class="line">        result += aiaj*a[k]</span><br><span class="line">        sumai += a[k]</span><br><span class="line">        sumai2 += a[k]**<span class="number">2</span></span><br><span class="line">    end = time.time()</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;time is &#123;&#125;&quot;</span>.<span class="built_in">format</span>(end - begin))</span><br><span class="line"></span><br><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">8</span></span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span></span><br><span class="line"><span class="number">4536</span></span><br><span class="line">time <span class="keyword">is</span> <span class="number">2.1219253540039062e-05</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="quickSort"><a href="#quickSort" class="headerlink" title="quickSort"></a>quickSort</h1><h2 id="Based-on-recursive"><a href="#Based-on-recursive" class="headerlink" title="Based on recursive"></a>Based on recursive</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">quickSort</span><span class="params">(arr []<span class="type">int</span>, startIndex, endIndex <span class="type">int</span> )</span></span>  &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> startIndex &gt;= endIndex &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	pivotIndex:= partition(arr,startIndex,endIndex)</span><br><span class="line">	quickSort(arr,startIndex,pivotIndex<span class="number">-1</span>)</span><br><span class="line">	quickSort(arr,pivotIndex+<span class="number">1</span>,endIndex)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">partition</span><span class="params">(arr []<span class="type">int</span>, startIndex, endIndex <span class="type">int</span> )</span></span>  <span class="type">int</span> &#123;</span><br><span class="line"></span><br><span class="line">	pivot:=arr[startIndex]</span><br><span class="line">	mark:=startIndex</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i:=startIndex+<span class="number">1</span>; i&lt;= endIndex; i++&#123;</span><br><span class="line">		<span class="keyword">if</span> arr[i]&lt;pivot &#123;</span><br><span class="line">			mark++    <span class="comment">//  numbers that smaller pivot ++</span></span><br><span class="line">			arr[i],arr[mark] = arr[mark], arr[i]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	arr[startIndex] = arr [mark]</span><br><span class="line">	arr[mark] = pivot</span><br><span class="line">	<span class="keyword">return</span> mark</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> arr = []<span class="type">int</span>&#123;<span class="number">4</span>,<span class="number">4</span>,<span class="number">6</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">1</span>&#125;</span><br><span class="line">	quickSort(arr,<span class="number">0</span>, <span class="built_in">len</span>(arr)<span class="number">-1</span>)</span><br><span class="line">	fmt.Print(arr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Use-stack"><a href="#Use-stack" class="headerlink" title="Use stack"></a>Use stack</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/golang-collections/collections/stack&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">quickSort</span><span class="params">(arr []<span class="type">int</span>, startIndex, endIndex <span class="type">int</span> )</span></span>  &#123;</span><br><span class="line"></span><br><span class="line">	quickSortStack := stack.New()</span><br><span class="line">	rootParam := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>)</span><br><span class="line">	rootParam[<span class="string">&quot;startIndex&quot;</span>] = startIndex</span><br><span class="line">	rootParam[<span class="string">&quot;endIndex&quot;</span>] = endIndex</span><br><span class="line">	quickSortStack.Push(rootParam)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> quickSortStack.Len() &gt; <span class="number">0</span> &#123;</span><br><span class="line"></span><br><span class="line">		param := quickSortStack.Pop().(<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>)</span><br><span class="line">		pivotIndex := partition(arr, param[<span class="string">&quot;startIndex&quot;</span>], param[<span class="string">&quot;endIndex&quot;</span>] )</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> param[<span class="string">&quot;startIndex&quot;</span>] &lt; pivotIndex<span class="number">-1</span> &#123;</span><br><span class="line">			leftParam := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>)</span><br><span class="line">			leftParam[<span class="string">&quot;startIndex&quot;</span>] = param[<span class="string">&quot;startIndex&quot;</span>]</span><br><span class="line">			leftParam[<span class="string">&quot;endIndex&quot;</span>] = pivotIndex<span class="number">-1</span></span><br><span class="line">			quickSortStack.Push(leftParam)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> pivotIndex+<span class="number">1</span> &lt; param[<span class="string">&quot;endIndex&quot;</span>] &#123;</span><br><span class="line"></span><br><span class="line">			rightParam := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>)</span><br><span class="line">			rightParam[<span class="string">&quot;startIndex&quot;</span>] = pivotIndex+<span class="number">1</span></span><br><span class="line">			rightParam[<span class="string">&quot;endIndex&quot;</span>] = param[<span class="string">&quot;endIndex&quot;</span>]</span><br><span class="line">			quickSortStack.Push(rightParam)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">partition</span><span class="params">(arr []<span class="type">int</span>, startIndex, endIndex <span class="type">int</span> )</span></span>  <span class="type">int</span> &#123;</span><br><span class="line"></span><br><span class="line">	pivot:=arr[startIndex]</span><br><span class="line">	mark:=startIndex</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i:=startIndex+<span class="number">1</span>; i&lt;= endIndex; i++&#123;</span><br><span class="line">		<span class="keyword">if</span> arr[i]&lt;pivot &#123;</span><br><span class="line">			mark++    <span class="comment">//  smaller pivot numbers ++</span></span><br><span class="line">			arr[i],arr[mark] = arr[mark], arr[i]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	arr[startIndex] = arr [mark]</span><br><span class="line">	arr[mark] = pivot</span><br><span class="line">	<span class="keyword">return</span> mark</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> arr = []<span class="type">int</span>&#123;<span class="number">4</span>,<span class="number">4</span>,<span class="number">6</span>,<span class="number">5</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">1</span>&#125;</span><br><span class="line">	quickSort(arr,<span class="number">0</span>, <span class="built_in">len</span>(arr)<span class="number">-1</span>)</span><br><span class="line">	fmt.Print(arr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="Hash-Table"><a href="#Hash-Table" class="headerlink" title="Hash Table"></a>Hash Table</h1><h2 id="Two-Sum"><a href="#Two-Sum" class="headerlink" title="Two Sum"></a>Two Sum</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">twoSum</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">    </span><br><span class="line">    dic := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">int</span>]<span class="type">int</span>)</span><br><span class="line">    <span class="keyword">for</span> i, v := <span class="keyword">range</span> nums &#123;</span><br><span class="line">        </span><br><span class="line">        k,ok := dic[target-v]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> ok &#123;</span><br><span class="line">            <span class="keyword">return</span> []<span class="type">int</span>&#123;k, i&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        dic[v]=i     </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="least-recently-used"><a href="#least-recently-used" class="headerlink" title="least recently used"></a>least recently used</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Your LRUCache object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"># obj = LRUCache(capacity)</span></span><br><span class="line"><span class="comment"># param_1 = obj.get(key)</span></span><br><span class="line"><span class="comment"># obj.put(key,value)</span></span><br><span class="line"><span class="comment"># leetcode 146</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DoubleNode</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, key, val, pre=<span class="literal">None</span>, <span class="built_in">next</span>=<span class="literal">None</span></span>):</span><br><span class="line">        self.key = key</span><br><span class="line">        self.val = val</span><br><span class="line">        self.pre = pre</span><br><span class="line">        self.<span class="built_in">next</span> = <span class="built_in">next</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LRUCache</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, capacity: <span class="built_in">int</span></span>):</span><br><span class="line">        self._capacity = capacity</span><br><span class="line">        self._index = &#123;&#125;</span><br><span class="line">        self._head = DoubleNode(-<span class="number">1</span>, -<span class="number">1</span>, <span class="literal">None</span>, <span class="literal">None</span>)</span><br><span class="line">        </span><br><span class="line">        cur = self._head</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, capacity):</span><br><span class="line">            cur.<span class="built_in">next</span> = DoubleNode(-<span class="number">1</span>, -<span class="number">1</span>, cur)</span><br><span class="line">            cur = cur.<span class="built_in">next</span></span><br><span class="line">        cur.<span class="built_in">next</span> = self._head</span><br><span class="line">        self._head.pre = cur</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">move_to_head</span>(<span class="params">self, cur</span>):</span><br><span class="line">        <span class="keyword">if</span> cur == self._head:</span><br><span class="line">            self._head = self._head.pre</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line">        cur.pre.<span class="built_in">next</span> = cur.<span class="built_in">next</span></span><br><span class="line">        cur.<span class="built_in">next</span>.pre = cur.pre</span><br><span class="line">        <span class="comment"># attach to head pointer</span></span><br><span class="line">        cur.<span class="built_in">next</span> = self._head.<span class="built_in">next</span></span><br><span class="line">        cur.<span class="built_in">next</span>.pre = cur</span><br><span class="line">        self._head.<span class="built_in">next</span> = cur</span><br><span class="line">        cur.pre = self._head</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, key: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        cur = self._index.get(key, <span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cur:</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.move_to_head(cur)</span><br><span class="line">            <span class="keyword">return</span> cur.val</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">put</span>(<span class="params">self, key: <span class="built_in">int</span>, value: <span class="built_in">int</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">if</span> self._index.get(key, <span class="literal">None</span>):</span><br><span class="line">            cur = self._index[key]</span><br><span class="line">            cur.val = value</span><br><span class="line">            self.move_to_head(cur)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> self._head.val != -<span class="number">1</span>:</span><br><span class="line">                <span class="keyword">del</span>(self._index[self._head.key])</span><br><span class="line">            </span><br><span class="line">            self. _head.key = key</span><br><span class="line">            self._head.val = value</span><br><span class="line">            self._index[key] = self._head</span><br><span class="line">            self._head = self._head.pre</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="Leetcode"><a href="#Leetcode" class="headerlink" title="Leetcode"></a>Leetcode</h1><h2 id="Longest-Palindromic-Substring"><a href="#Longest-Palindromic-Substring" class="headerlink" title="Longest Palindromic Substring"></a>Longest Palindromic Substring</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># leetcode 5  Longest Palindromic Substring</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_expand</span>(<span class="params">self, s: <span class="built_in">str</span>, left: <span class="built_in">int</span>, right: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="keyword">while</span> left &gt;= <span class="number">0</span> <span class="keyword">and</span> right &lt; <span class="built_in">len</span>(s) <span class="keyword">and</span> s[left] == s[right] :</span><br><span class="line">            left -= <span class="number">1</span></span><br><span class="line">            right += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> right - left - <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">longestPalindrome</span>(<span class="params">self, s: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="keyword">if</span>  s <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="built_in">len</span>(s) == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        start = <span class="number">0</span></span><br><span class="line">        maxLen = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s)):</span><br><span class="line">            len1 = self._expand(s, i, i)</span><br><span class="line">            len2 = self._expand(s, i, i+<span class="number">1</span>)</span><br><span class="line">            length = <span class="built_in">max</span>(len1, len2)</span><br><span class="line">            <span class="keyword">if</span> length &gt; maxLen:</span><br><span class="line">                start = i - (length-<span class="number">1</span>)//<span class="number">2</span></span><br><span class="line">                maxLen = length</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> s[start:start+maxLen]</span><br></pre></td></tr></table></figure>
+
+<h2 id="Palindrome-Linked-List"><a href="#Palindrome-Linked-List" class="headerlink" title="Palindrome Linked List"></a>Palindrome Linked List</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"># class ListNode:</span></span><br><span class="line"><span class="comment">#     def __init__(self, val=0, next=None):</span></span><br><span class="line"><span class="comment">#         self.val = val</span></span><br><span class="line"><span class="comment">#         self.next = next</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">isPalindrome</span>(<span class="params">self, head: ListNode</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        length = <span class="number">0</span></span><br><span class="line">        p = head</span><br><span class="line">        <span class="keyword">while</span> p != <span class="literal">None</span>:</span><br><span class="line">            length += <span class="number">1</span></span><br><span class="line">            p = p.<span class="built_in">next</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># get length of link</span></span><br><span class="line">        </span><br><span class="line">        cur = head</span><br><span class="line">        pre = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length//<span class="number">2</span>):</span><br><span class="line">            nex = cur.<span class="built_in">next</span></span><br><span class="line">            cur.<span class="built_in">next</span> = pre</span><br><span class="line">            pre = cur</span><br><span class="line">            cur = nex</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># even need goback 1 seat</span></span><br><span class="line">        <span class="keyword">if</span> length % <span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">            cur = cur.<span class="built_in">next</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> pre != <span class="literal">None</span> <span class="keyword">and</span> cur != <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">if</span> pre.val != cur.val:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">            </span><br><span class="line">            pre = pre.<span class="built_in">next</span></span><br><span class="line">            cur = cur.<span class="built_in">next</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Median-of-Two-Sorted-Arrays"><a href="#Median-of-Two-Sorted-Arrays" class="headerlink" title="Median of Two Sorted Arrays"></a>Median of Two Sorted Arrays</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="comment"># 分奇 偶情况来找到第 K 小的数字</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">findMedianSortedArrays</span>(<span class="params">self, nums1: <span class="type">List</span>[<span class="built_in">int</span>], nums2: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">        total = <span class="built_in">len</span>(nums1) + <span class="built_in">len</span>(nums2)</span><br><span class="line">        <span class="keyword">if</span> total &amp; <span class="number">1</span> == <span class="number">1</span>: <span class="comment"># 按位与来判断奇偶性</span></span><br><span class="line">            <span class="keyword">return</span> self.find(nums1, nums2, total//<span class="number">2</span> + <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            a = self.find(nums1, nums2, total//<span class="number">2</span>)</span><br><span class="line">            b = self.find(nums1, nums2, total//<span class="number">2</span> + <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">return</span> (a+b) / <span class="number">2</span></span><br><span class="line">        </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">find</span>(<span class="params">self, nums1: <span class="type">List</span>[<span class="built_in">int</span>], nums2: <span class="type">List</span>[<span class="built_in">int</span>], k: <span class="built_in">int</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">        len1 = <span class="built_in">len</span>(nums1)</span><br><span class="line">        len2 = <span class="built_in">len</span>(nums2)</span><br><span class="line">        base1 = <span class="number">0</span> <span class="comment"># 用 base 来增加偏移量，避免重复创建新的数组，节约空间</span></span><br><span class="line">        base2 = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">if</span> len1 == <span class="number">0</span>: <span class="keyword">return</span> nums2[base2 + k - <span class="number">1</span>]</span><br><span class="line">            <span class="keyword">if</span> len2 == <span class="number">0</span>: <span class="keyword">return</span> nums1[base1 + k - <span class="number">1</span>]</span><br><span class="line">            <span class="keyword">if</span> k == <span class="number">1</span>: <span class="keyword">return</span> <span class="built_in">min</span>(nums1[base1], nums2[base2])</span><br><span class="line">            </span><br><span class="line">            i = <span class="built_in">min</span>(k//<span class="number">2</span>, len1)</span><br><span class="line">            j = <span class="built_in">min</span>(k-i, len2)</span><br><span class="line">            a = nums1[base1 + i - <span class="number">1</span>]</span><br><span class="line">            b = nums2[base2 + j - <span class="number">1</span>]</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> i+j == k <span class="keyword">and</span> a == b: <span class="keyword">return</span> a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里 a == b 判断了两次，是因为 i+j&lt;k, 第 k 小的数不在这两个部分，都可以排除</span></span><br><span class="line">            <span class="keyword">if</span> a &lt;=b:</span><br><span class="line">                base1 += i</span><br><span class="line">                len1 -= i</span><br><span class="line">                k -= i</span><br><span class="line">            <span class="keyword">if</span> a &gt;= b:</span><br><span class="line">                base2 += j</span><br><span class="line">                len2 -= j</span><br><span class="line">                k -= j</span><br><span class="line">                </span><br></pre></td></tr></table></figure>
+
+<h2 id="Longest-Substring-Without-Repeating-Characters"><a href="#Longest-Substring-Without-Repeating-Characters" class="headerlink" title="Longest Substring Without Repeating Characters"></a>Longest Substring Without Repeating Characters</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lengthOfLongestSubstring</span>(<span class="params">self, s</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type s: str</span></span><br><span class="line"><span class="string">        :rtype: int abcabcbb</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        seen = &#123;&#125;</span><br><span class="line">        left, right = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        longest = <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> right &lt; <span class="built_in">len</span>(s):</span><br><span class="line">            <span class="keyword">if</span> s[right] <span class="keyword">in</span> seen:</span><br><span class="line">                left = <span class="built_in">max</span>(left,seen[s[right]]+<span class="number">1</span>)</span><br><span class="line">            longest = <span class="built_in">max</span>(longest, right - left + <span class="number">1</span>)</span><br><span class="line">            seen[s[right]] = right</span><br><span class="line">            right += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> longest</span><br></pre></td></tr></table></figure>
+
+<h2 id="Regular-Expression-Matching"><a href="#Regular-Expression-Matching" class="headerlink" title="Regular Expression Matching"></a>Regular Expression Matching</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"># go</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/golang/" rel="prev" title="go 学习笔记">
+      <i class="fa fa-chevron-left"></i> go 学习笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/bigdata/" rel="next" title="大数据学习笔记">
+      大数据学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">1.</span> <span class="nav-text">reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Math"><span class="nav-number">2.</span> <span class="nav-text">Math</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Reverse-Integer"><span class="nav-number">2.1.</span> <span class="nav-text">Reverse Integer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evolving-Di%EF%AC%83culty"><span class="nav-number">2.2.</span> <span class="nav-text">Evolving Diﬃculty</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#quickSort"><span class="nav-number">3.</span> <span class="nav-text">quickSort</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Based-on-recursive"><span class="nav-number">3.1.</span> <span class="nav-text">Based on recursive</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-stack"><span class="nav-number">3.2.</span> <span class="nav-text">Use stack</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash-Table"><span class="nav-number">4.</span> <span class="nav-text">Hash Table</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Two-Sum"><span class="nav-number">4.1.</span> <span class="nav-text">Two Sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#least-recently-used"><span class="nav-number">4.2.</span> <span class="nav-text">least recently used</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Leetcode"><span class="nav-number">5.</span> <span class="nav-text">Leetcode</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Longest-Palindromic-Substring"><span class="nav-number">5.1.</span> <span class="nav-text">Longest Palindromic Substring</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Palindrome-Linked-List"><span class="nav-number">5.2.</span> <span class="nav-text">Palindrome Linked List</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Median-of-Two-Sorted-Arrays"><span class="nav-number">5.3.</span> <span class="nav-text">Median of Two Sorted Arrays</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Longest-Substring-Without-Repeating-Characters"><span class="nav-number">5.4.</span> <span class="nav-text">Longest Substring Without Repeating Characters</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Regular-Expression-Matching"><span class="nav-number">5.5.</span> <span class="nav-text">Regular Expression Matching</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

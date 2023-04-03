@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="传统方式的购买 TLS 证书，流程繁琐， 采购周期长。 vault 的优点在于 Vault PKI allows users to dynamically generate X.509 certificates quickly and on demand. Vault PKI can streamline distributing TLS certificates and allows users">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vault pki 实践">
+<meta property="og:url" content="http://feiyang233.club/post/pki/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="传统方式的购买 TLS 证书，流程繁琐， 采购周期长。 vault 的优点在于 Vault PKI allows users to dynamically generate X.509 certificates quickly and on demand. Vault PKI can streamline distributing TLS certificates and allows users">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126095726.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105131.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105137.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105144.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105150.jpg">
+<meta property="article:published_time" content="2021-11-26T01:27:46.000Z">
+<meta property="article:modified_time" content="2022-02-10T08:22:32.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="hashicorp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126095726.png">
+
+<link rel="canonical" href="http://feiyang233.club/post/pki/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>vault pki 实践 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/pki/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vault pki 实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-11-26 09:27:46" itemprop="dateCreated datePublished" datetime="2021-11-26T09:27:46+08:00">2021-11-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-02-10 16:22:32" itemprop="dateModified" datetime="2022-02-10T16:22:32+08:00">2022-02-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>传统方式的购买 TLS 证书，流程繁琐， 采购周期长。 vault 的优点在于 Vault PKI allows users to dynamically generate X.509 certificates quickly and on demand. Vault PKI can streamline distributing TLS certificates and allows users to create PKI certificates with a single command. Vault PKI reduces overhead around the usual manual process of generating a private key and CSR, submitting to a CA, and waiting for a verification and signing process to complete, while additionally providing an authentication and authorization mechanism to validate as well.</p>
+<span id="more"></span>
+<h1 id="为什么需要-TLS"><a href="#为什么需要-TLS" class="headerlink" title="为什么需要 TLS"></a>为什么需要 TLS</h1><p>为了避免被中间人劫持:</p>
+<ul>
+<li>安全传输公钥: 权威机构的公钥不需要传输，因为权威机构会和主流的浏览器或操作系统合作，将他们的公钥内置在浏览器或操作系统环境中。客户端收到证书之后，只需要从证书中找到权威机构的信息，并从本地环境中找到权威机构的公钥，就能正确解密A公钥。</li>
+<li>保证客户端收到的证书是服务器下发的证书，没有被中间人篡改过。<br>更多详细信息, 可以参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25976060">文章一</a>, <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/89905893">文章二</a> 或者自行 Google</li>
+</ul>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><p>当我们访问的 Google 的时候，我们的电脑内置了权威机构的根证书 GTS Root。由此根证书，我们可以验证谷歌站点发过来的 ca chain 真实性。<br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126095726.png"></p>
+<h1 id="vault-pki"><a href="#vault-pki" class="headerlink" title="vault pki"></a>vault pki</h1><p>参考:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/vault/pki-engine">官网教程</a></li>
+<li><a target="_blank" rel="noopener" href="https://strimzi.io/blog/2018/11/16/using-vault-with-strimzi/">CA chain</a></li>
+<li><a target="_blank" rel="noopener" href="https://daimajiaoliu.com/daima/481c508cb9003fc">nginx 验证</a></li>
+</ul>
+<p>搭建 vault 可以参考我的另外一篇 post <a href="https://feiyang233.club/post/vault/">vault 实践</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Creating the root CA:</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">First, <span class="built_in">enable</span> the pki secrets engine at the pki path:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vault secrets <span class="built_in">enable</span> pki</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Tune the pki secrets engine to issue certificates with a maximum time-to-live (TTL)</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  of 87600 hours (10 years):</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vault secrets tune -max-lease-ttl=87600h pki</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Generate the root CA, extracting the root CA<span class="string">&#x27;s certificate to root.crt; the secret</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">  key is not exported!</span></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="string">vault write -field=certificate pki/root/generate/internal common_name=&quot;feiyang.com&quot; \</span></span></span><br><span class="line"><span class="string"><span class="language-bash">       ttl=87600h &gt; root.crt</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">This generates a new self-signed CA certificate and private key. Vault will automatically</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">  revoke the generated root at the end of its lease period (TTL); the CA certificate will</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">    sign its own Certificate Revocation List (CRL).</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">Configure the CA and CRL URLs:</span></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="string">vault write pki/config/urls \</span></span></span><br><span class="line"><span class="string"><span class="language-bash">     issuing_certificates=&quot;$VAULT_ADDR/v1/pki/ca&quot; \</span></span></span><br><span class="line"><span class="string"><span class="language-bash">     crl_distribution_points=&quot;$VAULT_ADDR/v1/pki/crl&quot;</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">Creating the intermediate CA:</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">First, enable the pki secrets engine at the pki_int path:</span></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="string">vault secrets enable -path=pki_int pki</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">Tune the pki_int secrets engine to issue certificates with a maximum time-to-live (TTL)</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">  of 43800 hours (5 years):</span></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="string">vault secrets tune -max-lease-ttl=43800h pki_int</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">Execute the following command to generate an intermediate and save the CSR as</span></span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">  pki_intermediate.csr:</span></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="string">vault write -format=json pki_int/intermediate/generate/exported \</span></span></span><br><span class="line"><span class="string"><span class="language-bash">        common_name=&quot;feiyang.com Intermediate Authority&quot; ttl=&quot;43800h&quot; format=&quot;pem&quot; &gt; pki_intermediate</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">Extract the private key &amp; certificate signing request from the previous command&#x27;</span>s output:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">jq -r <span class="string">&#x27;.data.private_key&#x27;</span> &lt; pki_intermediate &gt; intermediate.key.pem</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">jq -r <span class="string">&#x27;.data.csr&#x27;</span> &lt; pki_intermediate &gt; pki_intermediate.csr</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Sign the intermediate certificate with the root certificate and save the generated</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  certificate as intermediate.cert.pem:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vault write -format=json pki/root/sign-intermediate csr=@pki_intermediate.csr \</span></span><br><span class="line"><span class="language-bash">        format=<span class="string">&quot;pem&quot;</span> \</span></span><br><span class="line"><span class="language-bash">        | jq -r <span class="string">&#x27;.data.certificate&#x27;</span> &gt; intermediate.cert.pem</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Once the CSR is signed and the root CA returns a certificate, it can be imported back</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  into Vault:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vault write pki_int/intermediate/set-signed certificate=@intermediate.cert.pem</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就是拼接成 ca chain （颁发的证书在前，CA证书在后）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cat</span> intermediate.cert.pem &gt; intermediate.chain.pem</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cat</span> root.crt &gt;&gt; intermediate.chain.pem</span></span><br><span class="line"></span><br><span class="line">root@ubuntu18-108:/etc/vault.d/pki_test# ls</span><br><span class="line">feiyang.txt            intermediate.chain.pem  pki_intermediate      root.crt</span><br><span class="line">intermediate.cert.pem  intermediate.key.pem    pki_intermediate.csr</span><br></pre></td></tr></table></figure>
+
+<p>为 client 创建一个 role， client 端可以用来申请证书。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vault write pki_int/roles/feiyang-dot-com \</span><br><span class="line">     allowed_domains=&quot;feiyang.com&quot; \</span><br><span class="line">     allow_subdomains=true \</span><br><span class="line">     max_ttl=&quot;720h&quot;</span><br><span class="line">     </span><br><span class="line">vault write pki_int/issue/feiyang-dot-com common_name=&quot;test.feiyang.com&quot; ttl=&quot;24h&quot; &gt;&gt;feiyang.txt</span><br></pre></td></tr></table></figure>
+<p>我们来看一下， 返回的 test.feiyang.com 有什么</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:/etc/vault.d/pki_test# cat feiyang.txt</span><br><span class="line">Key                 Value</span><br><span class="line">---                 -----</span><br><span class="line">ca_chain            [-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIDrDCCApSgAwIBAgIUNhNKMD9l+/MExLQd3zhvJ6BGDNQwDQYJKoZIhvcNAQEL</span><br><span class="line">BQAwFjEUMBIGA1UEAxMLZmVpeWFuZy5jb20wHhcNMjExMTIzMDIyNzAyWhcNMjEx</span><br><span class="line">MjI1MDIyNzMyWjAtMSswKQYDVQQDEyJmZWl5YW5nLmNvbSBJbnRlcm1lZGlhdGUg</span><br><span class="line">QXV0aG9yaXR5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6fVj91gg</span><br><span class="line">QY1UpNnm387tn9lMirtwhVxEexXPJHL00St3J+io7gbTkw6DNZE5wwsoILqB4jKe</span><br><span class="line">rGsWsk2zIZlebISBzPVhIdLqeVyTW0/hUtLc4KoHgcrAtI8qwaqtGMAOmLWBLHdZ</span><br><span class="line">Gb6j2uiuf6773YPkNT0zaemD/t3JndFFCzZne3xUsOkPUrODmtHUAENHPAxuDQhP</span><br><span class="line">DIYNDENi9KRvh5CD778gXFYgoh+MuWHx8+vcy8IJi/ykfR9yE+P2beP/N/11Jm02</span><br><span class="line">uALJJ0NeQ/nGDaktR4Q5SgkmLY8rwgWRWQmJBR7welSY/ZjPfjfdlmeGdHecYPK9</span><br><span class="line">acGBKk/81lryOQIDAQABo4HaMIHXMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E</span><br><span class="line">BTADAQH/MB0GA1UdDgQWBBRIhaij4GVicVWQAcZvTOxdPg4F5jAfBgNVHSMEGDAW</span><br><span class="line">gBSPMN9+BzUlsMkk8Hv+GVDS0nD3gjA+BggrBgEFBQcBAQQyMDAwLgYIKwYBBQUH</span><br><span class="line">MAKGImh0dHA6Ly8xOTIuMTY4LjY0LjM6ODIwMC92MS9wa2kvY2EwNAYDVR0fBC0w</span><br><span class="line">KzApoCegJYYjaHR0cDovLzE5Mi4xNjguNjQuMzo4MjAwL3YxL3BraS9jcmwwDQYJ</span><br><span class="line">KoZIhvcNAQELBQADggEBAEVNSisWlg+TdPct9VXKJ6cLsHdWNzIfIXk3lFNzcd1J</span><br><span class="line">zWuYEtBYpAvdLFAy3KzmmepTP/jqKN6+nw4JDOMzv/kaRx0Fyoq/uvBu3GILH3NB</span><br><span class="line">ZjMWkOCuvEdFozKj9qTj4GkL9wFzUfEra0w6x+2tr1qodCtcjxxHUv9/jr0slFle</span><br><span class="line">e/zOsLpNd/q+ozWNmt2KEN3STCugIoMhlvAQESUtiESbphMoqPFVw1cc5SX8LI78</span><br><span class="line">cQMgEyT67wiH9KHsJfcJQexzQCQUJcebXbO9HvUTnP94kdVZIN3uDot5OiDWJPqg</span><br><span class="line">M8uwej97SAyjjnjGR8bkO+Ct1SuSDV5URP2E/9possg=</span><br><span class="line">-----END CERTIFICATE-----]</span><br><span class="line">certificate         -----BEGIN CERTIFICATE-----</span><br><span class="line">MIIDZjCCAk6gAwIBAgIUQu0BTkmbJHjwUGiXDjLOX47ki18wDQYJKoZIhvcNAQEL</span><br><span class="line">BQAwLTErMCkGA1UEAxMiZmVpeWFuZy5jb20gSW50ZXJtZWRpYXRlIEF1dGhvcml0</span><br><span class="line">eTAeFw0yMTExMjUxNjE0MzBaFw0yMTExMjYxNjE1MDBaMBsxGTAXBgNVBAMTEHRl</span><br><span class="line">c3QuZmVpeWFuZy5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCn</span><br><span class="line">cVsD17cydZz722CwpIS6bPjGLxMxnl2xk2yfGdhQZc2z/GEtyQd028n6PwPoxJ9U</span><br><span class="line">6dwGZcyzS/iHTZhmThv6hvy2QZgeIbWB8n58Cnf7ExWmwmplUVQd549NP9RwFtuN</span><br><span class="line">tBKZjxpVyPiwp3dVoBuA+3rVBo4z5Cfz1HQ0b53j5Vb9AjNX8VrDFWOpGOF2LWPg</span><br><span class="line">nZOWLQaCMMOd7iuXjPKLJtO2VDbBGBYOx0YXhyr5itQDhM8UKgEVU1kJZgna7CWu</span><br><span class="line">CfBdQh+new+YgsPTQx4zkca472Uyb9rykTxzRfnly0b5WkhwDoyvCMPZtFerf3T7</span><br><span class="line">LjJhqnVWcCgA1R0sb0/HAgMBAAGjgY8wgYwwDgYDVR0PAQH/BAQDAgOoMB0GA1Ud</span><br><span class="line">JQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNVHQ4EFgQUSjt1XbgoJdJceVB+</span><br><span class="line">VP5bMuGFEnAwHwYDVR0jBBgwFoAUSIWoo+BlYnFVkAHGb0zsXT4OBeYwGwYDVR0R</span><br><span class="line">BBQwEoIQdGVzdC5mZWl5YW5nLmNvbTANBgkqhkiG9w0BAQsFAAOCAQEAdTP2kqpS</span><br><span class="line">P1qTmt/ILAuJ5wz6Fe+78v3uv5PjAGz4CJ4gcdqVXqVxn0a6PPi3VuCg2y50h/zC</span><br><span class="line">a/T7OWC/Qcu3No0Puad2T2osVbrH/pf/WvmieMnwPcc+8Ay8pgEDO1iP8R7m/YB4</span><br><span class="line">fnt1x2ePkeHRp984QnCt19a8nVNTnD5bsGR4dIcchgz0xDyGlro7rDY8MppBJZNy</span><br><span class="line">24Dg6BJOo+GTFwO3+lvoB4RrlVQpr74a5y4PJJnRdwq5ov/1qMd5E1MkzJAdPPhs</span><br><span class="line">xi5+oaa7Ja9hpYk9iZUcdZrePE31WTkqnNZvkC+DZGQ3eZbdO/uK2fRYvX4tjOyX</span><br><span class="line">16kYe2YkPN9KzA==</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">expiration          1637943300</span><br><span class="line">issuing_ca          -----BEGIN CERTIFICATE-----</span><br><span class="line">MIIDrDCCApSgAwIBAgIUNhNKMD9l+/MExLQd3zhvJ6BGDNQwDQYJKoZIhvcNAQEL</span><br><span class="line">BQAwFjEUMBIGA1UEAxMLZmVpeWFuZy5jb20wHhcNMjExMTIzMDIyNzAyWhcNMjEx</span><br><span class="line">MjI1MDIyNzMyWjAtMSswKQYDVQQDEyJmZWl5YW5nLmNvbSBJbnRlcm1lZGlhdGUg</span><br><span class="line">QXV0aG9yaXR5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6fVj91gg</span><br><span class="line">QY1UpNnm387tn9lMirtwhVxEexXPJHL00St3J+io7gbTkw6DNZE5wwsoILqB4jKe</span><br><span class="line">rGsWsk2zIZlebISBzPVhIdLqeVyTW0/hUtLc4KoHgcrAtI8qwaqtGMAOmLWBLHdZ</span><br><span class="line">Gb6j2uiuf6773YPkNT0zaemD/t3JndFFCzZne3xUsOkPUrODmtHUAENHPAxuDQhP</span><br><span class="line">DIYNDENi9KRvh5CD778gXFYgoh+MuWHx8+vcy8IJi/ykfR9yE+P2beP/N/11Jm02</span><br><span class="line">uALJJ0NeQ/nGDaktR4Q5SgkmLY8rwgWRWQmJBR7welSY/ZjPfjfdlmeGdHecYPK9</span><br><span class="line">acGBKk/81lryOQIDAQABo4HaMIHXMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E</span><br><span class="line">BTADAQH/MB0GA1UdDgQWBBRIhaij4GVicVWQAcZvTOxdPg4F5jAfBgNVHSMEGDAW</span><br><span class="line">gBSPMN9+BzUlsMkk8Hv+GVDS0nD3gjA+BggrBgEFBQcBAQQyMDAwLgYIKwYBBQUH</span><br><span class="line">MAKGImh0dHA6Ly8xOTIuMTY4LjY0LjM6ODIwMC92MS9wa2kvY2EwNAYDVR0fBC0w</span><br><span class="line">KzApoCegJYYjaHR0cDovLzE5Mi4xNjguNjQuMzo4MjAwL3YxL3BraS9jcmwwDQYJ</span><br><span class="line">KoZIhvcNAQELBQADggEBAEVNSisWlg+TdPct9VXKJ6cLsHdWNzIfIXk3lFNzcd1J</span><br><span class="line">zWuYEtBYpAvdLFAy3KzmmepTP/jqKN6+nw4JDOMzv/kaRx0Fyoq/uvBu3GILH3NB</span><br><span class="line">ZjMWkOCuvEdFozKj9qTj4GkL9wFzUfEra0w6x+2tr1qodCtcjxxHUv9/jr0slFle</span><br><span class="line">e/zOsLpNd/q+ozWNmt2KEN3STCugIoMhlvAQESUtiESbphMoqPFVw1cc5SX8LI78</span><br><span class="line">cQMgEyT67wiH9KHsJfcJQexzQCQUJcebXbO9HvUTnP94kdVZIN3uDot5OiDWJPqg</span><br><span class="line">M8uwej97SAyjjnjGR8bkO+Ct1SuSDV5URP2E/9possg=</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">private_key         -----BEGIN RSA PRIVATE KEY-----</span><br><span class="line">MIIEpAIBAAKCAQEAp3FbA9e3MnWc+9tgsKSEumz4xi8TMZ5dsZNsnxnYUGXNs/xh</span><br><span class="line">LckHdNvJ+j8D6MSfVOncBmXMs0v4h02YZk4b+ob8tkGYHiG1gfJ+fAp3+xMVpsJq</span><br><span class="line">ZVFUHeePTT/UcBbbjbQSmY8aVcj4sKd3VaAbgPt61QaOM+Qn89R0NG+d4+VW/QIz</span><br><span class="line">V/FawxVjqRjhdi1j4J2Tli0GgjDDne4rl4zyiybTtlQ2wRgWDsdGF4cq+YrUA4TP</span><br><span class="line">FCoBFVNZCWYJ2uwlrgnwXUIfp3sPmILD00MeM5HGuO9lMm/a8pE8c0X55ctG+VpI</span><br><span class="line">cA6MrwjD2bRXq390+y4yYap1VnAoANUdLG9PxwIDAQABAoIBAB5H9bnALTVG59j0</span><br><span class="line">V4wadJZyVpsgsEvs4+zVSHONbP09K/I81iY9kMelZ+WFt+NEi7wDfvL5Pge+2Xc+</span><br><span class="line">pSz7OzwXZWRggG4Skoypmg48pm4ViXja9/rStm+iDNxfir+qopIB2stCgfS5n5/y</span><br><span class="line">6TXm+pJc6F3WDal8vWzvIwTImrk32WgNa3TxA/KtkawbhiAwOsvT4S5SlQmsgpFK</span><br><span class="line">EtC+lmbx9aZTeoAcor/XMz9hbk0pB3r9VK4Z4MxOz5WrNcb2wPZ81EuVVBBdEYCI</span><br><span class="line">auaNTnLl8r5w/VMSTi2DvSuZ9SC6yGc4Gv8Y3GvsHpxujAQlls3kqJQtPAPs4Cwg</span><br><span class="line">hNS8JyECgYEAwDrhkaW7AUhrhQ5655Vv4/EF5sFNIPp8A0e7jzq7iDSmbvdG1EGU</span><br><span class="line">eaUYqj7zY6USRf2B2cnTYo7WQJedshK6/mRErFv+prsNUT0kyKIgEKgLWPMZwzAQ</span><br><span class="line">6RI9uDRiRYNbcLlU8Wukxt1A+9JlddVFfwI0L98J9v6TkgRXL8ZTKM0CgYEA3v1s</span><br><span class="line">J6ZdjjBqA1+qzSEkmHjSk9CPTNuQ4/sIciOXdcu8r+g9fbj88I4ZrT4q8L7Xqojj</span><br><span class="line">bgB/mJpebRrkLOGU8iBCqCHjJSqciBBU1c2v8quoLOD4Mo2naBLqI2ge30RJGxEY</span><br><span class="line">Yt8Bacmlr3q2SsDZ6GtLQf7UVCfN+3u+Gd4CquMCgYBYFeMtSYNSyCu00fjRy/F0</span><br><span class="line">wwpQPj2oof9XxXQV4vTyKiYl7RvAwbhWsaeGw8fl3ktsVQk+kjRSEl/tQ0yYv+p+</span><br><span class="line">DdZGIPWk00v78Qe9BEWrPEXO4b7paUomcxxjH2X0soehNNvOsOPV2KchfbzObQcm</span><br><span class="line">dw0Q7qRzUR6wJ1sIYlnS9QKBgQDPCftOgSAiMf9sbHnYhapFywCxb5ZtpPtNQbog</span><br><span class="line">x70MCQODTB0zyvtGmplqiesype72Dq0jaGEQHlwH70zmAvjZKmzZUMVmr76wcoFi</span><br><span class="line">Fd0Ecq7uJF8uCOnjLpSoFTd80xkRgXjj6+yS/T/RwxzYIWDxdBVnDCS2klKk6cqi</span><br><span class="line">l8hgQwKBgQCCG+QMKA6o6gtYnxdi6S3EF3Mo0b9MB3r4OFRFHN7Sk1ICxWB5oy94</span><br><span class="line">YSER0HMxcl+N6COfr4QiA46Me0ixEJ/CXnE9ey7zrvojchLbtIZrZPenhAiFxiiC</span><br><span class="line">/wDATARa8QuQ2HrBt7G/zzCujWQilbGcWWqK/K/4ESA40Ib4N05grQ==</span><br><span class="line">-----END RSA PRIVATE KEY-----</span><br><span class="line">private_key_type    rsa</span><br><span class="line">serial_number       42:ed:01:4e:49:9b:24:78:f0:50:68:97:0e:32:ce:5f:8e:e4:8b:5f</span><br></pre></td></tr></table></figure>
+<h1 id="verify-in-nginx"><a href="#verify-in-nginx" class="headerlink" title="verify in nginx"></a>verify in nginx</h1><p>安装 Nginx 的过程就省略了，只看设置</p>
+<h2 id="nginx-server"><a href="#nginx-server" class="headerlink" title="nginx server"></a>nginx server</h2><p>这里的 server.crt 就是 ca chain， 把 feiyang.txt 里面的 certificate 和 issuing_ca 拼接起来</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">    server &#123;</span><br><span class="line">        listen       443 ssl http2;</span><br><span class="line">        listen       [::]:443 ssl http2;</span><br><span class="line">        server_name  test.feiyang.com;</span><br><span class="line">        root         /usr/share/nginx/html;</span><br><span class="line"></span><br><span class="line">        ssl_certificate &quot;/etc/pki/nginx/server.crt&quot;;</span><br><span class="line">        ssl_certificate_key &quot;/etc/pki/nginx/private/server.key&quot;;</span><br><span class="line">        ssl_session_cache shared:SSL:1m;</span><br><span class="line">        ssl_session_timeout  10m;</span><br><span class="line">        ssl_ciphers HIGH:!aNULL:!MD5;</span><br><span class="line">        ssl_prefer_server_ciphers on;</span><br><span class="line">        </span><br><span class="line">[root@centos7 nginx]# cat /etc/pki/nginx/server.crt</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIDZjCCAk6gAwIBAgIUQu0BTkmbJHjwUGiXDjLOX47ki18wDQYJKoZIhvcNAQEL</span><br><span class="line">BQAwLTErMCkGA1UEAxMiZmVpeWFuZy5jb20gSW50ZXJtZWRpYXRlIEF1dGhvcml0</span><br><span class="line">eTAeFw0yMTExMjUxNjE0MzBaFw0yMTExMjYxNjE1MDBaMBsxGTAXBgNVBAMTEHRl</span><br><span class="line">c3QuZmVpeWFuZy5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCn</span><br><span class="line">cVsD17cydZz722CwpIS6bPjGLxMxnl2xk2yfGdhQZc2z/GEtyQd028n6PwPoxJ9U</span><br><span class="line">6dwGZcyzS/iHTZhmThv6hvy2QZgeIbWB8n58Cnf7ExWmwmplUVQd549NP9RwFtuN</span><br><span class="line">tBKZjxpVyPiwp3dVoBuA+3rVBo4z5Cfz1HQ0b53j5Vb9AjNX8VrDFWOpGOF2LWPg</span><br><span class="line">nZOWLQaCMMOd7iuXjPKLJtO2VDbBGBYOx0YXhyr5itQDhM8UKgEVU1kJZgna7CWu</span><br><span class="line">CfBdQh+new+YgsPTQx4zkca472Uyb9rykTxzRfnly0b5WkhwDoyvCMPZtFerf3T7</span><br><span class="line">LjJhqnVWcCgA1R0sb0/HAgMBAAGjgY8wgYwwDgYDVR0PAQH/BAQDAgOoMB0GA1Ud</span><br><span class="line">JQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNVHQ4EFgQUSjt1XbgoJdJceVB+</span><br><span class="line">VP5bMuGFEnAwHwYDVR0jBBgwFoAUSIWoo+BlYnFVkAHGb0zsXT4OBeYwGwYDVR0R</span><br><span class="line">BBQwEoIQdGVzdC5mZWl5YW5nLmNvbTANBgkqhkiG9w0BAQsFAAOCAQEAdTP2kqpS</span><br><span class="line">P1qTmt/ILAuJ5wz6Fe+78v3uv5PjAGz4CJ4gcdqVXqVxn0a6PPi3VuCg2y50h/zC</span><br><span class="line">a/T7OWC/Qcu3No0Puad2T2osVbrH/pf/WvmieMnwPcc+8Ay8pgEDO1iP8R7m/YB4</span><br><span class="line">fnt1x2ePkeHRp984QnCt19a8nVNTnD5bsGR4dIcchgz0xDyGlro7rDY8MppBJZNy</span><br><span class="line">24Dg6BJOo+GTFwO3+lvoB4RrlVQpr74a5y4PJJnRdwq5ov/1qMd5E1MkzJAdPPhs</span><br><span class="line">xi5+oaa7Ja9hpYk9iZUcdZrePE31WTkqnNZvkC+DZGQ3eZbdO/uK2fRYvX4tjOyX</span><br><span class="line">16kYe2YkPN9KzA==</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIDrDCCApSgAwIBAgIUNhNKMD9l+/MExLQd3zhvJ6BGDNQwDQYJKoZIhvcNAQEL</span><br><span class="line">BQAwFjEUMBIGA1UEAxMLZmVpeWFuZy5jb20wHhcNMjExMTIzMDIyNzAyWhcNMjEx</span><br><span class="line">MjI1MDIyNzMyWjAtMSswKQYDVQQDEyJmZWl5YW5nLmNvbSBJbnRlcm1lZGlhdGUg</span><br><span class="line">QXV0aG9yaXR5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6fVj91gg</span><br><span class="line">QY1UpNnm387tn9lMirtwhVxEexXPJHL00St3J+io7gbTkw6DNZE5wwsoILqB4jKe</span><br><span class="line">rGsWsk2zIZlebISBzPVhIdLqeVyTW0/hUtLc4KoHgcrAtI8qwaqtGMAOmLWBLHdZ</span><br><span class="line">Gb6j2uiuf6773YPkNT0zaemD/t3JndFFCzZne3xUsOkPUrODmtHUAENHPAxuDQhP</span><br><span class="line">DIYNDENi9KRvh5CD778gXFYgoh+MuWHx8+vcy8IJi/ykfR9yE+P2beP/N/11Jm02</span><br><span class="line">uALJJ0NeQ/nGDaktR4Q5SgkmLY8rwgWRWQmJBR7welSY/ZjPfjfdlmeGdHecYPK9</span><br><span class="line">acGBKk/81lryOQIDAQABo4HaMIHXMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E</span><br><span class="line">BTADAQH/MB0GA1UdDgQWBBRIhaij4GVicVWQAcZvTOxdPg4F5jAfBgNVHSMEGDAW</span><br><span class="line">gBSPMN9+BzUlsMkk8Hv+GVDS0nD3gjA+BggrBgEFBQcBAQQyMDAwLgYIKwYBBQUH</span><br><span class="line">MAKGImh0dHA6Ly8xOTIuMTY4LjY0LjM6ODIwMC92MS9wa2kvY2EwNAYDVR0fBC0w</span><br><span class="line">KzApoCegJYYjaHR0cDovLzE5Mi4xNjguNjQuMzo4MjAwL3YxL3BraS9jcmwwDQYJ</span><br><span class="line">KoZIhvcNAQELBQADggEBAEVNSisWlg+TdPct9VXKJ6cLsHdWNzIfIXk3lFNzcd1J</span><br><span class="line">zWuYEtBYpAvdLFAy3KzmmepTP/jqKN6+nw4JDOMzv/kaRx0Fyoq/uvBu3GILH3NB</span><br><span class="line">ZjMWkOCuvEdFozKj9qTj4GkL9wFzUfEra0w6x+2tr1qodCtcjxxHUv9/jr0slFle</span><br><span class="line">e/zOsLpNd/q+ozWNmt2KEN3STCugIoMhlvAQESUtiESbphMoqPFVw1cc5SX8LI78</span><br><span class="line">cQMgEyT67wiH9KHsJfcJQexzQCQUJcebXbO9HvUTnP94kdVZIN3uDot5OiDWJPqg</span><br><span class="line">M8uwej97SAyjjnjGR8bkO+Ct1SuSDV5URP2E/9possg=</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line"></span><br><span class="line">[root@centos7 nginx]# cat /etc/pki/nginx/private/server.key</span><br><span class="line">-----BEGIN RSA PRIVATE KEY-----</span><br><span class="line">MIIEpAIBAAKCAQEAp3FbA9e3MnWc+9tgsKSEumz4xi8TMZ5dsZNsnxnYUGXNs/xh</span><br><span class="line">LckHdNvJ+j8D6MSfVOncBmXMs0v4h02YZk4b+ob8tkGYHiG1gfJ+fAp3+xMVpsJq</span><br><span class="line">ZVFUHeePTT/UcBbbjbQSmY8aVcj4sKd3VaAbgPt61QaOM+Qn89R0NG+d4+VW/QIz</span><br><span class="line">V/FawxVjqRjhdi1j4J2Tli0GgjDDne4rl4zyiybTtlQ2wRgWDsdGF4cq+YrUA4TP</span><br><span class="line">FCoBFVNZCWYJ2uwlrgnwXUIfp3sPmILD00MeM5HGuO9lMm/a8pE8c0X55ctG+VpI</span><br><span class="line">cA6MrwjD2bRXq390+y4yYap1VnAoANUdLG9PxwIDAQABAoIBAB5H9bnALTVG59j0</span><br><span class="line">V4wadJZyVpsgsEvs4+zVSHONbP09K/I81iY9kMelZ+WFt+NEi7wDfvL5Pge+2Xc+</span><br><span class="line">pSz7OzwXZWRggG4Skoypmg48pm4ViXja9/rStm+iDNxfir+qopIB2stCgfS5n5/y</span><br><span class="line">6TXm+pJc6F3WDal8vWzvIwTImrk32WgNa3TxA/KtkawbhiAwOsvT4S5SlQmsgpFK</span><br><span class="line">EtC+lmbx9aZTeoAcor/XMz9hbk0pB3r9VK4Z4MxOz5WrNcb2wPZ81EuVVBBdEYCI</span><br><span class="line">auaNTnLl8r5w/VMSTi2DvSuZ9SC6yGc4Gv8Y3GvsHpxujAQlls3kqJQtPAPs4Cwg</span><br><span class="line">hNS8JyECgYEAwDrhkaW7AUhrhQ5655Vv4/EF5sFNIPp8A0e7jzq7iDSmbvdG1EGU</span><br><span class="line">eaUYqj7zY6USRf2B2cnTYo7WQJedshK6/mRErFv+prsNUT0kyKIgEKgLWPMZwzAQ</span><br><span class="line">6RI9uDRiRYNbcLlU8Wukxt1A+9JlddVFfwI0L98J9v6TkgRXL8ZTKM0CgYEA3v1s</span><br><span class="line">J6ZdjjBqA1+qzSEkmHjSk9CPTNuQ4/sIciOXdcu8r+g9fbj88I4ZrT4q8L7Xqojj</span><br><span class="line">bgB/mJpebRrkLOGU8iBCqCHjJSqciBBU1c2v8quoLOD4Mo2naBLqI2ge30RJGxEY</span><br><span class="line">Yt8Bacmlr3q2SsDZ6GtLQf7UVCfN+3u+Gd4CquMCgYBYFeMtSYNSyCu00fjRy/F0</span><br><span class="line">wwpQPj2oof9XxXQV4vTyKiYl7RvAwbhWsaeGw8fl3ktsVQk+kjRSEl/tQ0yYv+p+</span><br><span class="line">DdZGIPWk00v78Qe9BEWrPEXO4b7paUomcxxjH2X0soehNNvOsOPV2KchfbzObQcm</span><br><span class="line">dw0Q7qRzUR6wJ1sIYlnS9QKBgQDPCftOgSAiMf9sbHnYhapFywCxb5ZtpPtNQbog</span><br><span class="line">x70MCQODTB0zyvtGmplqiesype72Dq0jaGEQHlwH70zmAvjZKmzZUMVmr76wcoFi</span><br><span class="line">Fd0Ecq7uJF8uCOnjLpSoFTd80xkRgXjj6+yS/T/RwxzYIWDxdBVnDCS2klKk6cqi</span><br><span class="line">l8hgQwKBgQCCG+QMKA6o6gtYnxdi6S3EF3Mo0b9MB3r4OFRFHN7Sk1ICxWB5oy94</span><br><span class="line">YSER0HMxcl+N6COfr4QiA46Me0ixEJ/CXnE9ey7zrvojchLbtIZrZPenhAiFxiiC</span><br><span class="line">/wDATARa8QuQ2HrBt7G/zzCujWQilbGcWWqK/K/4ESA40Ib4N05grQ==</span><br><span class="line">-----END RSA PRIVATE KEY-----</span><br></pre></td></tr></table></figure>
+<h2 id="ubuntu20-verify"><a href="#ubuntu20-verify" class="headerlink" title="ubuntu20 verify"></a>ubuntu20 verify</h2><p>需要先把根证书 root.crt 导入 ubuntu20, 这里我们 copy &amp; paste <a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/90450/adding-a-self-signed-certificate-to-the-trusted-list">Adding a self-signed certificate to the “trusted list”</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">sudo <span class="built_in">cp</span> root.crt /usr/local/share/ca-certificates/</span></span><br><span class="line">vim /usr/local/share/ca-certificates/feiyang.crt</span><br><span class="line">sudo update-ca-certificates</span><br><span class="line"></span><br><span class="line">echo &quot;192.168.64.4 test.feiyang.com&quot; &gt;&gt; /etc/hosts</span><br></pre></td></tr></table></figure>
+<p>添加好证书后，我们就可以用 curl 测试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu20:/usr/local/share/ca-certificates# curl -v https://test.feiyang.com</span><br><span class="line"></span><br><span class="line">*   Trying 192.168.64.4:443...</span><br><span class="line">* TCP_NODELAY set</span><br><span class="line">* Connected to test.feiyang.com (192.168.64.4) port 443 (#0)</span><br><span class="line">* ALPN, offering h2</span><br><span class="line">* ALPN, offering http/1.1</span><br><span class="line">* successfully set certificate verify locations:</span><br><span class="line">*   CAfile: /etc/ssl/certs/ca-certificates.crt</span><br><span class="line">  CApath: /etc/ssl/certs</span><br><span class="line">* TLSv1.3 (OUT), TLS handshake, Client hello (1):</span><br><span class="line">* TLSv1.3 (IN), TLS handshake, Server hello (2):</span><br><span class="line">* TLSv1.2 (IN), TLS handshake, Certificate (11):</span><br><span class="line">* TLSv1.2 (IN), TLS handshake, Server key exchange (12):</span><br><span class="line">* TLSv1.2 (IN), TLS handshake, Server finished (14):</span><br><span class="line">* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):</span><br><span class="line">* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):</span><br><span class="line">* TLSv1.2 (OUT), TLS handshake, Finished (20):</span><br><span class="line">* TLSv1.2 (IN), TLS handshake, Finished (20):</span><br><span class="line">* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384</span><br><span class="line">* ALPN, server accepted to use h2</span><br><span class="line">* Server certificate:</span><br><span class="line">*  subject: CN=test.feiyang.com</span><br><span class="line">*  start date: Nov 25 16:14:30 2021 GMT</span><br><span class="line">*  expire date: Nov 26 16:15:00 2021 GMT</span><br><span class="line">*  subjectAltName: host &quot;test.feiyang.com&quot; matched cert&#x27;s &quot;test.feiyang.com&quot;</span><br><span class="line">*  issuer: CN=feiyang.com Intermediate Authority</span><br><span class="line">*  SSL certificate verify ok.</span><br><span class="line">* Using HTTP2, server supports multi-use</span><br><span class="line">* Connection state changed (HTTP/2 confirmed)</span><br><span class="line">* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0</span><br><span class="line">* Using Stream ID: 1 (easy handle 0x563b3aa8be10)</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">GET / HTTP/2</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">Host: test.feiyang.com</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">user-agent: curl/7.68.0</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">accept: */*</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash">* Connection state changed (MAX_CONCURRENT_STREAMS == 128)!</span></span><br><span class="line">&lt; HTTP/2 200</span><br><span class="line">&lt; server: nginx/1.20.1</span><br><span class="line">&lt; date: Fri, 26 Nov 2021 02:48:04 GMT</span><br><span class="line">&lt; content-type: text/html</span><br><span class="line">&lt; content-length: 4833</span><br><span class="line">&lt; last-modified: Fri, 16 May 2014 15:12:48 GMT</span><br><span class="line">&lt; etag: &quot;53762af0-12e1&quot;</span><br><span class="line">&lt; accept-ranges: bytes</span><br></pre></td></tr></table></figure>
+
+<h2 id="ubuntu18-firefox"><a href="#ubuntu18-firefox" class="headerlink" title="ubuntu18 firefox"></a>ubuntu18 firefox</h2><p>我们把证书导入到另外一台 Ubuntu 桌面版，浏览器 firefox 里面。参考 <a target="_blank" rel="noopener" href="https://javorszky.co.uk/2019/11/06/get-firefox-to-trust-your-self-signed-certificates/">Get Firefox to trust your self signed certificates</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;192.168.64.4 test.feiyang.com&quot; &gt;&gt; /etc/hosts</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105131.png"><br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105137.jpg"><br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105144.jpg"><br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/20211126105150.jpg"></p>
+<h1 id="vault-revoke"><a href="#vault-revoke" class="headerlink" title="vault revoke"></a>vault revoke</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-108:/etc/vault.d/pki_test# vault write pki_int/revoke serial_number=42:ed:01:4e:49:9b:24:78:f0:50:68:97:0e:32:ce:5f:8e:e4:8b:5f</span><br><span class="line">Key                        Value</span><br><span class="line">---                        -----</span><br><span class="line">revocation_time            1637895959</span><br><span class="line">revocation_time_rfc3339    2021-11-26T03:05:59.165880864Z</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/hashicorp/" rel="tag"># hashicorp</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/recommend/" rel="prev" title="好物分享">
+      <i class="fa fa-chevron-left"></i> 好物分享
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/vault-k8s/" rel="next" title="vault k8s integration">
+      vault k8s integration <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-TLS"><span class="nav-number">1.</span> <span class="nav-text">为什么需要 TLS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vault-pki"><span class="nav-number">2.</span> <span class="nav-text">vault pki</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#verify-in-nginx"><span class="nav-number">3.</span> <span class="nav-text">verify in nginx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx-server"><span class="nav-number">3.1.</span> <span class="nav-text">nginx server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ubuntu20-verify"><span class="nav-number">3.2.</span> <span class="nav-text">ubuntu20 verify</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ubuntu18-firefox"><span class="nav-number">3.3.</span> <span class="nav-text">ubuntu18 firefox</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vault-revoke"><span class="nav-number">4.</span> <span class="nav-text">vault revoke</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

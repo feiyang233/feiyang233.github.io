@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题介绍假设有小费和小王俩好基友，天天形影不离，二人分在一个组。为了减少迟到的现象，班主任规定如下：  迟到一次，则当事人记一分。（迟到） 小组两人在某一天同时迟到，则小组总分再记一分。（连坐） 一周内如果每天都迟到，则当事人再扣一分。（太皮了）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="排列组合了解一下(阿里笔试题改编)">
+<meta property="og:url" content="http://feiyang233.club/post/Combination/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="问题介绍假设有小费和小王俩好基友，天天形影不离，二人分在一个组。为了减少迟到的现象，班主任规定如下：  迟到一次，则当事人记一分。（迟到） 小组两人在某一天同时迟到，则小组总分再记一分。（连坐） 一周内如果每天都迟到，则当事人再扣一分。（太皮了）">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://feiyang233.club/img/gay.jpeg">
+<meta property="og:image" content="http://feiyang233.club/img/combination1.png">
+<meta property="og:image" content="http://feiyang233.club/img/combination2.png">
+<meta property="og:image" content="http://feiyang233.club/img/combination3.png">
+<meta property="og:image" content="http://feiyang233.club/img/combination4.png">
+<meta property="article:published_time" content="2018-03-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-27T01:13:04.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://feiyang233.club/img/gay.jpeg">
+
+<link rel="canonical" href="http://feiyang233.club/post/Combination/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>排列组合了解一下(阿里笔试题改编) | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/Combination/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          排列组合了解一下(阿里笔试题改编)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-03-04 00:00:00" itemprop="dateCreated datePublished" datetime="2018-03-04T00:00:00+08:00">2018-03-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-27 09:13:04" itemprop="dateModified" datetime="2021-06-27T09:13:04+08:00">2021-06-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h2><p>假设有小费和小王俩好基友，天天形影不离，二人分在一个组。<br>为了减少迟到的现象，班主任规定如下：</p>
+<ol>
+<li>迟到一次，则当事人记一分。（迟到）</li>
+<li>小组两人在某一天同时迟到，则小组总分再记一分。（连坐）</li>
+<li>一周内如果每天都迟到，则当事人再扣一分。（太皮了）</li>
+</ol>
+<span id="more"></span>
+<p>  三种情况可累加记分，一周结算一次小组总分。<br>  肯定有人想说<br><img src="/img/gay.jpeg" alt="gay里gay气"> </p>
+<h2 id="举个例子好了"><a href="#举个例子好了" class="headerlink" title="举个例子好了"></a>举个例子好了</h2><p>下图为某一周的出勤情况：从图中看出小费同学比较皮，天天迟到！小王同学有两天和小费同学一起开黑，导致了迟到。<br>所以总的小组计分为10分！</p>
+<p><img src="/img/combination1.png" alt="出勤情况"></p>
+<p><code>那么问题来了：如果已知某一周小组的总分情况，列出可能的出勤表</code></p>
+<h2 id="咸鱼采用的暴力破解法"><a href="#咸鱼采用的暴力破解法" class="headerlink" title="咸鱼采用的暴力破解法"></a>咸鱼采用的暴力破解法</h2><p>有两个对象，每个对象有5个记录。每次记录的值有两种情况，我们可以暴力枚举出所有的情况。<br>一共也才2的10次方，1024种情况。对于计算机来说，当然是小菜一碟咯。</p>
+<p>所有上面的出勤图就可以简化为0-1数值图：<br><img src="/img/combination2.png" alt="数值图"></p>
+<p>接下来问题就变成，如何枚举出这1024种情况？</p>
+<ol>
+<li>2行5列一共10个值，循环列出0-1111111111二进制数的情况，高位补0。</li>
+<li>如上图，2列是独立的，我们只需求出5位的情况，两列互相遍历即可。</li>
+<li>用python自带的 <a target="_blank" rel="noopener" href="https://docs.python.org/3/library/itertools.html">itertools</a>库，分分钟枚举完成。</li>
+</ol>
+<p><img src="/img/combination3.png" alt="解释图"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> itertools</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">start_day,faith_score</span>):</span><br><span class="line">    Calendar=[[<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>],[<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>]] <span class="comment">#模拟日历2行5列</span></span><br><span class="line">    L=<span class="built_in">list</span>(itertools.product([<span class="number">0</span>,<span class="number">1</span>],repeat=<span class="number">5</span>)) <span class="comment">#枚举产生</span></span><br><span class="line">    leng=<span class="built_in">len</span>(L)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(leng):<span class="comment">#两次遍历</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(leng):</span><br><span class="line">            Calendar[<span class="number">0</span>]=L[i]</span><br><span class="line">            Calendar[<span class="number">1</span>]=L[j]</span><br><span class="line">            <span class="keyword">if</span> sumcredit(Calendar)==faith_score:<span class="comment">#判断情况</span></span><br><span class="line">                gg=todate(Calendar,start_day)</span><br><span class="line">                <span class="built_in">print</span>(gg) <span class="comment">#输出情况</span></span><br></pre></td></tr></table></figure>
+
+<p>只要有了枚举的所有情况，判断计分则是很容易的事情。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">credit1</span>(<span class="params">L</span>): <span class="comment">#迟到一次扣一分</span></span><br><span class="line">    credit=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> L[<span class="number">0</span>]:</span><br><span class="line">        <span class="keyword">if</span> i==<span class="number">1</span>:</span><br><span class="line">            credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> L[<span class="number">1</span>]:</span><br><span class="line">        <span class="keyword">if</span> j==<span class="number">1</span>:</span><br><span class="line">            credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> credit</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">credit2</span> (L):  <span class="comment">#一起迟到，多扣一分</span></span><br><span class="line">    credit=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        <span class="keyword">if</span> L[<span class="number">0</span>][i]==<span class="number">1</span> <span class="keyword">and</span> L[<span class="number">1</span>][i]==<span class="number">1</span>:</span><br><span class="line">            credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> credit</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">credit3</span> (L): <span class="comment">#连续迟到，罪加一等</span></span><br><span class="line">    credit=<span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> <span class="number">0</span> <span class="keyword">not</span> <span class="keyword">in</span> L[<span class="number">0</span>]:</span><br><span class="line">        credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> <span class="number">0</span> <span class="keyword">not</span> <span class="keyword">in</span> L[<span class="number">1</span>]:</span><br><span class="line">        credit+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> credit</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sumcredit</span>(<span class="params">L</span>): <span class="comment">#累加总分</span></span><br><span class="line">    c1=credit1(L)</span><br><span class="line">    c2=credit2(L)</span><br><span class="line">    c3=credit3(L)</span><br><span class="line">    <span class="keyword">return</span> c1+c2+c3</span><br></pre></td></tr></table></figure>
+
+<h2 id="时间问题，不容小觑"><a href="#时间问题，不容小觑" class="headerlink" title="时间问题，不容小觑"></a>时间问题，不容小觑</h2><p>因为时间在<code>跨月份</code>是时候有点麻烦，不能用普通的++，但我们可以用<code>datetime</code>库呀。<br>输入一个起始时间，我们要得到那一周的5天。<code>timedelta()</code>函数你值得拥有。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime,timedelta</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_date</span>(<span class="params">date</span>):       <span class="comment">#Y表示四位数的年份(0-9999)</span></span><br><span class="line">    date_begin=datetime.strptime(date,<span class="string">&#x27;%Y%m%d&#x27;</span>) </span><br><span class="line">    time=<span class="built_in">str</span>(datetime.date(date_begin))</span><br><span class="line"></span><br><span class="line">    date1=date_begin+timedelta(days=<span class="number">1</span>) <span class="comment">#加1s，哈哈</span></span><br><span class="line">    time1=<span class="built_in">str</span>(datetime.date(date1))</span><br><span class="line"></span><br><span class="line">    date2=date_begin+timedelta(days=<span class="number">2</span>)</span><br><span class="line">    time2=<span class="built_in">str</span>(datetime.date(date2))</span><br><span class="line"></span><br><span class="line">    date3=date_begin+timedelta(days=<span class="number">2</span>)</span><br><span class="line">    time3=<span class="built_in">str</span>(datetime.date(date3))</span><br><span class="line"></span><br><span class="line">    date4=date_begin+timedelta(days=<span class="number">2</span>)</span><br><span class="line">    time4=<span class="built_in">str</span>(datetime.date(date4))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> time,time1,time2,time3,time4</span><br></pre></td></tr></table></figure>
+
+<p>最后我们在输出 出勤情况的时候，将那个简化后的二维数组List<code>=&gt;</code>日历对应起来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">todate</span>(<span class="params">L,date</span>):</span><br><span class="line">    time,time1,time2,time3,time4=get_date(date)</span><br><span class="line">    record=[time+<span class="string">&#x27;-小费&#x27;</span>,time+<span class="string">&#x27;-小王&#x27;</span>,time1+<span class="string">&#x27;-小费&#x27;</span>,time1+<span class="string">&#x27;-小王&#x27;</span>,time2+<span class="string">&#x27;-小费&#x27;</span>,\</span><br><span class="line">    time2+<span class="string">&#x27;-小王&#x27;</span>,time3+<span class="string">&#x27;-小费&#x27;</span>,time3+<span class="string">&#x27;-小王&#x27;</span>,time4+<span class="string">&#x27;-小费&#x27;</span>,time4+<span class="string">&#x27;-小王&#x27;</span>]</span><br><span class="line">    L1=L[<span class="number">0</span>]+L[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(L1)):</span><br><span class="line">        <span class="keyword">if</span> L1[i]==<span class="number">1</span>: <span class="comment">#1 代表迟到</span></span><br><span class="line">            record[i]+=<span class="string">&#x27;(迟到)&#x27;</span></span><br><span class="line">        <span class="keyword">else</span>: <span class="comment">#0代表没迟到</span></span><br><span class="line">            record[i]+=<span class="string">&#x27;(正常)&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> record</span><br></pre></td></tr></table></figure>
+
+<p>假设我们输入<code>date=20180305,score=0</code><br>输出如下结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;2018-03-04-小费(正常)&#x27;</span>, <span class="string">&#x27;2018-03-04-小王(正常)&#x27;</span>,</span><br><span class="line"> <span class="string">&#x27;2018-03-05-小费(正常)&#x27;</span>, <span class="string">&#x27;2018-03-05-小王(正常)&#x27;</span>, </span><br><span class="line"> <span class="string">&#x27;2018-03-06-小费(正常)&#x27;</span>, <span class="string">&#x27;2018-03-06-小王(正常)&#x27;</span>, </span><br><span class="line"> <span class="string">&#x27;2018-03-06-小费(正常)&#x27;</span>, <span class="string">&#x27;2018-03-06-小王(正常)&#x27;</span>, </span><br><span class="line"> <span class="string">&#x27;2018-03-06-小费(正常)&#x27;</span>, <span class="string">&#x27;2018-03-06-小王(正常)&#x27;</span>]</span><br><span class="line">[Finished <span class="keyword">in</span> <span class="number">0.2</span>s]</span><br></pre></td></tr></table></figure>
+
+<p>假设我们输入<code>date=20180305,score=1</code><br>输出如下结果：<br><img src="/img/combination4.png" alt="结果"></p>
+<h2 id="最后一点废话"><a href="#最后一点废话" class="headerlink" title="最后一点废话"></a>最后一点废话</h2><p>有一篇关于itertools的文章<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Rb5aYWA7NYOi1eckGtakuQ">这段代码很Pythonic | 相见恨晚的 itertools 库</a> 安利一下。此文章的python<a target="_blank" rel="noopener" href="https://github.com/fainyang/LeetCode_practice/blob/master/score.py">源代码</a></p>
+<p>马上就要毕业了，再也没有当学生那种无忧无虑的感觉了。以前贪玩欠的债，找工作的时候哭出来。<br>去面试才知道自己有多菜，所幸我还比较<code>naive</code>，未来珍惜时间，好好学习。狗住，加油！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/timestampdiff/" rel="prev" title="时间求差值timestampdiff">
+      <i class="fa fa-chevron-left"></i> 时间求差值timestampdiff
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/Robot/" rel="next" title="小白也会用的微信机器人">
+      小白也会用的微信机器人 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">问题介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%B8%AA%E4%BE%8B%E5%AD%90%E5%A5%BD%E4%BA%86"><span class="nav-number">2.</span> <span class="nav-text">举个例子好了</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%92%B8%E9%B1%BC%E9%87%87%E7%94%A8%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">咸鱼采用的暴力破解法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E9%97%AE%E9%A2%98%EF%BC%8C%E4%B8%8D%E5%AE%B9%E5%B0%8F%E8%A7%91"><span class="nav-number">4.</span> <span class="nav-text">时间问题，不容小觑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%E4%B8%80%E7%82%B9%E5%BA%9F%E8%AF%9D"><span class="nav-number">5.</span> <span class="nav-text">最后一点废话</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

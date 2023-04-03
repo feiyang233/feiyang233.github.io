@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="DNSMasq 搭建自己的DNS服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DNS">
+<meta property="og:url" content="http://feiyang233.club/post/dns/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="DNSMasq 搭建自己的DNS服务器">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://feiyang233.club/img/misc/5.png">
+<meta property="article:published_time" content="2021-01-10T13:27:45.000Z">
+<meta property="article:modified_time" content="2021-06-11T01:03:15.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://feiyang233.club/img/misc/5.png">
+
+<link rel="canonical" href="http://feiyang233.club/post/dns/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>DNS | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/dns/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DNS
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-10 21:27:45" itemprop="dateCreated datePublished" datetime="2021-01-10T21:27:45+08:00">2021-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-11 09:03:15" itemprop="dateModified" datetime="2021-06-11T09:03:15+08:00">2021-06-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>DNSMasq 搭建自己的DNS服务器</p>
+<span id="more"></span>
+<h1 id="Update-history"><a href="#Update-history" class="headerlink" title="Update history"></a>Update history</h1><p>2021-01-10 初稿。最近拼多多搞得太过分了，打工人们要联合起来呀</p>
+<h1 id="Dnsmasq"><a href="#Dnsmasq" class="headerlink" title="Dnsmasq"></a>Dnsmasq</h1><p>为什么要安装 DNS 呢？ 因为上一篇 blog， 自定义的 domain 需要在每台机器上修改  hosts，有一点麻烦，干脆就直接在测试环境，搭建一个 DNS 服务器</p>
+<h2 id="stop-systemd-resolve"><a href="#stop-systemd-resolve" class="headerlink" title="stop systemd-resolve"></a>stop systemd-resolve</h2><ul>
+<li>ubuntu 上面 systemd-resolve 会修改 &#x2F;etc&#x2F;resolv.conf 详情请看 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/breezey/p/9155988.html">https://www.cnblogs.com/breezey/p/9155988.html</a> </li>
+<li>centos 上面 networkmanager 会修改 &#x2F;etc&#x2F;resolv.conf 这里有两种做法：</li>
+</ul>
+<ol>
+<li>从源头上修改，这样每次上面 networkmanager 生成的话也是正确的 <a target="_blank" rel="noopener" href="https://ma.ttias.be/centos-7-networkmanager-keeps-overwriting-etcresolv-conf/">https://ma.ttias.be/centos-7-networkmanager-keeps-overwriting-etcresolv-conf/</a></li>
+<li>禁止 networkmanager 修改 dns 参考 <a target="_blank" rel="noopener" href="https://wiseindy.com/blog/linux/how-to-set-dns-in-centos-rhel-7-prevent-network-manager-from-overwriting-etc-resolv-conf/">https://wiseindy.com/blog/linux/how-to-set-dns-in-centos-rhel-7-prevent-network-manager-from-overwriting-etc-resolv-conf/</a></li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl disable systemd-resolved</span><br><span class="line">sudo systemctl stop systemd-resolved</span><br><span class="line"></span><br><span class="line">sudo rm /etc/resolv.conf</span><br><span class="line"></span><br><span class="line">echo nameserver 8.8.8.8 | sudo tee /etc/resolv.conf</span><br></pre></td></tr></table></figure>
+
+<h2 id="Install"><a href="#Install" class="headerlink" title="Install"></a>Install</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install dnsmasq</span><br><span class="line"></span><br><span class="line">vim /etc/dnsmasq.conf</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Listen on this specific port instead of the standard DNS port</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">(53). Setting this to zero completely disables DNS <span class="keyword">function</span>,</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">leaving only DHCP and/or TFTP.</span></span><br><span class="line">port=53</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Never forward plain names (without a dot or domain part)</span></span><br><span class="line">domain-needed</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Never forward addresses <span class="keyword">in</span> the non-routed address spaces.</span></span><br><span class="line">bogus-priv</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">By  default,  dnsmasq  will  send queries to any of the upstream</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">servers it knows about and tries to favour servers to are  known</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">to  be  up.  Uncommenting this forces dnsmasq to try each query</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">with  each  server  strictly  <span class="keyword">in</span>  the  order  they   appear   <span class="keyword">in</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">/etc/resolv.conf</span></span><br><span class="line">strict-order</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Set this (and domain: see below) <span class="keyword">if</span> you want to have a domain</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">automatically added to simple names <span class="keyword">in</span> a hosts-file.</span></span><br><span class="line">expand-hosts</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Set the domain <span class="keyword">for</span> dnsmasq. this is optional, but <span class="keyword">if</span> it is <span class="built_in">set</span>, it</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">does the following things.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1) Allows DHCP hosts to have fully qualified domain names, as long</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">    as the domain part matches this setting.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2) Sets the <span class="string">&quot;domain&quot;</span> DHCP option thereby potentially setting the</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">   domain of all systems configured by DHCP</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3) Provides the domain part <span class="keyword">for</span> <span class="string">&quot;expand-hosts&quot;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">domain=thekelleys.org.uk 这里的是主域名，方便在 /etc/hosts 配置的时候，只写前缀即可</span></span><br><span class="line">domain=feiyang.com</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Set Liste address</span></span><br><span class="line">listen-address=127.0.0.1,192.168.17.5 # Set to Server IP for network responses</span><br></pre></td></tr></table></figure>
+
+<h2 id="Adding-DNS-records"><a href="#Adding-DNS-records" class="headerlink" title="Adding DNS records"></a>Adding DNS records</h2><p>因为我们没有修改 resolv-file, 默认的就是 &#x2F;etc&#x2F;hosts</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu20:/home/feiyang<span class="comment"># cat /etc/hosts</span></span><br><span class="line">127.0.0.1 localhost</span><br><span class="line">127.0.1.1 ubuntu20</span><br><span class="line">192.168.17.3 gitlab.feiyang.com</span><br><span class="line">233.233.233.233 haha  <span class="comment">#因为有expand-hosts， 这里是 haha.feiyang.com</span></span><br><span class="line">1.1.1.1 free.dns.com</span><br><span class="line"><span class="comment"># The following lines are desirable for IPv6 capable hosts</span></span><br><span class="line">::1     ip6-localhost ip6-loopback</span><br><span class="line">fe00::0 ip6-localnet</span><br><span class="line">ff00::0 ip6-mcastprefix</span><br><span class="line">ff02::1 ip6-allnodes</span><br><span class="line">ff02::2 ip6-allrouters</span><br></pre></td></tr></table></figure>
+<p>重启 dnsmasq</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart dnsmasq</span><br></pre></td></tr></table></figure>
+
+<h2 id="test"><a href="#test" class="headerlink" title="test"></a>test</h2><p>Ubuntu 20 为 DNS 服务器, 用 Ubuntu18 和 centos7 来进行测试，结果如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18:/home/feiyang<span class="comment"># nslookup haha.feiyang.com</span></span><br><span class="line">Server:		192.168.17.5</span><br><span class="line">Address:	192.168.17.5<span class="comment">#53</span></span><br><span class="line"></span><br><span class="line">Name:	haha.feiyang.com</span><br><span class="line">Address: 233.233.233.233</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[jy576@centos7 ~]$ nslookup gitlab.feiyang.com</span><br><span class="line">Server:		192.168.17.5</span><br><span class="line">Address:	192.168.17.5<span class="comment">#53</span></span><br><span class="line"></span><br><span class="line">Name:	gitlab.feiyang.com</span><br><span class="line">Address: 192.168.17.3</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[jy576@centos7 ~]$ nslookup free.dns.com</span><br><span class="line">Server:		192.168.17.5</span><br><span class="line">Address:	192.168.17.5<span class="comment">#53</span></span><br><span class="line"></span><br><span class="line">Name:	free.dns.com</span><br><span class="line">Address: 1.1.1.1</span><br></pre></td></tr></table></figure>
+
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://computingforgeeks.com/install-and-configure-dnsmasq-on-ubuntu-18-04-lts/">https://computingforgeeks.com/install-and-configure-dnsmasq-on-ubuntu-18-04-lts/</a></li>
+</ul>
+<h1 id="DNS-takeover"><a href="#DNS-takeover" class="headerlink" title="DNS takeover"></a>DNS takeover</h1><p><img src="/img/misc/5.png"> </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/network/" rel="tag"># network</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/gitlab/" rel="prev" title="gitlab install and CI pipeline">
+      <i class="fa fa-chevron-left"></i> gitlab install and CI pipeline
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/vault/" rel="next" title="vault 实践">
+      vault 实践 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Update-history"><span class="nav-number">1.</span> <span class="nav-text">Update history</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dnsmasq"><span class="nav-number">2.</span> <span class="nav-text">Dnsmasq</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#stop-systemd-resolve"><span class="nav-number">2.1.</span> <span class="nav-text">stop systemd-resolve</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Install"><span class="nav-number">2.2.</span> <span class="nav-text">Install</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adding-DNS-records"><span class="nav-number">2.3.</span> <span class="nav-text">Adding DNS records</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#test"><span class="nav-number">2.4.</span> <span class="nav-text">test</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DNS-takeover"><span class="nav-number">4.</span> <span class="nav-text">DNS takeover</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

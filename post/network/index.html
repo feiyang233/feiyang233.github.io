@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="记录网络相关知识与 Linux 网络相关的命令。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络相关">
+<meta property="og:url" content="http://feiyang233.club/post/network/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="记录网络相关知识与 Linux 网络相关的命令。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-05-30T03:21:34.000Z">
+<meta property="article:modified_time" content="2021-06-23T05:36:54.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="network">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://feiyang233.club/post/network/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>计算机网络相关 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机网络相关
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-05-30 11:21:34" itemprop="dateCreated datePublished" datetime="2019-05-30T11:21:34+08:00">2019-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-23 13:36:54" itemprop="dateModified" datetime="2021-06-23T13:36:54+08:00">2021-06-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>记录网络相关知识与 Linux 网络相关的命令。</p>
+<span id="more"></span>
+<h1 id="tools"><a href="#tools" class="headerlink" title="tools"></a>tools</h1><p>好工具分享：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=s6jPU8V1_8A">https://www.youtube.com/watch?v=s6jPU8V1_8A</a><br>github 地址：<a target="_blank" rel="noopener" href="https://github.com/oh-my-docker/net-box">https://github.com/oh-my-docker/net-box</a></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><ol start="0">
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/bUy220-ect00N4gnO0697A">图解网络</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TxcX8Xlp62Rpqo9NEsoLqA">TCP&#x2F;IP 三次握手与四次挥手</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/yuwZ24gMMZsLta3psgYuPg">HTTPS 原理分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/XmCMkgT_F5-bfHzxYQYsJQ">Iptables其底层架构 Netfilter</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TLeKpbHMLZ4hBFcz3vjbsg">面对 DDoS，实现在 1 秒内丢弃掉 1000 万个网络数据包攻击</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HDHK_U6aTspzXMUgNyQ91g">3 个 Linux 中快速检测端口的小技巧</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Z4X29GfZ_yRnuc2OblXF_A">HTTPS 需要 7 次握手</a></li>
+</ol>
+<h1 id="Linux-命令"><a href="#Linux-命令" class="headerlink" title="Linux 命令"></a>Linux 命令</h1><ol>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/peida/archive/2013/03/05/2943698.html">route</a> 某些 IP 段故障</li>
+<li><a target="_blank" rel="noopener" href="https://blog.einverne.info/post/2017/11/mtr-usage.html">mtr</a> 连通性测试<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -I / --interface 网卡</span></span><br><span class="line"><span class="comment"># -n 不进行域名解析，显示 IP</span></span><br><span class="line"><span class="comment"># -c 定义数据包数量</span></span><br><span class="line"><span class="comment"># -r 生成报告</span></span><br><span class="line"><span class="comment"># --tcp / -T 或者 --udp / -u 或者 -S / --sctp, 默认是 icmp</span></span><br><span class="line"><span class="comment"># --port / -P</span></span><br><span class="line"></span><br><span class="line">root@ubuntu20:~<span class="comment"># mtr -n -c 3 -r --tcp --port 80  192.168.1.108</span></span><br><span class="line">Start: 2021-05-25T11:33:27+0000</span><br><span class="line">HOST: ubuntu20                    Loss%   Snt   Last   Avg  Best  Wrst StDev</span><br><span class="line">  1.|-- 192.168.64.2               0.0%     3    0.2   0.4   0.2   0.7   0.2</span><br><span class="line">  2.|-- 192.168.1.108              0.0%     3    1.0   0.9   0.8   1.0   0.1</span><br><span class="line"></span><br><span class="line">root@ubuntu20:~<span class="comment"># mtr -n -c 3 -r  192.168.1.125 </span></span><br><span class="line">Start: 2021-05-25T11:38:34+0000</span><br><span class="line">HOST: ubuntu20                    Loss%   Snt   Last   Avg  Best  Wrst StDev</span><br><span class="line">  1.|-- 192.168.64.2               0.0%     3    0.3   0.4   0.3   0.5   0.2</span><br><span class="line">  2.|-- 192.168.1.125              0.0%     3  107.3  66.8   4.6 107.3  54.7</span><br></pre></td></tr></table></figure></li>
+<li><a target="_blank" rel="noopener" href="http://cn.linux.vbird.org/linux_server/0140networkcommand_1.php">Linux 常用网络指令</a></li>
+<li><a target="_blank" rel="noopener" href="https://wsgzao.github.io/post/iptables/">iptables 奥哥篇</a></li>
+<li><a target="_blank" rel="noopener" href="http://cn.linux.vbird.org/linux_server/0250simple_firewall_5.php">iptables-NAT</a></li>
+<li><a target="_blank" rel="noopener" href="http://man.linuxde.net/iperf">iperf</a> <a target="_blank" rel="noopener" href="https://docs.azure.cn/zh-cn/articles/azure-operations-guide/virtual-network/aog-virtual-network-iperf-bandwidth-test">测试网速</a>的工具</li>
+<li>删除网卡 ip link delete  [网卡名称]</li>
+<li>检查未被正确关闭的文件 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/276815076/p/3503923.html">lsof</a> 或者 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/o3Q-aiOWbn8s4jrwpf-4Qg">linux中如何解决文件已删除但空间不释放的案例</a></li>
+<li>磁盘监控命令<a target="_blank" rel="noopener" href="https://www.cnblogs.com/peida/archive/2012/12/28/2837345.html">iostat</a></li>
+<li>高 disk IO 检查: <strong>iotop -oP</strong>  看哪个进程占用大量的 disk IO</li>
+<li>查看链接状态<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">netstat -n | awk <span class="string">&#x27;/^tcp/ &#123;++state[$NF]&#125; END &#123;for(key in state) print key,&quot;\t&quot;,state[key]&#125;&#x27;</span></span><br><span class="line"><span class="comment"># 如下结果</span></span><br><span class="line">FIN_WAIT2 	 5683</span><br><span class="line">SYN_RECV 	 311</span><br><span class="line">CLOSE_WAIT 	 3</span><br><span class="line">TIME_WAIT 	 127952</span><br><span class="line">ESTABLISHED 	 52032</span><br><span class="line">FIN_WAIT1 	 22345</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>What is a TCP Reset <a target="_blank" rel="noopener" href="https://www.corvil.com/kb/what-is-a-tcp-reset-rst">RST</a>  </li>
+<li>QPS TPS CCU Throughput <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JcvoziRPFxt-vphBOLpvyQ">https://mp.weixin.qq.com/s/JcvoziRPFxt-vphBOLpvyQ</a></li>
+</ol>
+<h2 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h2><p>iptables 默认有 4 个表</p>
+<ul>
+<li>nat 表（地址转换表）</li>
+<li>filter 表（数据过滤表）</li>
+<li>raw 表（状态跟踪表）</li>
+<li>mangle 表（包标记表）</li>
+</ul>
+<p>每个表都有一组内置链，用户还可以添加自定义的链。最重要的内置链是 filter 表中的 INPUT、OUTPUT 和 FORWARD 链。</p>
+<ul>
+<li>INPUT 链（入站规则）</li>
+<li>OUTPUT 链（出站规则）</li>
+<li>FORWARD 链（转发规则）</li>
+<li>PREROUTING 链（路有前规则）</li>
+<li>POSTROUTING 链（路由后规则）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">iptables -t  nat  -nL   # 查看 nat 表</span><br><span class="line">iptables -t 表名 -N 自定义链名 # 创建一个链</span><br><span class="line">iptables -t 表名 -L  default filter</span><br><span class="line">iptables -t 表名 -L 链名</span><br><span class="line">iptables -t 表名 -nL --line</span><br><span class="line">iptables -t 表名 -D 链名 要删除的序号</span><br><span class="line">iptables -t 表名 -P 链名 动作    修改默认规则 DROP</span><br><span class="line">-A INPUT -m iprange --src-range x.x.x.x-x.x.x.x  -p tcp --dport 11211 -j ACCEPT #多 IP</span><br><span class="line">-A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT  #多端口</span><br><span class="line">类型匹配 -p tcp udp udplite icmp icmpv6 esp ah sctp mh</span><br><span class="line">转发功能 cat /proc/sys/net/ipv4/ip_forward</span><br></pre></td></tr></table></figure>
+<h1 id="小知识"><a href="#小知识" class="headerlink" title="小知识"></a>小知识</h1><h2 id="Public-IP"><a href="#Public-IP" class="headerlink" title="Public IP"></a>Public IP</h2><ul>
+<li>Class A: 0.x.x.x ~ 127.x.x.x</li>
+<li>Class B: 128.x.x.x ~ 191.x.x.x</li>
+<li>Class C: 192.x.x.x ~ 223.x.x.x</li>
+<li>Class D: 224.x.x.x ~ 239.x.x.x  #multicast</li>
+<li>Class E: 240.x.x.x ~ 255.x.x.x  #保留</li>
+</ul>
+<h2 id="Private-IP"><a href="#Private-IP" class="headerlink" title="Private IP"></a>Private IP</h2><ul>
+<li><p>Class A: 10.0.0.0 ~ 10.255.255.255</p>
+</li>
+<li><p>Class B: 172.16.0.0 ~ 172.31.255.255</p>
+</li>
+<li><p>Class C: 192.168.0.0 ~ 192.168.255.255 </p>
+</li>
+<li><p>169.254.x.x  临时 IP DHCP is full. 就用这个 IP</p>
+</li>
+</ul>
+<h2 id="Loopback-IP"><a href="#Loopback-IP" class="headerlink" title="Loopback IP"></a>Loopback IP</h2><ul>
+<li>Class A: 127.0.0.1&#x2F;8</li>
+</ul>
+<h1 id="设置-NAT-server"><a href="#设置-NAT-server" class="headerlink" title="设置 NAT server"></a>设置 NAT server</h1><p>开启转发功能</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysctl.conf</span><br><span class="line"></span><br><span class="line">net.ipv4.ip_forward=1 <span class="comment"># 添加此行，开启转发功能</span></span><br><span class="line"></span><br><span class="line">sysctl -p    <span class="comment"># 执行生效</span></span><br></pre></td></tr></table></figure>
+<p>还需要在 iptable 里设置转发规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysconfig/iptables</span><br><span class="line"></span><br><span class="line">*nat</span><br><span class="line">:PREROUTING ACCEPT [0:0]</span><br><span class="line">:INPUT ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [0:0]</span><br><span class="line">:POSTROUTING ACCEPT [0:0]</span><br><span class="line">-A POSTROUTING -o em2 -j MASQUERADE</span><br><span class="line">COMMIT</span><br><span class="line"></span><br><span class="line"><span class="comment"># em2 是公网网卡，当其他内网机器设置 NAT 机器的内网 IP 为网关时。 </span></span><br><span class="line"><span class="comment"># 内网机器发包给 NAT 机器， NAT 机器根据路由规则，将会由 em2 公网网卡转发出去。</span></span><br><span class="line"><span class="comment"># 转发时，会将包的源 IP 替换为自己公网的 IP</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="网络扫描"><a href="#网络扫描" class="headerlink" title="网络扫描"></a>网络扫描</h1><p>安装 <a target="_blank" rel="noopener" href="https://nmap.org/download.html">nmap 官网</a> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">rpm -vhU https://nmap.org/dist/nmap-7.80-1.x86_64.rpm</span><br><span class="line"><span class="comment"># yum install nmap 版本比较老</span></span><br><span class="line"><span class="comment">#主机发现 ICMP ARP 两种方式</span></span><br><span class="line">nmap -v -n -sn -PE 192.168.21.0/24</span><br><span class="line"><span class="comment"># -v 指定详细输出</span></span><br><span class="line"><span class="comment"># -n 不进行 DNS 解析</span></span><br><span class="line"><span class="comment"># -sn 使用 ping 扫描，禁用端口扫描</span></span><br><span class="line"><span class="comment"># -PE 指定使用 ICMP Echo Request 发现主机</span></span><br><span class="line"><span class="comment"># 192.168.21.0/24 为目标网段</span></span><br><span class="line"><span class="comment"># -PR 指定使用 ARP Request 发现主机</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># TCP Connect 端口扫描</span></span><br><span class="line">nmap  -v -n -sT --max-retries 1 -p1-65535 192.168.21.19</span><br><span class="line"></span><br><span class="line"><span class="comment"># -sT 使用 TCP Connect </span></span><br><span class="line"><span class="comment"># --max-retries 每个端口最多重试的次数</span></span><br><span class="line"><span class="comment"># -p1-65535 指定端口的扫描范围</span></span><br><span class="line"><span class="comment"># 192.168.21.19 为被扫描主机的 IP</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># TCP SYN 端口扫描,导致服务器出现大量的半连接</span></span><br><span class="line">nmap  -v -n -sS --max-retries 1 -p1-65535 192.168.21.19</span><br><span class="line"></span><br><span class="line"><span class="comment"># -sS 使用 TCP SYN </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># UDP 扫描</span></span><br><span class="line">nmap  -v -n -sU --max-retries 1 -p1-65535 192.168.21.19</span><br><span class="line"><span class="comment"># -sU 使用 UDP 进行扫描</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 识别指定端口应用</span></span><br><span class="line">nmap  -v -n -sV -p2333 192.168.21.19</span><br><span class="line"><span class="comment"># -sV 指定识别该端口上的应用</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="tcpdump-抓包分析"><a href="#tcpdump-抓包分析" class="headerlink" title="tcpdump 抓包分析"></a>tcpdump 抓包分析</h1><ul>
+<li>进入 INPUT 的流量不会被 iptable 影响</li>
+<li>出口 OUTPIT 流量会受到 iptable 影响</li>
+</ul>
+<h1 id="ICMP"><a href="#ICMP" class="headerlink" title="ICMP"></a>ICMP</h1><ul>
+<li>ping 默认发 4、5 个包</li>
+<li>traceroute 显示的是不同 AS 之间的跳数。其实一个 AS 内部可能有很多路由器，TTL 与实际跳数是不符合的。</li>
+</ul>
+<h1 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h1><ul>
+<li>三次握手建立连接</li>
+<li>四次分手，等待 2 MSL</li>
+<li>只走一条路径</li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/TxcX8Xlp62Rpqo9NEsoLqA">详细介绍</a></li>
+</ul>
+<h1 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h1><ul>
+<li>更轻更快</li>
+<li>多条路径同时发送</li>
+</ul>
+<h1 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h1><ul>
+<li>域名基础知识  <a target="_blank" rel="noopener" href="https://support.google.com/a/answer/2573637">https://support.google.com/a/answer/2573637</a></li>
+<li>DNS 基础知识  <a target="_blank" rel="noopener" href="https://support.google.com/a/answer/48090?hl=zh-Hans">https://support.google.com/a/answer/48090?hl=zh-Hans</a></li>
+<li>SPF 记录：原理、语法及配置方法简介 <a target="_blank" rel="noopener" href="https://www.renfei.org/blog/introduction-to-spf.html">https://www.renfei.org/blog/introduction-to-spf.html</a></li>
+</ul>
+<h1 id="DDos-攻击"><a href="#DDos-攻击" class="headerlink" title="DDos 攻击"></a>DDos 攻击</h1><p>DDOS 攻击，它在短时间内发起大量请求，耗尽服务器的资源，无法响应正常的访问，造成网站实质下线。DDOS 里面的 DOS 是 denial of service（停止服务）的缩写，表示这种攻击的目的，就是使得服务中断。最前面的那个 D 是 distributed （分布式），表示攻击不是来自一个地方，而是来自四面八方，因此更难防。</p>
+<ol>
+<li>比较常见的一种攻击是 cc 攻击。它就是简单粗暴地送来大量正常的请求，超出服务器的最大承受量，导致宕机。</li>
+<li>SYN攻击属于DoS攻击的一种，它利用TCP协议缺陷，通过发送大量的半连接请求，耗费CPU和内存资源。SYN攻击除了能影响主机外，还可以危害路由器、防火墙等网络系统，事实上SYN攻击并不管目标是什么系统，只要这些系统打开TCP服务就可以实施。服务器接收到连接请求（syn&#x3D; j），将此信息加入未连接队列，并发送请求包给客户（syn&#x3D;k,ack&#x3D;j+1），此时进入SYN_RECV状态。当服务器未收到客户端的确认包时，重发请求包，一直到超时，才将此条目从未连接队列删除。配合IP欺骗，SYN攻击能达到很好的效果，通常，客户端在短时间内伪造大量不存在的IP地址，向服务器不断地发送syn包，服务器回复确认包，并等待客户的确认，由于源地址是不存在的，服务器需要不断的重发直至超时，这些伪造的SYN包将长时间占用未连接队列，正常的SYN请求被丢弃，目标系统运行缓慢，严重者引起网络堵塞甚至系统瘫痪。</li>
+</ol>
+<h1 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h1><ol>
+<li>docker container IP default  is 172.17.0.0&#x2F;16  检查 iptables 是否阻挡</li>
+<li>-A INPUT -m state –state RELATED,ESTABLISHED -j ACCEPT 这一条 iptables 的规则也非常重要。Packets in a RELATED or ESTABLISHED state are those ones which belong to an already opened connection; you’ll generally want to accept them, otherwise connections will get established correctly but nothing will be able to flow after the initial handshake. 如果没有这一条，会遇到 DNS 解析失败， curl 失败。 凡是 iptables 没有允许的 IP, 都不能正常的工作。 例如 DNS 查询发包后，三次握手建立。回包收到了，却会被 iptables 阻挡，上层应用无法拿到解析的结果，导致 hang 住。</li>
+<li>抓包分析时， 进入的包都可以抓到，不会受到 iptables, 发出的包会受到 iptables 影响，可能被 iptables 阻挡导致抓包失败。</li>
+<li>在此衷心的感谢，皇族后裔，八旗子弟，爱新觉罗·高Li，提供的帮助！</li>
+<li>IP 冲突，导致服务不稳定。需要使用 arping -c 3  -I em2 192.168.1.1</li>
+<li>docker 服务失败导致 telnet 不通，抓包表现为 宿主机收到了 telnet 的包，但不会转发给容器内部。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost feiyang]<span class="comment"># tcpdump -i any port 9200  -nnn</span></span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">21:44:12.657584 IP 192.168.1.78.12118 &gt; 192.168.1.89.9200: Flags [S], <span class="built_in">seq</span> 2957511281, win 29200, options [mss 1460,nop,nop,sackOK,nop,wscale 7], length 0</span><br><span class="line">21:44:12.657654 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [S], <span class="built_in">seq</span> 2957511281, win 29200, options [mss 1460,nop,nop,sackOK,nop,wscale 7], length 0</span><br><span class="line">21:44:12.657658 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [S], <span class="built_in">seq</span> 2957511281, win 29200, options [mss 1460,nop,nop,sackOK,nop,wscale 7], length 0</span><br><span class="line">21:44:12.657711 IP 172.17.0.2.9200 &gt; 192.168.1.78.12118: Flags [S.], <span class="built_in">seq</span> 3836648310, ack 2957511282, win 29200, options [mss 1460,nop,nop,sackOK,nop,wscale 7], length 0</span><br><span class="line">21:44:12.657711 IP 172.17.0.2.9200 &gt; 192.168.1.78.12118: Flags [S.], <span class="built_in">seq</span> 3836648310, ack 2957511282, win 29200, options [mss 1460,nop,nop,sackOK,nop,wscale 7], length 0</span><br><span class="line">21:44:12.657727 IP 192.168.1.89.9200 &gt; 192.168.1.78.12118: Flags [S.], <span class="built_in">seq</span> 3836648310, ack 2957511282, win 29200, options [mss 1460,nop,nop,sackOK,nop,wscale 7], length 0</span><br><span class="line">21:44:12.657913 IP 192.168.1.78.12118 &gt; 192.168.1.89.9200: Flags [.], ack 1, win 229, length 0</span><br><span class="line">21:44:12.657921 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [.], ack 1, win 229, length 0</span><br><span class="line">21:44:12.657922 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [.], ack 1, win 229, length 0</span><br><span class="line">21:45:31.315560 IP 192.168.1.78.12118 &gt; 192.168.1.89.9200: Flags [F.], <span class="built_in">seq</span> 1, ack 1, win 229, length 0</span><br><span class="line">21:45:31.315596 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [F.], <span class="built_in">seq</span> 1, ack 1, win 229, length 0</span><br><span class="line">21:45:31.315598 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [F.], <span class="built_in">seq</span> 1, ack 1, win 229, length 0</span><br><span class="line">21:45:31.315985 IP 172.17.0.2.9200 &gt; 192.168.1.78.12118: Flags [F.], <span class="built_in">seq</span> 1, ack 2, win 229, length 0</span><br><span class="line">21:45:31.315985 IP 172.17.0.2.9200 &gt; 192.168.1.78.12118: Flags [F.], <span class="built_in">seq</span> 1, ack 2, win 229, length 0</span><br><span class="line">21:45:31.316012 IP 192.168.1.89.9200 &gt; 192.168.1.78.12118: Flags [F.], <span class="built_in">seq</span> 1, ack 2, win 229, length 0</span><br><span class="line">21:45:31.316225 IP 192.168.1.78.12118 &gt; 192.168.1.89.9200: Flags [.], ack 2, win 229, length 0</span><br><span class="line">21:45:31.316277 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [.], ack 2, win 229, length 0</span><br><span class="line">21:45:31.316279 IP 192.168.1.78.12118 &gt; 172.17.0.2.9200: Flags [.], ack 2, win 229, length 0</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="ubuntu16-network-config"><a href="#ubuntu16-network-config" class="headerlink" title="ubuntu16 network config"></a>ubuntu16 network config</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"># /etc/network/interfaces</span><br><span class="line"></span><br><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto eno1</span><br><span class="line">iface eno1 inet manual</span><br><span class="line">    bond-master bond0</span><br><span class="line"></span><br><span class="line">auto eno2</span><br><span class="line">iface eno2 inet manual</span><br><span class="line">    bond-master bond0</span><br><span class="line"></span><br><span class="line">auto bond0</span><br><span class="line">iface bond0 inet manual</span><br><span class="line">    bond-slaves eno1 eno2</span><br><span class="line">    bond-mode 4</span><br><span class="line">    bond-miimon 100</span><br><span class="line">    bond-lacp-rate 1</span><br><span class="line">    bond-xmit_hash_policy layer3+4</span><br><span class="line"></span><br><span class="line">auto bond0.1000</span><br><span class="line">iface bond0.1000 inet static</span><br><span class="line">    address 10.1.1.10</span><br><span class="line">    netmask 255.255.255.0</span><br><span class="line">    gateway 10.1.1.254</span><br><span class="line">    vlan-raw-device bond0</span><br><span class="line"></span><br><span class="line">#----------------------------------</span><br><span class="line">#ubuntu default</span><br><span class="line"># The loopback network interface</span><br><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line"># The primary network interface</span><br><span class="line">auto ens33</span><br><span class="line">iface ens33 inet dhcp</span><br></pre></td></tr></table></figure>
+
+<h1 id="ubuntu20-network-config"><a href="#ubuntu20-network-config" class="headerlink" title="ubuntu20 network config"></a>ubuntu20 network config</h1><p>在Ubuntu20.04中已经不使用&#x2F;etc&#x2F;networks&#x2F;interface来配置网络了，而是使用netplan配置网络：<br>参考 </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/fansnn/article/details/105930009">https://blog.csdn.net/fansnn/article/details/105930009</a> </li>
+<li><a target="_blank" rel="noopener" href="https://linuxconfig.org/how-to-configure-static-ip-address-on-ubuntu-18-04-bionic-beaver-linux">How to configure static IP address on Ubuntu 18.04 Bionic Beaver Linux</a></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This is the network config written by &#x27;subiquity&#x27;</span></span><br><span class="line"><span class="attr">network:</span></span><br><span class="line">  <span class="attr">ethernets:</span></span><br><span class="line">    <span class="attr">ens33:</span></span><br><span class="line">      <span class="attr">addresses:</span> [<span class="number">192.168</span><span class="number">.17</span><span class="number">.5</span><span class="string">/24</span>]</span><br><span class="line">      <span class="attr">optional:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">dhcp4:</span> <span class="literal">no</span></span><br><span class="line">      <span class="attr">gateway4:</span> <span class="number">192.168</span><span class="number">.17</span><span class="number">.2</span></span><br><span class="line">      <span class="attr">nameservers:</span></span><br><span class="line">        <span class="attr">addresses:</span> [<span class="number">1.1</span><span class="number">.1</span><span class="number">.1</span>,<span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span>]</span><br><span class="line">  <span class="attr">version:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">renderer:</span> <span class="string">networkd</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="docker-network"><a href="#docker-network" class="headerlink" title="docker network"></a>docker network</h1><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/LtgGcS9b8X-TqbfaLfBldQ">一次有趣的 Docker 容器网络排查</a><br>把内核选项 <code>net.netfilter.nf_conntrack_tcp_be_liberal</code> 设置为 1：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w <span class="string">&quot;net.netfilter.nf_conntrack_tcp_be_liberal=1&quot;</span></span><br><span class="line">net.netfilter.nf_conntrack_tcp_be_liberal = 1</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/network/" rel="tag"># network</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/google-api/" rel="prev" title="Google Sheet API 学习">
+      <i class="fa fa-chevron-left"></i> Google Sheet API 学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/zabbix/" rel="next" title="zabbix 从入门到放弃">
+      zabbix 从入门到放弃 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tools"><span class="nav-number">1.</span> <span class="nav-text">tools</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">2.</span> <span class="nav-text">reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-%E5%91%BD%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">Linux 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iptables"><span class="nav-number">3.1.</span> <span class="nav-text">iptables</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E7%9F%A5%E8%AF%86"><span class="nav-number">4.</span> <span class="nav-text">小知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Public-IP"><span class="nav-number">4.1.</span> <span class="nav-text">Public IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Private-IP"><span class="nav-number">4.2.</span> <span class="nav-text">Private IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Loopback-IP"><span class="nav-number">4.3.</span> <span class="nav-text">Loopback IP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE-NAT-server"><span class="nav-number">5.</span> <span class="nav-text">设置 NAT server</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%89%AB%E6%8F%8F"><span class="nav-number">6.</span> <span class="nav-text">网络扫描</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tcpdump-%E6%8A%93%E5%8C%85%E5%88%86%E6%9E%90"><span class="nav-number">7.</span> <span class="nav-text">tcpdump 抓包分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ICMP"><span class="nav-number">8.</span> <span class="nav-text">ICMP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP"><span class="nav-number">9.</span> <span class="nav-text">TCP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UDP"><span class="nav-number">10.</span> <span class="nav-text">UDP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DNS"><span class="nav-number">11.</span> <span class="nav-text">DNS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DDos-%E6%94%BB%E5%87%BB"><span class="nav-number">12.</span> <span class="nav-text">DDos 攻击</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="nav-number">13.</span> <span class="nav-text">踩过的坑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ubuntu16-network-config"><span class="nav-number">14.</span> <span class="nav-text">ubuntu16 network config</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ubuntu20-network-config"><span class="nav-number">15.</span> <span class="nav-text">ubuntu20 network config</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-network"><span class="nav-number">16.</span> <span class="nav-text">docker network</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

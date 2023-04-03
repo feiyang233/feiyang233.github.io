@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="docker 安装 zabbix, 添加主机，设置报警，性能调优。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="zabbix 从入门到放弃">
+<meta property="og:url" content="http://feiyang233.club/post/zabbix/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="docker 安装 zabbix, 添加主机，设置报警，性能调优。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190823152533.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190822173033.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190822173036.png">
+<meta property="article:published_time" content="2019-06-06T03:00:56.000Z">
+<meta property="article:modified_time" content="2020-09-22T03:31:08.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="zabbix">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190823152533.png">
+
+<link rel="canonical" href="http://feiyang233.club/post/zabbix/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>zabbix 从入门到放弃 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/zabbix/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          zabbix 从入门到放弃
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-06-06 11:00:56" itemprop="dateCreated datePublished" datetime="2019-06-06T11:00:56+08:00">2019-06-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-22 11:31:08" itemprop="dateModified" datetime="2020-09-22T11:31:08+08:00">2020-09-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>docker 安装 zabbix, 添加主机，设置报警，性能调优。</p>
+<span id="more"></span>
+<h1 id="监控模式"><a href="#监控模式" class="headerlink" title="监控模式"></a>监控模式</h1><p>zabbix 有两种监控模式，主动和被动。在客户端与服务端之间还可以加一个 proxy，入下图所示<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190823152533.png"></p>
+<p><strong>需要注意 iptables问题</strong>: 跨地区监控的时候， proxy 必须监听在所有网卡上。内网是为了和客户端通信，外网是为了和服务端通信。我曾试过 proxy 只监听在内网，因为是主动模式，层层上报信息，在 zabbix server 还是能发现 proxy 的存活。但是当我打算添加一台 host 时，却一直报错。原因就是 proxy 和 服务端是外网通信的，proxy 发包查询 host 的信息（监控项等），因为只监听内网，服务端的回包 proxy 无法获取，导致通信失败。</p>
+<h1 id="LAMP-架构安装"><a href="#LAMP-架构安装" class="headerlink" title="LAMP 架构安装"></a>LAMP 架构安装</h1><p>基于官方的 LAMP 架构，按照最简单的原生方式来部署，不做任何多余优化。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"># 安装必要依赖包 </span><br><span class="line">yum install -y httpd mariadb-server mariadb php php-mysql php-gd libjpeg* php-ldap php-odbc php-pear php-xml php-xmlrpc php-mhash</span><br><span class="line"></span><br><span class="line"># 修改 apache 配置 </span><br><span class="line">vim /etc/httpd/conf/httpd.conf</span><br><span class="line">ServerName 192.168.1.10:8080</span><br><span class="line">Listen 192.168.1.10:8080</span><br><span class="line">DirectoryIndex index.html index.php</span><br><span class="line"></span><br><span class="line"># 修改 php 时区 </span><br><span class="line">vim /etc/php.ini</span><br><span class="line">date.timezone = Asia/Singapore</span><br><span class="line"></span><br><span class="line"># 启动 httpd 服务 </span><br><span class="line">systemctl start httpd.service</span><br><span class="line"></span><br><span class="line"># 修改数据库存储的位置 /data</span><br><span class="line">vim /etc/my.cnf</span><br><span class="line">[mysqld]</span><br><span class="line">datadir=/data/mysql</span><br><span class="line">socket=/data/mysql/mysql.sock</span><br><span class="line">bind-address = 127.0.0.1</span><br><span class="line">max_connections = 1000</span><br><span class="line"></span><br><span class="line"># 最大连接数很关键，如果 zabbix-server StartPollers= 设置过大</span><br><span class="line"># 则很容易出现，connection to database &#x27;zabbix&#x27; failed: [1040] Too many connections</span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port=3306</span><br><span class="line">socket=/data/mysql/mysql.sock</span><br><span class="line"></span><br><span class="line"># 启动 mariadb 服务 </span><br><span class="line">systemctl start mariadb.service</span><br><span class="line"></span><br><span class="line"># 初始化 mysql 数据库，并配置 root 用户密码 </span><br><span class="line">mysql_secure_installation</span><br><span class="line"></span><br><span class="line"># 万一新版本忘记随机密码可以通过日志获取 </span><br><span class="line">grep &#x27;temporary password&#x27; /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"># 创建一个测试页，测试 LAMP 是否搭建成功 </span><br><span class="line">cat &gt; /var/www/html/index.php &lt;&lt; EOF</span><br><span class="line">&lt;?php</span><br><span class="line">phpinfo();</span><br><span class="line">?&gt;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"># 创建 zabbix 数据库 </span><br><span class="line">mysql -uroot -p</span><br><span class="line"></span><br><span class="line">mysql&gt; create database zabbix character set utf8 collate utf8_bin;</span><br><span class="line">mysql&gt; grant all privileges on zabbix.* to zabbix@localhost identified by &#x27;zabbix&#x27;;</span><br><span class="line">mysql&gt; quit;</span><br><span class="line"></span><br><span class="line"># 部署 zabbix</span><br><span class="line">rpm -Uvh https://repo.zabbix.com/zabbix/4.2/rhel/7/x86_64/zabbix-release-4.2-2.el7.noarch.rpm</span><br><span class="line">yum clean all</span><br><span class="line">yum install -y zabbix-server-mysql zabbix-web-mysql zabbix-agent</span><br><span class="line">zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix</span><br><span class="line"># 输入密码 zabbix</span><br><span class="line"></span><br><span class="line"># 配置数据库用户及密码 </span><br><span class="line">vim /etc/zabbix/zabbix_server.conf</span><br><span class="line">DBPassword=zabbix</span><br><span class="line">DBSocket=/data/mysql/mysql.sock</span><br><span class="line"></span><br><span class="line"># 修改时区 </span><br><span class="line">vim /etc/httpd/conf.d/zabbix.conf</span><br><span class="line">php_value date.timezone Asia/Singapore</span><br><span class="line"></span><br><span class="line"># 启动 zabbix 并设置自启动服务 </span><br><span class="line">systemctl restart zabbix-server zabbix-agent httpd</span><br><span class="line">systemctl enable zabbix-server zabbix-agent httpd mariadb</span><br></pre></td></tr></table></figure>
+<p>一切就绪，打开浏览器，输入 <a href="http://ServerName:port/zabbix">http://ServerName:port/zabbix</a></p>
+<h1 id="zabbix-server-conf-参数调优"><a href="#zabbix-server-conf-参数调优" class="headerlink" title="zabbix_server.conf 参数调优"></a>zabbix_server.conf 参数调优</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CacheSize=8G               # Host 过多时，需要增大 CacheSize</span><br><span class="line">TrendCacheSize=2G          # __zbx_mem_realloc(): out of memory (requested 108424 bytes) </span><br><span class="line">Timeout=30                 # __zbx_mem_realloc(): please increase CacheSize configuration parameter</span><br><span class="line">StartPollers=500           # Poller 会导致连接数增大。需要调大数据库的最大连接数</span><br><span class="line">StartPollersUnreachable=100</span><br><span class="line">HousekeepingFrequency=0</span><br></pre></td></tr></table></figure>
+<h1 id="docker-搭建"><a href="#docker-搭建" class="headerlink" title="docker 搭建"></a>docker 搭建</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install docker-ce</span></span><br><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">sudo yum install -y docker-ce</span><br><span class="line">sudo systemctl start docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 做数据映射后的方案 </span></span><br><span class="line"><span class="built_in">mkdir</span> -p /data/docker/mysql/zabbix/data</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/docker/zabbix/alertscripts</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/docker/zabbix/externalscripts</span><br></pre></td></tr></table></figure>
+
+<p>然后是安装 zabbix 前端，后端，数据库。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 数据库。</span></span><br><span class="line">docker run --name mysql-server -t \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;feiyang@2019+&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;feiyang@2019+&quot;</span> \</span><br><span class="line">-v /data/zabbix_data:/var/lib/mysql  \</span><br><span class="line">-d mysql:5.7  \</span><br><span class="line">--character-set-server=utf8 --collation-server=utf8_bin</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 后端 参数已经调优</span></span><br><span class="line">docker run --name zabbix-server-mysql  \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span>  \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span>  \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span>  \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;feiyang@2019+&quot;</span>  \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;feiyang@2019+&quot;</span>  \</span><br><span class="line">-e ZBX_TIMEOUT=30   \</span><br><span class="line">-e ZBX_CACHESIZE=8G  \</span><br><span class="line">-e ZBX_TRENDCACHESIZE=2G  \</span><br><span class="line">-e ZBX_STARTPOLLERS=500   \</span><br><span class="line">-e ZBX_STARTPOLLERSUNREACHABLE=100  \</span><br><span class="line">-e ZBX_HOUSEKEEPINGFREQUENCY=0  \</span><br><span class="line">-v /data/zabbix/alertscripts:/usr/lib/zabbix/alertscripts  \</span><br><span class="line">-v /data/zabbix/externalscripts:/usr/lib/zabbix/externalscripts  \</span><br><span class="line">-v /data/zabbix/conf:/etc/zabbix  \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql  \</span><br><span class="line">-p 10051:10051  \</span><br><span class="line">-d zabbix/zabbix-server-mysql:centos-4.2-latest</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 前端</span></span><br><span class="line">docker run --name zabbix-web-nginx-mysql \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;feiyang@2019+&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;feiyang@2019+&quot;</span> \</span><br><span class="line">-e PHP_TZ=<span class="string">&quot;Asia/Singapore&quot;</span> \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">--<span class="built_in">link</span> zabbix-server-mysql:zabbix-server \</span><br><span class="line">-p 8080:80 \</span><br><span class="line">-d zabbix/zabbix-web-nginx-mysql:centos-4.2-latest</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，在浏览器打开 <a target="_blank" rel="noopener" href="http://localhost:8080/">http://localhost:8080</a>  默认的账户是 <code>Admin</code>  密码是 <code>zabbix</code></p>
+<h1 id="ansible-批量添加主机"><a href="#ansible-批量添加主机" class="headerlink" title="ansible 批量添加主机"></a>ansible 批量添加主机</h1><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">add</span> <span class="string">zabbix</span> <span class="string">hosts</span></span><br><span class="line">    <span class="attr">local_action:</span></span><br><span class="line">      <span class="attr">module:</span> <span class="string">zabbix_host</span></span><br><span class="line">      <span class="attr">server_url:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; var_server_url &#125;&#125;</span>&quot;</span></span><br><span class="line">      <span class="attr">login_user:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; var_login_user &#125;&#125;</span>&quot;</span></span><br><span class="line">      <span class="attr">login_password:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; var_login_password &#125;&#125;</span>&quot;</span></span><br><span class="line">      <span class="attr">host_name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; inventory_hostname &#125;&#125;</span>&quot;</span></span><br><span class="line">      <span class="attr">visible_name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; inventory_hostname &#125;&#125;</span>-<span class="template-variable">&#123;&#123;function&#125;&#125;</span>&quot;</span></span><br><span class="line">      <span class="attr">host_groups:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; var_host_group &#125;&#125;</span>&quot;</span></span><br><span class="line">      <span class="attr">link_templates:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">Template</span> <span class="string">Sea</span> <span class="string">Ops</span> <span class="string">OS</span> <span class="string">Linux</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">Template</span> <span class="string">Sea</span> <span class="string">Ops</span> <span class="string">Disk</span> <span class="string">IO</span> <span class="string">Linux</span></span><br><span class="line">      <span class="comment">#status: disabled</span></span><br><span class="line">      <span class="attr">status:</span> <span class="string">enabled</span></span><br><span class="line">      <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">      <span class="attr">interfaces:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">type:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">main:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">useip:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">ip:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;  var_lanip | default(inventory_hostname) &#125;&#125;</span>&quot;</span></span><br><span class="line">        <span class="attr">dns:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">10050</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h1><p>设置触发警告的 Action 时，当 Step 设置为从 1 到 0 时，会一直发送告警信息，直到事件状态变成 OK，当 Step 设置为从 1 到 1 时，则只会发送一次告警，后面不会继续发送告警信息。</p>
+<h1 id="Zabbix-监控"><a href="#Zabbix-监控" class="headerlink" title="Zabbix 监控"></a>Zabbix 监控</h1><h2 id="监控网页状态"><a href="#监控网页状态" class="headerlink" title="监控网页状态"></a>监控网页状态</h2><p>zabbix 自带的 Web monitoring 就可以进行简单的网页监控。目前官方的 zabbix 版本是 4.2 此时日期 2019-07-09<br>首先是找到一台机器 Go to Configuration → Hosts, pick a host and click on Web in the row of that host. Then click on Create web scenario. 详情请看<a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation/4.2/manual/web_monitoring/example">官方文档</a>，然后是添加报警，<a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation/4.2/manual/web_monitoring/items">网页监控的官方文档</a>也是介绍的非常详细。<br>具体的监控图表信息，可以在 zabbix 主页的 Monitoring -&gt; Web 可以看到网页监控的详细信息。</p>
+<h2 id="监控-DNS"><a href="#监控-DNS" class="headerlink" title="监控 DNS"></a>监控 DNS</h2><p><a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation/4.2/manual/config/items/itemtypes/zabbix_agent?s%5B%5D=net&s%5B%5D=dns&s%5B%5D=record">官方文档 4.2 版本</a><br>zabbix默认支持检查解析成功与否和具体的解析结果。对应内置的KEY</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">net.dns[&lt;ip&gt;,zone,&lt;type&gt;,&lt;timeout&gt;,&lt;count&gt;]</span><br><span class="line">net.dns.record[&lt;ip&gt;,zone,&lt;type&gt;,&lt;timeout&gt;,&lt;count&gt;]</span><br><span class="line">ip 指DNS服务器地址。</span><br><span class="line">zone 指要解析的域名</span><br><span class="line">type 指解析的记录类型</span><br><span class="line">timeout 指超时时间 默认1 秒</span><br><span class="line">count 指解析失败重试的次数 默认 2次</span><br><span class="line"></span><br><span class="line">trigger &#123;host:net.dns[dns_server,domain,A,1,2].count(#3)&#125;=0</span><br></pre></td></tr></table></figure>
+
+<h1 id="数据库表优化"><a href="#数据库表优化" class="headerlink" title="数据库表优化"></a>数据库表优化</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER $$</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> `partition_create`(SCHEMANAME <span class="type">varchar</span>(<span class="number">64</span>), TABLENAME <span class="type">varchar</span>(<span class="number">64</span>), PARTITIONNAME <span class="type">varchar</span>(<span class="number">64</span>), CLOCK <span class="type">int</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">           SCHEMANAME = The DB schema in which to make changes</span></span><br><span class="line"><span class="comment">           TABLENAME = The table with partitions to potentially delete</span></span><br><span class="line"><span class="comment">           PARTITIONNAME = The name of the partition to create</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">           Verify that the partition does not already exist</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">DECLARE</span> RETROWS <span class="type">INT</span>;</span><br><span class="line">        <span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="keyword">INTO</span> RETROWS</span><br><span class="line">        <span class="keyword">FROM</span> information_schema.partitions</span><br><span class="line">        <span class="keyword">WHERE</span> table_schema <span class="operator">=</span> SCHEMANAME <span class="keyword">AND</span> table_name <span class="operator">=</span> TABLENAME <span class="keyword">AND</span> partition_description <span class="operator">&gt;=</span> CLOCK;</span><br><span class="line"></span><br><span class="line">        IF RETROWS <span class="operator">=</span> <span class="number">0</span> <span class="keyword">THEN</span></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   1. Print a message indicating that a partition was created.</span></span><br><span class="line"><span class="comment">                   2. Create the SQL to create the partition.</span></span><br><span class="line"><span class="comment">                   3. Execute the SQL from #2.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">                <span class="keyword">SELECT</span> CONCAT( &quot;partition_create(&quot;, SCHEMANAME, &quot;,&quot;, TABLENAME, &quot;,&quot;, PARTITIONNAME, &quot;,&quot;, CLOCK, &quot;)&quot; ) <span class="keyword">AS</span> msg;</span><br><span class="line">                <span class="keyword">SET</span> <span class="variable">@sql</span> <span class="operator">=</span> CONCAT( <span class="string">&#x27;ALTER TABLE &#x27;</span>, SCHEMANAME, <span class="string">&#x27;.&#x27;</span>, TABLENAME, <span class="string">&#x27; ADD PARTITION (PARTITION &#x27;</span>, PARTITIONNAME, <span class="string">&#x27; VALUES LESS THAN (&#x27;</span>, CLOCK, <span class="string">&#x27;));&#x27;</span> );</span><br><span class="line">                <span class="keyword">PREPARE</span> STMT <span class="keyword">FROM</span> <span class="variable">@sql</span>;</span><br><span class="line">                <span class="keyword">EXECUTE</span> STMT;</span><br><span class="line">                <span class="keyword">DEALLOCATE</span> <span class="keyword">PREPARE</span> STMT;</span><br><span class="line">        <span class="keyword">END</span> IF;</span><br><span class="line"><span class="keyword">END</span>$$</span><br><span class="line">DELIMITER ;</span><br><span class="line">DELIMITER $$</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> `partition_drop`(SCHEMANAME <span class="type">VARCHAR</span>(<span class="number">64</span>), TABLENAME <span class="type">VARCHAR</span>(<span class="number">64</span>), DELETE_BELOW_PARTITION_DATE <span class="type">BIGINT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">           SCHEMANAME = The DB schema in which to make changes</span></span><br><span class="line"><span class="comment">           TABLENAME = The table with partitions to potentially delete</span></span><br><span class="line"><span class="comment">           DELETE_BELOW_PARTITION_DATE = Delete any partitions with names that are dates older than this one (yyyy-mm-dd)</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">DECLARE</span> done <span class="type">INT</span> <span class="keyword">DEFAULT</span> <span class="literal">FALSE</span>;</span><br><span class="line">        <span class="keyword">DECLARE</span> drop_part_name <span class="type">VARCHAR</span>(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">           Get a list of all the partitions that are older than the date</span></span><br><span class="line"><span class="comment">           in DELETE_BELOW_PARTITION_DATE.  All partitions are prefixed with</span></span><br><span class="line"><span class="comment">           a &quot;p&quot;, so use SUBSTRING TO get rid of that character.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">DECLARE</span> myCursor <span class="keyword">CURSOR</span> <span class="keyword">FOR</span></span><br><span class="line">                <span class="keyword">SELECT</span> partition_name</span><br><span class="line">                <span class="keyword">FROM</span> information_schema.partitions</span><br><span class="line">                <span class="keyword">WHERE</span> table_schema <span class="operator">=</span> SCHEMANAME <span class="keyword">AND</span> table_name <span class="operator">=</span> TABLENAME <span class="keyword">AND</span> <span class="built_in">CAST</span>(<span class="built_in">SUBSTRING</span>(partition_name <span class="keyword">FROM</span> <span class="number">2</span>) <span class="keyword">AS</span> UNSIGNED) <span class="operator">&lt;</span> DELETE_BELOW_PARTITION_DATE;</span><br><span class="line">        <span class="keyword">DECLARE</span> CONTINUE HANDLER <span class="keyword">FOR</span> <span class="keyword">NOT</span> FOUND <span class="keyword">SET</span> done <span class="operator">=</span> <span class="literal">TRUE</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">           Create the basics for when we need to drop the partition.  Also, create</span></span><br><span class="line"><span class="comment">           @drop_partitions to hold a comma-delimited list of all partitions that</span></span><br><span class="line"><span class="comment">           should be deleted.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">SET</span> <span class="variable">@alter</span>_header <span class="operator">=</span> CONCAT(&quot;ALTER TABLE &quot;, SCHEMANAME, &quot;.&quot;, TABLENAME, &quot; DROP PARTITION &quot;);</span><br><span class="line">        <span class="keyword">SET</span> <span class="variable">@drop</span>_partitions <span class="operator">=</span> &quot;&quot;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">           Start looping through all the partitions that are too old.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">OPEN</span> myCursor;</span><br><span class="line">        read_loop: LOOP</span><br><span class="line">                <span class="keyword">FETCH</span> myCursor <span class="keyword">INTO</span> drop_part_name;</span><br><span class="line">                IF done <span class="keyword">THEN</span></span><br><span class="line">                        LEAVE read_loop;</span><br><span class="line">                <span class="keyword">END</span> IF;</span><br><span class="line">                <span class="keyword">SET</span> <span class="variable">@drop</span>_partitions <span class="operator">=</span> IF(<span class="variable">@drop</span>_partitions <span class="operator">=</span> &quot;&quot;, drop_part_name, CONCAT(<span class="variable">@drop</span>_partitions, &quot;,&quot;, drop_part_name));</span><br><span class="line">        <span class="keyword">END</span> LOOP;</span><br><span class="line">        IF <span class="variable">@drop</span>_partitions <span class="operator">!=</span> &quot;&quot; <span class="keyword">THEN</span></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   1. Build the SQL to drop all the necessary partitions.</span></span><br><span class="line"><span class="comment">                   2. Run the SQL to drop the partitions.</span></span><br><span class="line"><span class="comment">                   3. Print out the table partitions that were deleted.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">                <span class="keyword">SET</span> <span class="variable">@full</span>_sql <span class="operator">=</span> CONCAT(<span class="variable">@alter</span>_header, <span class="variable">@drop</span>_partitions, &quot;;&quot;);</span><br><span class="line">                <span class="keyword">PREPARE</span> STMT <span class="keyword">FROM</span> <span class="variable">@full</span>_sql;</span><br><span class="line">                <span class="keyword">EXECUTE</span> STMT;</span><br><span class="line">                <span class="keyword">DEALLOCATE</span> <span class="keyword">PREPARE</span> STMT;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">SELECT</span> CONCAT(SCHEMANAME, &quot;.&quot;, TABLENAME) <span class="keyword">AS</span> `<span class="keyword">table</span>`, <span class="variable">@drop</span>_partitions <span class="keyword">AS</span> `partitions_deleted`;</span><br><span class="line">        <span class="keyword">ELSE</span></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                   No partitions are being deleted, so print out &quot;N/A&quot; (Not applicable) to indicate</span></span><br><span class="line"><span class="comment">                   that no changes were made.</span></span><br><span class="line"><span class="comment">                */</span></span><br><span class="line">                <span class="keyword">SELECT</span> CONCAT(SCHEMANAME, &quot;.&quot;, TABLENAME) <span class="keyword">AS</span> `<span class="keyword">table</span>`, &quot;N/A&quot; <span class="keyword">AS</span> `partitions_deleted`;</span><br><span class="line">        <span class="keyword">END</span> IF;</span><br><span class="line"><span class="keyword">END</span>$$</span><br><span class="line">DELIMITER ;</span><br><span class="line">DELIMITER $$</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> `partition_maintenance`(SCHEMA_NAME <span class="type">VARCHAR</span>(<span class="number">32</span>), TABLE_NAME <span class="type">VARCHAR</span>(<span class="number">32</span>), KEEP_DATA_DAYS <span class="type">INT</span>, HOURLY_INTERVAL <span class="type">INT</span>, CREATE_NEXT_INTERVALS <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">        <span class="keyword">DECLARE</span> OLDER_THAN_PARTITION_DATE <span class="type">VARCHAR</span>(<span class="number">16</span>);</span><br><span class="line">        <span class="keyword">DECLARE</span> PARTITION_NAME <span class="type">VARCHAR</span>(<span class="number">16</span>);</span><br><span class="line">        <span class="keyword">DECLARE</span> OLD_PARTITION_NAME <span class="type">VARCHAR</span>(<span class="number">16</span>);</span><br><span class="line">        <span class="keyword">DECLARE</span> LESS_THAN_TIMESTAMP <span class="type">INT</span>;</span><br><span class="line">        <span class="keyword">DECLARE</span> CUR_TIME <span class="type">INT</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">CALL</span> partition_verify(SCHEMA_NAME, TABLE_NAME, HOURLY_INTERVAL);</span><br><span class="line">        <span class="keyword">SET</span> CUR_TIME <span class="operator">=</span> UNIX_TIMESTAMP(DATE_FORMAT(NOW(), <span class="string">&#x27;%Y-%m-%d 00:00:00&#x27;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">SET</span> @__interval <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        create_loop: LOOP</span><br><span class="line">                IF @__interval <span class="operator">&gt;</span> CREATE_NEXT_INTERVALS <span class="keyword">THEN</span></span><br><span class="line">                        LEAVE create_loop;</span><br><span class="line">                <span class="keyword">END</span> IF;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">SET</span> LESS_THAN_TIMESTAMP <span class="operator">=</span> CUR_TIME <span class="operator">+</span> (HOURLY_INTERVAL <span class="operator">*</span> @__interval <span class="operator">*</span> <span class="number">3600</span>);</span><br><span class="line">                <span class="keyword">SET</span> PARTITION_NAME <span class="operator">=</span> FROM_UNIXTIME(CUR_TIME <span class="operator">+</span> HOURLY_INTERVAL <span class="operator">*</span> (@__interval <span class="operator">-</span> <span class="number">1</span>) <span class="operator">*</span> <span class="number">3600</span>, <span class="string">&#x27;p%Y%m%d%H00&#x27;</span>);</span><br><span class="line">                IF(PARTITION_NAME <span class="operator">!=</span> OLD_PARTITION_NAME) <span class="keyword">THEN</span></span><br><span class="line">                        <span class="keyword">CALL</span> partition_create(SCHEMA_NAME, TABLE_NAME, PARTITION_NAME, LESS_THAN_TIMESTAMP);</span><br><span class="line">                <span class="keyword">END</span> IF;</span><br><span class="line">                <span class="keyword">SET</span> @__interval<span class="operator">=</span>@__interval<span class="operator">+</span><span class="number">1</span>;</span><br><span class="line">                <span class="keyword">SET</span> OLD_PARTITION_NAME <span class="operator">=</span> PARTITION_NAME;</span><br><span class="line">        <span class="keyword">END</span> LOOP;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">SET</span> OLDER_THAN_PARTITION_DATE<span class="operator">=</span>DATE_FORMAT(DATE_SUB(NOW(), <span class="type">INTERVAL</span> KEEP_DATA_DAYS <span class="keyword">DAY</span>), <span class="string">&#x27;%Y%m%d0000&#x27;</span>);</span><br><span class="line">        <span class="keyword">CALL</span> partition_drop(SCHEMA_NAME, TABLE_NAME, OLDER_THAN_PARTITION_DATE);</span><br><span class="line"></span><br><span class="line"><span class="keyword">END</span>$$</span><br><span class="line">DELIMITER ;</span><br><span class="line">DELIMITER $$</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> `partition_verify`(SCHEMANAME <span class="type">VARCHAR</span>(<span class="number">64</span>), TABLENAME <span class="type">VARCHAR</span>(<span class="number">64</span>), HOURLYINTERVAL <span class="type">INT</span>(<span class="number">11</span>))</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">        <span class="keyword">DECLARE</span> PARTITION_NAME <span class="type">VARCHAR</span>(<span class="number">16</span>);</span><br><span class="line">        <span class="keyword">DECLARE</span> RETROWS <span class="type">INT</span>(<span class="number">11</span>);</span><br><span class="line">        <span class="keyword">DECLARE</span> FUTURE_TIMESTAMP <span class="type">TIMESTAMP</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * Check if any partitions exist for the given SCHEMANAME.TABLENAME.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="keyword">INTO</span> RETROWS</span><br><span class="line">        <span class="keyword">FROM</span> information_schema.partitions</span><br><span class="line">        <span class="keyword">WHERE</span> table_schema <span class="operator">=</span> SCHEMANAME <span class="keyword">AND</span> table_name <span class="operator">=</span> TABLENAME <span class="keyword">AND</span> partition_name <span class="keyword">IS</span> <span class="keyword">NULL</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * If partitions do not exist, go ahead and partition the table</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        IF RETROWS <span class="operator">=</span> <span class="number">1</span> <span class="keyword">THEN</span></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Take the current date at 00:00:00 and add HOURLYINTERVAL to it.  This is the timestamp below which we will store values.</span></span><br><span class="line"><span class="comment">                 * We begin partitioning based on the beginning of a day.  This is because we don&#x27;t want to generate a random partition</span></span><br><span class="line"><span class="comment">                 * that won&#x27;t necessarily fall in line with the desired partition naming (ie: if the hour interval is 24 hours, we could</span></span><br><span class="line"><span class="comment">                 * end up creating a partition now named &quot;p201403270600&quot; when all other partitions will be like &quot;p201403280000&quot;).</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">SET</span> FUTURE_TIMESTAMP <span class="operator">=</span> TIMESTAMPADD(<span class="keyword">HOUR</span>, HOURLYINTERVAL, CONCAT(CURDATE(), &quot; &quot;, <span class="string">&#x27;00:00:00&#x27;</span>));</span><br><span class="line">                <span class="keyword">SET</span> PARTITION_NAME <span class="operator">=</span> DATE_FORMAT(CURDATE(), <span class="string">&#x27;p%Y%m%d%H00&#x27;</span>);</span><br><span class="line"></span><br><span class="line">                <span class="comment">-- Create the partitioning query</span></span><br><span class="line">                <span class="keyword">SET</span> @__PARTITION_SQL <span class="operator">=</span> CONCAT(&quot;ALTER TABLE &quot;, SCHEMANAME, &quot;.&quot;, TABLENAME, &quot; PARTITION BY RANGE(`clock`)&quot;);</span><br><span class="line">                <span class="keyword">SET</span> @__PARTITION_SQL <span class="operator">=</span> CONCAT(@__PARTITION_SQL, &quot;(PARTITION &quot;, PARTITION_NAME, &quot; VALUES LESS THAN (&quot;, UNIX_TIMESTAMP(FUTURE_TIMESTAMP), &quot;));&quot;);</span><br><span class="line"></span><br><span class="line">                <span class="comment">-- Run the partitioning query</span></span><br><span class="line">                <span class="keyword">PREPARE</span> STMT <span class="keyword">FROM</span> @__PARTITION_SQL;</span><br><span class="line">                <span class="keyword">EXECUTE</span> STMT;</span><br><span class="line">                <span class="keyword">DEALLOCATE</span> <span class="keyword">PREPARE</span> STMT;</span><br><span class="line">        <span class="keyword">END</span> IF;</span><br><span class="line"><span class="keyword">END</span>$$</span><br><span class="line">DELIMITER ;</span><br><span class="line"></span><br><span class="line">DELIMITER $$</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span>`partition_maintenance_all`(SCHEMA_NAME <span class="type">VARCHAR</span>(<span class="number">32</span>))</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">               <span class="keyword">CALL</span> partition_maintenance(SCHEMA_NAME, <span class="string">&#x27;history&#x27;</span>, <span class="number">30</span>, <span class="number">24</span>, <span class="number">14</span>);</span><br><span class="line">               <span class="keyword">CALL</span> partition_maintenance(SCHEMA_NAME, <span class="string">&#x27;history_log&#x27;</span>, <span class="number">30</span>, <span class="number">24</span>, <span class="number">14</span>);</span><br><span class="line">               <span class="keyword">CALL</span> partition_maintenance(SCHEMA_NAME, <span class="string">&#x27;history_str&#x27;</span>, <span class="number">30</span>, <span class="number">24</span>, <span class="number">14</span>);</span><br><span class="line">               <span class="keyword">CALL</span> partition_maintenance(SCHEMA_NAME, <span class="string">&#x27;history_text&#x27;</span>, <span class="number">30</span>, <span class="number">24</span>, <span class="number">14</span>);</span><br><span class="line">               <span class="keyword">CALL</span> partition_maintenance(SCHEMA_NAME, <span class="string">&#x27;history_uint&#x27;</span>, <span class="number">30</span>, <span class="number">24</span>, <span class="number">14</span>);</span><br><span class="line">               <span class="keyword">CALL</span> partition_maintenance(SCHEMA_NAME, <span class="string">&#x27;trends&#x27;</span>, <span class="number">120</span>, <span class="number">24</span>, <span class="number">14</span>);</span><br><span class="line">               <span class="keyword">CALL</span> partition_maintenance(SCHEMA_NAME, <span class="string">&#x27;trends_uint&#x27;</span>, <span class="number">120</span>, <span class="number">24</span>, <span class="number">14</span>);</span><br><span class="line"><span class="keyword">END</span>$$</span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+<p>Trends 120,(‘history’, 30, 24, 14), 最多保存 30 天的数据，每隔 24 小时生成一个分区，每次生成 14 个分区   </p>
+<p>首先进入容器内部，将上面这个  partition.sql 导入数据库 mysql </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql  -uzabbix  -pfeiyang@2019+  zabbix  &lt; partition.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 mysql 容器内部 vim /opt/mysql.sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#!bin/bash</span></span><br><span class="line">mysql  -uzabbix -pfeiyang@2019+ zabbix -e<span class="string">&quot;CALL partition_maintenance_all(&#x27;zabbix&#x27;)&quot;</span> </span><br><span class="line"></span><br><span class="line"><span class="built_in">chmod</span> 755 /opt/mysql.sh</span><br></pre></td></tr></table></figure>
+<p>退出容器，在宿主机上，建立定时任务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vim /etc/crontab</span></span><br><span class="line"></span><br><span class="line">23 03  * * * root /bin/docker <span class="built_in">exec</span> [mysql 容器 ID] bash -c  <span class="string">&quot;cd /opt &amp;&amp; bash mysql.sh&quot;</span> </span><br><span class="line"></span><br><span class="line">systemctl restart crond</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Zabbix-api"><a href="#Zabbix-api" class="headerlink" title="Zabbix api"></a>Zabbix api</h1><p><a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation/current/manual/api">官方文档</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># auth_zabbix</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://IP:port/api_jsonrpc.php&#x27;</span>  <span class="comment">#docker 方式</span></span><br><span class="line"><span class="comment"># 非 docker 方式为 &quot;http://IP:port/zabbix/api_jsonrpc.php&quot;</span></span><br><span class="line"></span><br><span class="line">post_data = &#123;</span><br><span class="line">    <span class="string">&quot;jsonrpc&quot;</span>: <span class="string">&quot;2.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;method&quot;</span>: <span class="string">&quot;user.login&quot;</span>,</span><br><span class="line">    <span class="string">&quot;params&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;user&quot;</span>: <span class="string">&quot;xxx&quot;</span>,</span><br><span class="line">        <span class="string">&quot;password&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">1</span>,  </span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">post_header = &#123;<span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">ret = requests.post(url, data=json.dumps(post_data), headers=post_header)</span><br><span class="line"></span><br><span class="line"><span class="comment">#print(ret)</span></span><br><span class="line"></span><br><span class="line">zabbix_ret = json.loads(ret.text)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> zabbix_ret.has_key(<span class="string">&#x27;result&#x27;</span>):</span><br><span class="line">    <span class="built_in">print</span> <span class="string">&#x27;login error&#x27;</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span> zabbix_ret.get(<span class="string">&#x27;result&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># get hostid</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://IP:port/api_jsonrpc.php&#x27;</span></span><br><span class="line"></span><br><span class="line">server_list=[<span class="string">&quot;1.1.1.1&quot;</span>,<span class="string">&quot;233.233.233.233&quot;</span>]</span><br><span class="line"></span><br><span class="line">post_data = &#123;</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;jsonrpc&quot;</span>: <span class="string">&quot;2.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;method&quot;</span>: <span class="string">&quot;host.get&quot;</span>,</span><br><span class="line">    <span class="string">&quot;params&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;filter&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;host&quot;</span>: server_list</span><br><span class="line">        &#125;,</span><br><span class="line">    <span class="string">&quot;sortfield&quot;</span>: <span class="string">&quot;host&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="string">&quot;auth&quot;</span>: <span class="string">&quot;由上文中的 auth_zabbix.py 得出&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">post_header = &#123;<span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">ret = requests.post(url, data=json.dumps(post_data), headers=post_header)</span><br><span class="line"></span><br><span class="line">zabbix_ret = json.loads(ret.text)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> zabbix_ret</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> zabbix_ret.has_key(<span class="string">&#x27;result&#x27;</span>):</span><br><span class="line">    <span class="built_in">print</span> <span class="string">&#x27;login error&#x27;</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span> zabbix_ret.get(<span class="string">&#x27;result&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">hostid_list=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> zabbix_ret.get(<span class="string">&#x27;result&#x27;</span>):</span><br><span class="line">	hostid_list.append(<span class="built_in">str</span>(i[<span class="string">&#x27;hostid&#x27;</span>]))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> hostid_list</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># get hist_data</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">today = datetime.date.today()</span><br><span class="line">today_unix = <span class="built_in">int</span>(time.mktime(today.timetuple()))</span><br><span class="line">tomorrow = today+datetime.timedelta(days=<span class="number">1</span>)</span><br><span class="line">tomorrow_unix = <span class="built_in">int</span>(time.mktime(tomorrow.timetuple()))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> today_unix</span><br><span class="line"><span class="built_in">print</span> tomorrow_unix</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://IP:port/api_jsonrpc.php&#x27;</span></span><br><span class="line"></span><br><span class="line">post_data = &#123;</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;jsonrpc&quot;</span>: <span class="string">&quot;2.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;method&quot;</span>: <span class="string">&quot;history.get&quot;</span>,</span><br><span class="line">    <span class="string">&quot;params&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;output&quot;</span>: <span class="string">&quot;extend&quot;</span>,</span><br><span class="line">        <span class="string">&quot;history&quot;</span>: <span class="number">3</span>, <span class="comment"># 0,1,2,3,4 History object types</span></span><br><span class="line">        <span class="string">&quot;itemids&quot;</span>: <span class="string">&quot;31023&quot;</span>,</span><br><span class="line">        <span class="string">&quot;sortfield&quot;</span>: <span class="string">&quot;clock&quot;</span>,</span><br><span class="line">        <span class="string">&quot;sortorder&quot;</span>: <span class="string">&quot;DESC&quot;</span>,</span><br><span class="line">        <span class="string">&quot;time_from&quot;</span>: <span class="string">&quot;today_unix&quot;</span>,</span><br><span class="line">        <span class="string">&quot;time_till&quot;</span>: <span class="string">&quot;tomorrow_unix&quot;</span></span><br><span class="line">       </span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;auth&quot;</span>: <span class="string">&quot;由上文中的 auth_zabbix.py 得出&quot;</span>,</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">post_header = &#123;<span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">ret = requests.post(url, data=json.dumps(post_data), headers=post_header)</span><br><span class="line"></span><br><span class="line">zabbix_ret = json.loads(ret.text)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> zabbix_ret.get(<span class="string">&#x27;result&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># get trend_data</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">today = datetime.date.today()</span><br><span class="line">today_unix = <span class="built_in">int</span>(time.mktime(today.timetuple()))</span><br><span class="line">tomorrow = today+datetime.timedelta(days=<span class="number">1</span>)</span><br><span class="line">tomorrow_unix = <span class="built_in">int</span>(time.mktime(tomorrow.timetuple()))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://IP:port/api_jsonrpc.php&#x27;</span></span><br><span class="line"></span><br><span class="line">post_data = &#123;</span><br><span class="line">    <span class="string">&quot;jsonrpc&quot;</span>: <span class="string">&quot;2.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;method&quot;</span>: <span class="string">&quot;trend.get&quot;</span>,</span><br><span class="line">    <span class="string">&quot;params&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;output&quot;</span>: [  <span class="comment"># 定义 output 格式</span></span><br><span class="line">            <span class="string">&quot;itemid&quot;</span>,</span><br><span class="line">            <span class="string">&quot;clock&quot;</span>, <span class="comment"># 当前时间</span></span><br><span class="line">            <span class="string">&quot;num&quot;</span>,   <span class="comment"># trend 一小时采集次数</span></span><br><span class="line">            <span class="string">&quot;value_min&quot;</span>,</span><br><span class="line">            <span class="string">&quot;value_avg&quot;</span>,</span><br><span class="line">            <span class="string">&quot;value_max&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        </span><br><span class="line">        <span class="string">&quot;itemids&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;28959&quot;</span>,</span><br><span class="line">            <span class="string">&quot;28972&quot;</span></span><br><span class="line">            </span><br><span class="line">        ],</span><br><span class="line">        </span><br><span class="line">        <span class="string">&quot;time_from&quot;</span>: today_unix,</span><br><span class="line">        <span class="string">&quot;time_till&quot;</span>: tomorrow_unix</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;auth&quot;</span>: <span class="string">&quot;由上文中的 auth_zabbix.py 得出&quot;</span>,</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">post_header = &#123;<span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">ret = requests.post(url, data=json.dumps(post_data), headers=post_header)</span><br><span class="line"></span><br><span class="line">zabbix_ret = json.loads(ret.text)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> (zabbix_ret.get(<span class="string">&#x27;result&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="zabbix-get"><a href="#zabbix-get" class="headerlink" title="zabbix_get"></a>zabbix_get</h1><p>从 server 端检测到 client 端的网络是否通畅，可能是 iptables 或者 server host 白名单造成的问题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zabbix_get -s 10.10.1.1 -k system.uname</span><br></pre></td></tr></table></figure>
+
+<h1 id="zabbix-proxy"><a href="#zabbix-proxy" class="headerlink" title="zabbix proxy"></a>zabbix proxy</h1><p>如果 server cluster 规模不大，则我们可以采用被动模式（对 client 而言是被动的，被 zabbix server来拉取数据）。如果集群规模大，那么 zabbix server 的压力就很大了，如果要去抓取的客户端数量过于庞大。 还有一种建议用 proxy 模式的情况是跨地区监控，集中到一台中心 zabbix， 方便管理。<br>本次演示，我们用了三台机器，client: 10.66.236.98 , proxy: 10.66.236.99 , zabbix_server: 10.66.236.100 （可用上文的 docker 方式安装），非 docker 方式可用参考 <a target="_blank" rel="noopener" href="https://wsgzao.github.io/post/zabbix/">奥哥博客</a></p>
+<ol>
+<li>首先是安装 zabbix proxy 在 10.66.236.99 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># zabbix proxy 的依赖就只有数据库了，用于存储配置信息 </span></span><br><span class="line">yum install -y mariadb-server mariadb</span><br><span class="line"><span class="comment"># 启动 mariadb 服务 </span></span><br><span class="line">systemctl start mariadb.service</span><br><span class="line">systemctl <span class="built_in">enable</span> mariadb.service</span><br><span class="line"><span class="comment"># 初始化 mysql 数据库，并配置 root 用户密码 </span></span><br><span class="line">mysql_secure_installation</span><br><span class="line"><span class="comment"># 初始化，然后输入密码</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 zabbix_proxy 数据库 </span></span><br><span class="line">mysql -uroot -p</span><br><span class="line"></span><br><span class="line">mysql&gt; create database zabbix_proxy character <span class="built_in">set</span> utf8 collate utf8_bin;</span><br><span class="line">mysql&gt; grant all privileges on zabbix_proxy.* to zabbix@localhost identified by <span class="string">&#x27;zabbix&#x27;</span>;</span><br><span class="line">mysql&gt; quit;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署 zabbix_proxy 4.2 版本的</span></span><br><span class="line">rpm -Uvh  https://repo.zabbix.com/zabbix/4.2/rhel/7/x86_64/zabbix-release-4.2-2.el7.noarch.rpm</span><br><span class="line">yum install -y zabbix-proxy-mysql</span><br><span class="line">zcat /usr/share/doc/zabbix-proxy-mysql*/schema.sql.gz | mysql -uzabbix -p zabbix_proxy</span><br><span class="line"><span class="comment">#输入密码: zabbix</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置数据库用户及密码 </span></span><br><span class="line">vim /etc/zabbix/zabbix_proxy.conf</span><br><span class="line">Server=10.66.236.100   <span class="comment">#填写 zabbix server 的IP</span></span><br><span class="line">Hostname=zabbix_proxy</span><br><span class="line">DBName=zabbix_proxy</span><br><span class="line">DBUser=zabbix</span><br><span class="line">DBPassword=zabbix</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网页上配置 Zabbix Server Proxy</span></span><br><span class="line">Administration -&gt; Proxies -&gt; Create proxy</span><br><span class="line">Proxy name: zabbix_proxy</span><br><span class="line">Proxy mode: Active</span><br><span class="line">Proxy address: 10.66.236.99</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 zabbix_proxy</span></span><br><span class="line">systemctl restart zabbix-proxy</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>如果是 Active 模式，这里不需要填写 IP， Passive 被动模式才一定要填写 IP<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190822173033.png"></p>
+<ol start="2">
+<li><p>修改 client 端的配置 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改 zabbix_agent 配置指向 zabbix_proxy</span></span><br><span class="line">vim /etc/zabbix/zabbix_agentd.conf</span><br><span class="line">ServerActive=10.66.236.99  <span class="comment">#proxy 的 IP</span></span><br><span class="line">Hostname=10.66.236.98  <span class="comment">#本机的 IP</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启 zabbix_agent</span></span><br><span class="line">systemctl restart zabbix-agent</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在网页上添加 host</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20190822173036.png"><br>一定要选择 proxy，IP 就填写 0.0.0.0  还有一个非常重要的就是 template 所有的 item 需要采用 Zabbix agent (active)</p>
+<h1 id="遇到的坑"><a href="#遇到的坑" class="headerlink" title="遇到的坑"></a>遇到的坑</h1><ol>
+<li>在测试 proxy 时，host name 不匹配造成的，我最开始随便填了一个 hostname ， 然后发现和 agent config 不一致，又在zabbix 网页上更新为 10.66.236.98 ，感觉数据库并没有更新，所以导致 host name 匹配不了，一直报错 no active checks on server no active checks on server [10.66.236.99:10051]: host [10.66.236.98] not found<br>解决的办法是：重新删除了 host , 再添加上 ，一次性填对了 host name 10.66.236.98 就可以了</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/zabbix/" rel="tag"># zabbix</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/network/" rel="prev" title="计算机网络相关">
+      <i class="fa fa-chevron-left"></i> 计算机网络相关
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/ops-bug/" rel="next" title="DevOps 中踩过的坑">
+      DevOps 中踩过的坑 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">监控模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LAMP-%E6%9E%B6%E6%9E%84%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">LAMP 架构安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zabbix-server-conf-%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98"><span class="nav-number">3.</span> <span class="nav-text">zabbix_server.conf 参数调优</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-%E6%90%AD%E5%BB%BA"><span class="nav-number">4.</span> <span class="nav-text">docker 搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ansible-%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0%E4%B8%BB%E6%9C%BA"><span class="nav-number">5.</span> <span class="nav-text">ansible 批量添加主机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Action"><span class="nav-number">6.</span> <span class="nav-text">Action</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Zabbix-%E7%9B%91%E6%8E%A7"><span class="nav-number">7.</span> <span class="nav-text">Zabbix 监控</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E7%BD%91%E9%A1%B5%E7%8A%B6%E6%80%81"><span class="nav-number">7.1.</span> <span class="nav-text">监控网页状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7-DNS"><span class="nav-number">7.2.</span> <span class="nav-text">监控 DNS</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E4%BC%98%E5%8C%96"><span class="nav-number">8.</span> <span class="nav-text">数据库表优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Zabbix-api"><span class="nav-number">9.</span> <span class="nav-text">Zabbix api</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zabbix-get"><span class="nav-number">10.</span> <span class="nav-text">zabbix_get</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zabbix-proxy"><span class="nav-number">11.</span> <span class="nav-text">zabbix proxy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91"><span class="nav-number">12.</span> <span class="nav-text">遇到的坑</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

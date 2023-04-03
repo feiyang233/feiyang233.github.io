@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Prometheus 作为业务级监控告警工具，再配合上可视化工具 Grafana，运维人员能方便的监控所需的指标。本文记录了小白入门学习的过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Prometheus 指南">
+<meta property="og:url" content="http://feiyang233.club/post/prometheus/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="Prometheus 作为业务级监控告警工具，再配合上可视化工具 Grafana，运维人员能方便的监控所需的指标。本文记录了小白入门学习的过程">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003155435.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003160311.png">
+<meta property="article:published_time" content="2019-10-03T07:08:40.000Z">
+<meta property="article:modified_time" content="2020-09-22T03:31:49.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="prometheus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003155435.png">
+
+<link rel="canonical" href="http://feiyang233.club/post/prometheus/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Prometheus 指南 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/prometheus/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Prometheus 指南
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-10-03 15:08:40" itemprop="dateCreated datePublished" datetime="2019-10-03T15:08:40+08:00">2019-10-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-22 11:31:49" itemprop="dateModified" datetime="2020-09-22T11:31:49+08:00">2020-09-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Prometheus 作为业务级监控告警工具，再配合上可视化工具 Grafana，运维人员能方便的监控所需的指标。本文记录了小白入门学习的过程</p>
+<span id="more"></span>  
+<h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://ryanyang.gitbook.io/prometheus/">Prometheus 中文文档</a> </li>
+<li><a target="_blank" rel="noopener" href="https://prometheus.io/docs/introduction/overview/">官方文档地址</a></li>
+</ol>
+<h1 id="入门体验区"><a href="#入门体验区" class="headerlink" title="入门体验区"></a>入门体验区</h1><h2 id="快速安装"><a href="#快速安装" class="headerlink" title="快速安装"></a>快速安装</h2><p>快速安装应用首选 docker 方式，不需要配置复杂的环境。当我们已经非常熟悉如何使用 prometheus 的时候，再返回来使用普通安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 只监听在本地</span></span><br><span class="line">docker run --name prometheus -d -p 127.0.0.1:9090:9090 prom/prometheus</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将配置文件挂载到容器中，方便修改</span></span><br><span class="line">docker run -p 9090:9090 -v /tmp/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用额外的数据卷挂载配置文件：</span></span><br><span class="line">docker run -p 9090:9090 -v /prometheus-data prom/prometheus --config.file=/prometheus-data/prometheus.yml</span><br></pre></td></tr></table></figure>
+<p>安装完成后，即可访问 <a target="_blank" rel="noopener" href="http://localhost:9090/">http://localhost:9090</a> 可以在 Graph 查询监控项，在 Status 查看监控了哪些机器，配置文件等。</p>
+<h2 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h2><p>[配置介绍官方文档]<a target="_blank" rel="noopener" href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/">https://prometheus.io/docs/prometheus/latest/configuration/configuration/</a>)<br>我是在 Mac 电脑上 docker 安装 prometheus。由于我没有把配置文件挂载出来，只能进入容器去修改。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -u root -it 51ae3954e880 sh</span><br><span class="line"></span><br><span class="line">vi /etc/prometheus/prometheus.yml</span><br></pre></td></tr></table></figure>
+<p>配置文件如下所示</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my global config</span></span><br><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="attr">scrape_interval:</span>     <span class="string">15s</span> <span class="comment"># Set the scrape interval to every 15 seconds. Default is every 1 minute.</span></span><br><span class="line">  <span class="attr">evaluation_interval:</span> <span class="string">15s</span> <span class="comment"># Evaluate rules every 15 seconds. The default is every 1 minute.</span></span><br><span class="line">  <span class="comment"># scrape_timeout is set to the global default (10s).</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Alertmanager configuration</span></span><br><span class="line"><span class="attr">alerting:</span></span><br><span class="line">  <span class="attr">alertmanagers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">static_configs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">targets:</span></span><br><span class="line">      <span class="comment"># - alertmanager:9093</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load rules once and periodically evaluate them according to the global &#x27;evaluation_interval&#x27;.</span></span><br><span class="line"><span class="attr">rule_files:</span></span><br><span class="line">  <span class="comment"># - &quot;first_rules.yml&quot;</span></span><br><span class="line">  <span class="comment"># - &quot;second_rules.yml&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A scrape configuration containing exactly one endpoint to scrape:</span></span><br><span class="line"><span class="comment"># Here it&#x27;s Prometheus itself.</span></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="comment"># The job name is added as a label `job=&lt;job_name&gt;` to any timeseries scraped from this config.</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;prometheus&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># metrics_path defaults to &#x27;/metrics&#x27;</span></span><br><span class="line">    <span class="comment"># scheme defaults to &#x27;http&#x27;.</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:9090&#x27;</span>]</span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;feiy&#x27;</span></span><br><span class="line">    <span class="attr">scrape_interval:</span> <span class="string">5s</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;host.docker.internal:8000&#x27;</span>]</span><br><span class="line">        <span class="attr">labels:</span></span><br><span class="line">          <span class="attr">group:</span> <span class="string">&#x27;production&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>完整的配置例子，请点击<a target="_blank" rel="noopener" href="https://github.com/prometheus/prometheus/blob/master/config/testdata/conf.good.yml">这里</a></p>
+<h2 id="检查结果"><a href="#检查结果" class="headerlink" title="检查结果"></a>检查结果</h2><p>打开 <a target="_blank" rel="noopener" href="http://localhost:9090/targets">http://localhost:9090/targets</a> 我们可以看到如下的结果  </p>
+<p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003155435.png"></p>
+<p>图中两个 target，第一个 feiy 是我自己写的一个 django 小程序，暴露出来了我关心的指标，用了<a target="_blank" rel="noopener" href="https://github.com/prometheus/client_python">Prometheus Python Client</a>。第二个则是 Prometheus 服务器自带的监控数据。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># feiy 暴露出来的数据</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># HELP python_gc_objects_collected_total Objects collected during gc</span></span><br><span class="line"><span class="comment"># TYPE python_gc_objects_collected_total counter</span></span><br><span class="line">python_gc_objects_collected_total&#123;generation=<span class="string">&quot;0&quot;</span>&#125; 17999.0</span><br><span class="line">python_gc_objects_collected_total&#123;generation=<span class="string">&quot;1&quot;</span>&#125; 2384.0</span><br><span class="line">python_gc_objects_collected_total&#123;generation=<span class="string">&quot;2&quot;</span>&#125; 833.0</span><br><span class="line"><span class="comment"># HELP python_gc_objects_uncollectable_total Uncollectable object found during GC</span></span><br><span class="line"><span class="comment"># TYPE python_gc_objects_uncollectable_total counter</span></span><br><span class="line">python_gc_objects_uncollectable_total&#123;generation=<span class="string">&quot;0&quot;</span>&#125; 0.0</span><br><span class="line">python_gc_objects_uncollectable_total&#123;generation=<span class="string">&quot;1&quot;</span>&#125; 0.0</span><br><span class="line">python_gc_objects_uncollectable_total&#123;generation=<span class="string">&quot;2&quot;</span>&#125; 0.0</span><br><span class="line"><span class="comment"># HELP python_gc_collections_total Number of times this generation was collected</span></span><br><span class="line"><span class="comment"># TYPE python_gc_collections_total counter</span></span><br><span class="line">python_gc_collections_total&#123;generation=<span class="string">&quot;0&quot;</span>&#125; 255.0</span><br><span class="line">python_gc_collections_total&#123;generation=<span class="string">&quot;1&quot;</span>&#125; 23.0</span><br><span class="line">python_gc_collections_total&#123;generation=<span class="string">&quot;2&quot;</span>&#125; 2.0</span><br><span class="line"><span class="comment"># HELP python_info Python platform information</span></span><br><span class="line"><span class="comment"># TYPE python_info gauge</span></span><br><span class="line">python_info&#123;implementation=<span class="string">&quot;CPython&quot;</span>,major=<span class="string">&quot;3&quot;</span>,minor=<span class="string">&quot;7&quot;</span>,patchlevel=<span class="string">&quot;1&quot;</span>,version=<span class="string">&quot;3.7.1&quot;</span>&#125; 1.0</span><br><span class="line"><span class="comment"># HELP request_processing_seconds Time spent processing request</span></span><br><span class="line"><span class="comment"># TYPE request_processing_seconds summary</span></span><br><span class="line">request_processing_seconds_count&#123;endpoint=<span class="string">&quot;/metrics/&quot;</span>,method=<span class="string">&quot;GET&quot;</span>,status_code=<span class="string">&quot;200&quot;</span>&#125; 3.0</span><br><span class="line">request_processing_seconds_sum&#123;endpoint=<span class="string">&quot;/metrics/&quot;</span>,method=<span class="string">&quot;GET&quot;</span>,status_code=<span class="string">&quot;200&quot;</span>&#125; 0.0</span><br><span class="line"><span class="comment"># TYPE request_processing_seconds_created gauge</span></span><br><span class="line">request_processing_seconds_created&#123;endpoint=<span class="string">&quot;/metrics/&quot;</span>,method=<span class="string">&quot;GET&quot;</span>,status_code=<span class="string">&quot;200&quot;</span>&#125; 1.570089497964517e+09</span><br><span class="line"><span class="comment"># HELP request_byte_sum_total Total request byte sum</span></span><br><span class="line"><span class="comment"># TYPE request_byte_sum_total counter</span></span><br><span class="line">request_byte_sum_total&#123;endpoint=<span class="string">&quot;/metrics/&quot;</span>,method=<span class="string">&quot;GET&quot;</span>,status_code=<span class="string">&quot;200&quot;</span>&#125; 0.0</span><br><span class="line"><span class="comment"># TYPE request_byte_sum_created gauge</span></span><br><span class="line">request_byte_sum_created&#123;endpoint=<span class="string">&quot;/metrics/&quot;</span>,method=<span class="string">&quot;GET&quot;</span>,status_code=<span class="string">&quot;200&quot;</span>&#125; 1.570089497964633e+09</span><br><span class="line"><span class="comment"># HELP response_byte_sum_total Total response byte sum</span></span><br><span class="line"><span class="comment"># TYPE response_byte_sum_total counter</span></span><br><span class="line">response_byte_sum_total&#123;endpoint=<span class="string">&quot;/metrics/&quot;</span>,method=<span class="string">&quot;GET&quot;</span>,status_code=<span class="string">&quot;200&quot;</span>&#125; 5533.0</span><br><span class="line"><span class="comment"># TYPE response_byte_sum_created gauge</span></span><br><span class="line">response_byte_sum_created&#123;endpoint=<span class="string">&quot;/metrics/&quot;</span>,method=<span class="string">&quot;GET&quot;</span>,status_code=<span class="string">&quot;200&quot;</span>&#125; 1.5700894979645782e+09</span><br></pre></td></tr></table></figure>
+
+<p>我们可以在 Graph 查询结果，比如查询 python_info{implementation&#x3D;”CPython”,major&#x3D;”3”,minor&#x3D;”7”,patchlevel&#x3D;”1”,version&#x3D;”3.7.1”} 1.0<br>得到了如下的结果</p>
+<p><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20191003160311.png"></p>
+<h1 id="进阶区"><a href="#进阶区" class="headerlink" title="进阶区"></a>进阶区</h1><h2 id="暴露数据-node-exporter"><a href="#暴露数据-node-exporter" class="headerlink" title="暴露数据 node exporter"></a>暴露数据 node exporter</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://prometheus.io/docs/guides/node-exporter/">监控 Linux 机器</a></li>
+<li><a target="_blank" rel="noopener" href="https://prometheus.io/docs/guides/cadvisor/">监控容器</a></li>
+</ol>
+<h2 id="metric"><a href="#metric" class="headerlink" title="metric"></a>metric</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://prometheus.io/docs/concepts/metric_types/">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/1EuTeQKeCX7-B2Ihj85dCA">详细解读 Prometheus 的指标类型</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/WJM-DTUrdl8KFpLD5kabZg">一文搞懂 Prometheus 的直方图</a></li>
+</ol>
+<h2 id="rules"><a href="#rules" class="headerlink" title="rules"></a>rules</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/">官方文档</a><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果有错的话，则那一条规则不会更新。</span></span><br><span class="line">go get github.com/prometheus/prometheus/cmd/promtool</span><br><span class="line">promtool check rules /path/to/example.rules.yml</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="采坑区"><a href="#采坑区" class="headerlink" title="采坑区"></a>采坑区</h1>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/prometheus/" rel="tag"># prometheus</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/mac/" rel="prev" title="Mac 小技巧">
+      <i class="fa fa-chevron-left"></i> Mac 小技巧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/golang/" rel="next" title="go 学习笔记">
+      go 学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99"><span class="nav-number">1.</span> <span class="nav-text">学习资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%A5%E9%97%A8%E4%BD%93%E9%AA%8C%E5%8C%BA"><span class="nav-number">2.</span> <span class="nav-text">入门体验区</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">快速安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">修改配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%BB%93%E6%9E%9C"><span class="nav-number">2.3.</span> <span class="nav-text">检查结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E5%8C%BA"><span class="nav-number">3.</span> <span class="nav-text">进阶区</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9A%B4%E9%9C%B2%E6%95%B0%E6%8D%AE-node-exporter"><span class="nav-number">3.1.</span> <span class="nav-text">暴露数据 node exporter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#metric"><span class="nav-number">3.2.</span> <span class="nav-text">metric</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rules"><span class="nav-number">3.3.</span> <span class="nav-text">rules</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%87%E5%9D%91%E5%8C%BA"><span class="nav-number">4.</span> <span class="nav-text">采坑区</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

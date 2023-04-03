@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="都 2021 年了，我终于把 kubernetes 实验测试环境搭建好了，泪目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes 实验环境搭建">
+<meta property="og:url" content="http://feiyang233.club/post/k8s/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="都 2021 年了，我终于把 kubernetes 实验测试环境搭建好了，泪目">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://feiyang233.club/img/misc/3.svg">
+<meta property="og:image" content="http://feiyang233.club/img/misc/4.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203320.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203325.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203445.png">
+<meta property="article:published_time" content="2021-05-13T02:44:00.000Z">
+<meta property="article:modified_time" content="2021-10-11T02:15:20.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://feiyang233.club/img/misc/3.svg">
+
+<link rel="canonical" href="http://feiyang233.club/post/k8s/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>kubernetes 实验环境搭建 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/k8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes 实验环境搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-05-13 10:44:00" itemprop="dateCreated datePublished" datetime="2021-05-13T10:44:00+08:00">2021-05-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-10-11 10:15:20" itemprop="dateModified" datetime="2021-10-11T10:15:20+08:00">2021-10-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>都 2021 年了，我终于把 kubernetes 实验测试环境搭建好了，泪目</p>
+<span id="more"></span>
+
+<p>2019 年的时候，我也曾经尝试学习，搭建 kubernetes 集群，结果当时自己的电脑性能太差了。一台  mac 模拟出三台虚拟机，性能上根本无法满足要求，甚至偶尔死机。还有当时自己 naive， 也不会善用<a href="https://feiyang233.club/post/vm/#%E5%AD%A6%E4%BC%9A%E5%BF%AB%E7%85%A7-snapshot">快照</a>, 每次搞崩溃了环境，又重头再来，费时费力。</p>
+<p>如今，时代变了。兵强马壮，家里有三台笔记本，一台台式机，机荒的日子已经一去不复返了。重现当年好学的荣光，我辈义不容辞，冲。</p>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>本文记录了，在三台 Ubuntu 虚拟机上搭建一个 kubernetes 集群的全部过程，以及分享菜鸡我踩过的坑。</p>
+<p>实验的环境如下， 都是 Ubuntu desktop 桌面版的，我也建议用桌面版。 原因：比如 kubernetes Dashboard 只能从 localhost 本地访问，桌面版自带 Firefox 浏览器，就可以直接在虚拟机界面里面直接操作， 少一步转发。</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Operating system</th>
+<th>Kernel</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>Disk</th>
+<th>IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ubuntu18-119</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>5.4.0</td>
+<td>2</td>
+<td>4G</td>
+<td>30G</td>
+<td>192.168.1.119</td>
+</tr>
+<tr>
+<td>ubuntu18-120</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>5.4.0</td>
+<td>2</td>
+<td>4G</td>
+<td>30G</td>
+<td>192.168.1.120</td>
+</tr>
+<tr>
+<td>ubuntu18-121</td>
+<td>Ubuntu 18.04.5 LTS</td>
+<td>5.4.0</td>
+<td>2</td>
+<td>4G</td>
+<td>30G</td>
+<td>192.168.1.121</td>
+</tr>
+</tbody></table>
+<p>这三台虚拟机，分别跑在三台笔记本电脑上。这样做的好处是，桥接模式不需要 NAT 端口映射，在我家的局域网里面尽情的玩耍。<br>当然如果你的电脑性能超级好，一台物理机跑三台虚拟机也是没有问题的。</p>
+<p>实验环境的搭建，可以参考我的另外一篇博客 <a href="https://feiyang233.club/post/vm/">https://feiyang233.club/post/vm/</a></p>
+<h1 id="搭建集群"><a href="#搭建集群" class="headerlink" title="搭建集群"></a>搭建集群</h1><p>分享两个不错的参考文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dMygLTxvdUEieQsaQ2RGLA">部署v1.20版的Kubernetes集群</a> 这个很不错</li>
+<li><a target="_blank" rel="noopener" href="https://www.escapelife.site/posts/180e93f1.html">无坑部署最小化K8S集群</a> 设置相对繁琐了一些</li>
+</ul>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>在每一台机器上面做相同的准备工作。</p>
+<h3 id="硬件要求"><a href="#硬件要求" class="headerlink" title="硬件要求"></a>硬件要求</h3><ul>
+<li><p>每台机器 2 GB 或更多的 RAM </p>
+</li>
+<li><p>2 CPU 核或更多</p>
+</li>
+<li><p>集群中的所有机器的网络彼此均能相互连接</p>
+</li>
+<li><p>节点之中不可以有重复的主机名、MAC 地址或 product_uuid</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">你可以使用命令 ip <span class="built_in">link</span> 或 ifconfig -a 来获取网络接口的 MAC 地址</span><br><span class="line">可以使用 sudo <span class="built_in">cat</span> /sys/class/dmi/id/product_uuid 命令对 product_uuid 校验</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁用交换分区。 删除文件 &#x2F;etc&#x2F;fstab 中 swapfile 一行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/fstab: static file system information.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Use &#x27;blkid&#x27; to print the universally unique identifier for a</span></span><br><span class="line"><span class="comment"># device; this may be used with UUID= as a more robust way to name devices</span></span><br><span class="line"><span class="comment"># that works even if disks are added and removed. See fstab(5).</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;</span></span><br><span class="line"><span class="comment"># / was on /dev/sda1 during installation</span></span><br><span class="line">UUID=2bd16ba3-1087-4d5e-9d1b-f1527f62a3ce /               ext4    errors=remount-ro 0       1</span><br><span class="line"><span class="comment"># /swapfile                                 none            swap    sw              0       0</span></span><br><span class="line">/dev/fd0        /media/floppy0  auto    rw,user,noauto,<span class="built_in">exec</span>,utf8 0       0</span><br></pre></td></tr></table></figure></li>
+<li><p>允许 iptables 检查桥接流量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-121:~<span class="comment"># lsmod | grep br_netfilter</span></span><br><span class="line">br_netfilter           28672  0</span><br><span class="line">bridge                176128  1 br_netfilter</span><br><span class="line">root@ubuntu18-121:~<span class="comment"># sudo modprobe br_netfilter</span></span><br></pre></td></tr></table></figure></li>
+<li><p>禁用默认的防火墙服务, Ubuntu和Debian等Linux发行版默认使用ufw（Uncomplicated FireWall）作为前端来简化 iptables的使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ufw <span class="built_in">disable</span></span><br><span class="line"></span><br><span class="line">ufw status</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="安装-docker"><a href="#安装-docker" class="headerlink" title="安装 docker"></a>安装 docker</h3><p>参考官网文档</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install \</span><br><span class="line">    apt-transport-https \</span><br><span class="line">    ca-certificates \</span><br><span class="line">    curl \</span><br><span class="line">    gnupg \</span><br><span class="line">    lsb-release</span><br><span class="line"></span><br><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> \</span><br><span class="line">  <span class="string">&quot;deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \</span></span><br><span class="line"><span class="string">  <span class="subst">$(lsb_release -cs)</span> stable&quot;</span> | sudo <span class="built_in">tee</span> /etc/apt/sources.list.d/docker.list &gt; /dev/null</span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<h3 id="Container-runtimes"><a href="#Container-runtimes" class="headerlink" title="Container runtimes"></a>Container runtimes</h3><p>配置 Docker 守护程序，尤其是使用 systemd 来管理容器的 cgroup。<br>参考： <a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/#docker">https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/#docker</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/docker/daemon.json</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;],</span></span><br><span class="line"><span class="string">  &quot;log-driver&quot;: &quot;json-file&quot;,</span></span><br><span class="line"><span class="string">  &quot;log-opts&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;max-size&quot;: &quot;100m&quot;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &quot;storage-driver&quot;: &quot;overlay2&quot;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="设置集群"><a href="#设置集群" class="headerlink" title="设置集群"></a>设置集群</h2><p>在三台机器上面安装 kubelet kubeadm kubectl，我当时安装的版本是 v1.21.1</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https gnupg2 curl</span><br><span class="line"></span><br><span class="line">curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb https://apt.kubernetes.io/ kubernetes-xenial main&quot;</span> | sudo <span class="built_in">tee</span> -a /etc/apt/sources.list.d/kubernetes.list</span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install -y kubelet kubeadm kubectl</span><br><span class="line"></span><br><span class="line"><span class="comment">#  运行如下命令单独获取相关的镜像文件, 加速后面的 init </span></span><br><span class="line">kubeadm config images pull</span><br></pre></td></tr></table></figure>
+<p>到这来就可以先把三台机器关机，然后备份，存快照 snapshot</p>
+<h3 id="master"><a href="#master" class="headerlink" title="master"></a>master</h3><p>初始化master节点，kubeadm init命令支持两种初始化方式，一是通过命令行选项传递关键的部署设定，另一个是基于yaml格式的专用配置文件，后一种允许用户自定义各个部署参数。</p>
+<p>命令中的各选项简单说明如下： </p>
+<ul>
+<li>–pod-network-cidr：Pod网络的地址范围，其值为CIDR格式的网络地址，通常，Flannel网络插件的默认为10.244.0.0&#x2F;16，Project Calico插件的默认值为192.168.0.0&#x2F;16；</li>
+<li>–service-cidr：Service的网络地址范围，其值为CIDR格式的网络地址，默认为10.96.0.0&#x2F;12；通常，<code>仅Flannel一类的网络插件需要手动指定该地址</code>；</li>
+<li>–apiserver-advertise-address：apiserver通告给其他组件的IP地址，一般应该为Master节点的用于集群内部通信的IP地址，0.0.0.0表示节点上所有可用地址；</li>
+<li>–token-ttl：共享令牌（token）的过期时长，默认为24小时，0表示永不过期；为防止不安全存储等原因导致的令牌泄露危及集群安全，建议为其设定过期时长。未设定该选项时，在token过期后，若期望再向集群中加入其它节点，可以使用如下命令重新创建token，并生成节点加入命令。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># node ip 192.168.1.119</span></span><br><span class="line"></span><br><span class="line">sudo kubeadm init \</span><br><span class="line">    --apiserver-advertise-address=192.168.1.119 \</span><br><span class="line">    --pod-network-cidr=10.244.0.0/16 \</span><br><span class="line">    --service-cidr=10.245.0.0/16</span><br><span class="line"></span><br><span class="line"><span class="comment"># output ------------------------</span></span><br><span class="line"></span><br><span class="line">Your Kubernetes control-plane has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  <span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">  sudo <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">  sudo <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"></span><br><span class="line">Alternatively, <span class="keyword">if</span> you are the root user, you can run:</span><br><span class="line"></span><br><span class="line">  <span class="built_in">export</span> KUBECONFIG=/etc/kubernetes/admin.conf</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run <span class="string">&quot;kubectl apply -f [podnetwork].yaml&quot;</span> with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">Then you can <span class="built_in">join</span> any number of worker nodes by running the following on each as root:</span><br><span class="line"></span><br><span class="line">kubeadm <span class="built_in">join</span> 192.168.1.119:6443 --token vldwrp.5p31pom71n355r2k \</span><br><span class="line">	--discovery-token-ca-cert-hash sha256:b8a5fd92b8506651a6b7a23d9176eeb4c66c8ff92a5d59ea0a5e084d494ae64f </span><br><span class="line"></span><br><span class="line"><span class="comment"># -----------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"><span class="built_in">export</span> KUBECONFIG=/etc/kubernetes/admin.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 pods， 发现 coredns 在pending，是因为在等待网络插件的安装</span></span><br><span class="line">kubectl get pods --all-namespaces</span><br><span class="line">NAMESPACE     NAME                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">kube-system   coredns-558bd4d5db-76fbb               0/1     Pending   0          64s</span><br><span class="line">kube-system   coredns-558bd4d5db-vpjf4               0/1     Pending   0          64s</span><br><span class="line">kube-system   etcd-ubuntu18-119                      1/1     Running   0          79s</span><br><span class="line">kube-system   kube-apiserver-ubuntu18-119            1/1     Running   0          79s</span><br><span class="line">kube-system   kube-controller-manager-ubuntu18-119   1/1     Running   0          71s</span><br><span class="line">kube-system   kube-proxy-k8xth                       1/1     Running   0          64s</span><br><span class="line">kube-system   kube-scheduler-ubuntu18-119            1/1     Running   0          71s</span><br></pre></td></tr></table></figure>
+<p>还有非常重要的一步是 <code>部署网络插件</code>,  <a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/cluster-administration/networking/#how-to-implement-the-kubernetes-networking-model">插件列表</a> ， 这里我们选择安装 <a target="_blank" rel="noopener" href="https://github.com/flannel-io/flannel#flannel">Flannel</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装网络插件</span></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span><br><span class="line"></span><br><span class="line">Warning: policy/v1beta1 PodSecurityPolicy is deprecated <span class="keyword">in</span> v1.21+, unavailable <span class="keyword">in</span> v1.25+</span><br><span class="line">podsecuritypolicy.policy/psp.flannel.unprivileged created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/flannel created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/flannel created</span><br><span class="line">serviceaccount/flannel created</span><br><span class="line">configmap/kube-flannel-cfg created</span><br><span class="line">daemonset.apps/kube-flannel-ds created</span><br></pre></td></tr></table></figure>
+<p>安装完成，再检查 pods</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n kube-system -l app=flannel</span><br><span class="line">NAME                    READY   STATUS    RESTARTS   AGE</span><br><span class="line">kube-flannel-ds-bj57z   1/1     Running   0          17s</span><br><span class="line"></span><br><span class="line"><span class="comment"># pods running</span></span><br><span class="line">kubectl get pods -n kube-system</span><br><span class="line">NAME                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">coredns-558bd4d5db-76fbb               1/1     Running   0          10h</span><br><span class="line">coredns-558bd4d5db-vpjf4               1/1     Running   0          10h</span><br><span class="line">etcd-ubuntu18-119                      1/1     Running   0          10h</span><br><span class="line">kube-apiserver-ubuntu18-119            1/1     Running   0          10h</span><br><span class="line">kube-controller-manager-ubuntu18-119   1/1     Running   0          10h</span><br><span class="line">kube-flannel-ds-89pc6                  1/1     Running   0          10h</span><br><span class="line">kube-flannel-ds-bj57z                  1/1     Running   0          10h</span><br><span class="line">kube-flannel-ds-pnw6c                  1/1     Running   0          10h</span><br><span class="line">kube-proxy-k8xth                       1/1     Running   0          10h</span><br><span class="line">kube-proxy-n8fj8                       1/1     Running   0          10h</span><br><span class="line">kube-proxy-wlfmr                       1/1     Running   0          10h</span><br><span class="line">kube-scheduler-ubuntu18-119            1/1     Running   0          10h</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时还只有一个 node</span></span><br><span class="line">kubectl get nodes</span><br><span class="line">NAME           STATUS   ROLES                  AGE     VERSION</span><br><span class="line">ubuntu18-119   Ready    control-plane,master   3m29s   v1.21.1</span><br></pre></td></tr></table></figure>
+<p>以上终于完成了主要节点的设置，接下来是其余 2 个节点的加入。</p>
+<h3 id="node1"><a href="#node1" class="headerlink" title="node1"></a>node1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">kubeadm <span class="built_in">join</span> 192.168.1.119:6443 --token vldwrp.5p31pom71n355r2k \</span><br><span class="line">	--discovery-token-ca-cert-hash sha256:b8a5fd92b8506651a6b7a23d9176eeb4c66c8ff92a5d59ea0a5e084d494ae64f </span><br><span class="line"></span><br><span class="line">[preflight] Running pre-flight checks</span><br><span class="line">[preflight] Reading configuration from the cluster...</span><br><span class="line">[preflight] FYI: You can look at this config file with <span class="string">&#x27;kubectl -n kube-system get cm kubeadm-config -o yaml&#x27;</span></span><br><span class="line">[kubelet-start] Writing kubelet configuration to file <span class="string">&quot;/var/lib/kubelet/config.yaml&quot;</span></span><br><span class="line">[kubelet-start] Writing kubelet environment file with flags to file <span class="string">&quot;/var/lib/kubelet/kubeadm-flags.env&quot;</span></span><br><span class="line">[kubelet-start] Starting the kubelet</span><br><span class="line">[kubelet-start] Waiting <span class="keyword">for</span> the kubelet to perform the TLS Bootstrap...</span><br><span class="line"></span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run <span class="string">&#x27;kubectl get nodes&#x27;</span> on the control-plane to see this node <span class="built_in">join</span> the cluster.</span><br></pre></td></tr></table></figure>
+
+<h3 id="node2"><a href="#node2" class="headerlink" title="node2"></a>node2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">kubeadm <span class="built_in">join</span> 192.168.1.119:6443 --token vldwrp.5p31pom71n355r2k \</span><br><span class="line">	--discovery-token-ca-cert-hash sha256:b8a5fd92b8506651a6b7a23d9176eeb4c66c8ff92a5d59ea0a5e084d494ae64f </span><br><span class="line"></span><br><span class="line">[preflight] Running pre-flight checks</span><br><span class="line">[preflight] Reading configuration from the cluster...</span><br><span class="line">[preflight] FYI: You can look at this config file with <span class="string">&#x27;kubectl -n kube-system get cm kubeadm-config -o yaml&#x27;</span></span><br><span class="line">[kubelet-start] Writing kubelet configuration to file <span class="string">&quot;/var/lib/kubelet/config.yaml&quot;</span></span><br><span class="line">[kubelet-start] Writing kubelet environment file with flags to file <span class="string">&quot;/var/lib/kubelet/kubeadm-flags.env&quot;</span></span><br><span class="line">[kubelet-start] Starting the kubelet</span><br><span class="line">[kubelet-start] Waiting <span class="keyword">for</span> the kubelet to perform the TLS Bootstrap...</span><br><span class="line"></span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run <span class="string">&#x27;kubectl get nodes&#x27;</span> on the control-plane to see this node <span class="built_in">join</span> the cluster.</span><br></pre></td></tr></table></figure>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>当 2 个节点成功加入集群后，我们可以在 master 节点检查 nodes 情况, 3 个 nodes 的情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br><span class="line"></span><br><span class="line">NAME           STATUS   ROLES                  AGE   VERSION   INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME</span><br><span class="line">ubuntu18-119   Ready    control-plane,master   10h   v1.21.1   192.168.1.119   &lt;none&gt;        Ubuntu 18.04.5 LTS   5.4.0-72-generic   docker://20.10.6</span><br><span class="line">ubuntu18-120   Ready    &lt;none&gt;                 10h   v1.21.1   192.168.1.120   &lt;none&gt;        Ubuntu 18.04.5 LTS   5.4.0-42-generic   docker://20.10.6</span><br><span class="line">ubuntu18-121   Ready    &lt;none&gt;                 10h   v1.21.1   192.168.1.121   &lt;none&gt;        Ubuntu 18.04.5 LTS   5.4.0-42-generic   docker://20.10.6</span><br></pre></td></tr></table></figure>
+<p>到此为止，一个master，并附带有三个node的kubernetes集群基础设施已经部署完成，用户随后即可测试其核心功能。例如，下面的命令可将demoapp以Pod的形式编排运行于集群之上，并通过在集群外部进行访问</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 在  master 上运行</span></span><br><span class="line">kubectl create deployment demoapp --image=ikubernetes/demoapp:v1.0</span><br><span class="line"></span><br><span class="line">kubectl scale deployment/demoapp --replicas=6</span><br><span class="line"></span><br><span class="line">kubectl create service nodeport demoapp --tcp=80:80</span><br><span class="line"></span><br><span class="line"><span class="comment">## 而后，使用如下命令了解Service对象demoapp使用的NodePort，以便于在集群外部进行访问：</span></span><br><span class="line">kubectl get svc -l app=demoapp </span><br><span class="line">NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">demoapp   NodePort   10.245.33.169   &lt;none&gt;        80:31938/TCP   6s</span><br><span class="line"></span><br><span class="line"><span class="comment">## 检查应用 6 个容器的分布情况, 5 个在 120， 1 个在 121</span></span><br><span class="line">kubectl get pods -o wide</span><br><span class="line">NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES</span><br><span class="line">demoapp-5f7d8f9847-2s6zd   1/1     Running   0          57s   10.244.2.2   ubuntu18-121   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-2wqdv   1/1     Running   0          57s   10.244.1.4   ubuntu18-120   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-8p7wd   1/1     Running   0          57s   10.244.1.3   ubuntu18-120   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-jrmzj   1/1     Running   0          81s   10.244.1.2   ubuntu18-120   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-mjk7x   1/1     Running   0          57s   10.244.1.5   ubuntu18-120   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-xch2b   1/1     Running   0          57s   10.244.1.6   ubuntu18-120   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 service。一个 Service 由一组 backend Pod 组成。这些 Pod 通过 endpoints 暴露出来</span></span><br><span class="line"><span class="comment">#  注意 Service IP 完全是虚拟的，它从来没有走过网络，如果对它如何工作的原理感到好奇， 可以进一步阅读服务代理的内容</span></span><br><span class="line">kubectl describe svc demoapp</span><br><span class="line">Name:                     demoapp</span><br><span class="line">Namespace:                default</span><br><span class="line">Labels:                   app=demoapp</span><br><span class="line">Annotations:              &lt;none&gt;</span><br><span class="line">Selector:                 app=demoapp</span><br><span class="line">Type:                     NodePort</span><br><span class="line">IP Family Policy:         SingleStack</span><br><span class="line">IP Families:              IPv4</span><br><span class="line">IP:                       10.245.33.169</span><br><span class="line">IPs:                      10.245.33.169</span><br><span class="line">Port:                     80-80  80/TCP</span><br><span class="line">TargetPort:               80/TCP</span><br><span class="line">NodePort:                 80-80  31938/TCP</span><br><span class="line">Endpoints:                10.244.1.44:80,10.244.1.45:80,10.244.1.46:80 + 3 more...</span><br><span class="line">Session Affinity:         None</span><br><span class="line">External Traffic Policy:  Cluster</span><br><span class="line">Events:                   &lt;none&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">## 访问 access service port</span></span><br><span class="line"><span class="comment"># master test</span></span><br><span class="line">curl http://10.245.33.169 </span><br><span class="line">iKubernetes demoapp v1.0 !! ClientIP: 10.244.0.0, ServerName: demoapp-5f7d8f9847-pps49, ServerIP: 10.244.1.49!</span><br><span class="line"></span><br><span class="line"><span class="comment"># node1 test</span></span><br><span class="line">curl http://10.245.33.169 </span><br><span class="line">iKubernetes demoapp v1.0 !! ClientIP: 10.244.0.0, ServerName: demoapp-5f7d8f9847-p7vdc, ServerIP: 10.244.1.48!</span><br><span class="line"></span><br><span class="line"><span class="comment"># node2 test</span></span><br><span class="line">curl http://10.245.33.169 </span><br><span class="line">iKubernetes demoapp v1.0 !! ClientIP: 10.244.0.0, ServerName: demoapp-5f7d8f9847-2z5g4, ServerIP: 10.244.1.44!</span><br><span class="line"></span><br><span class="line"><span class="comment">## 在 master 上面，测试 API 注意 node 端口是 31938</span></span><br><span class="line">curl http://192.168.1.119:31938</span><br><span class="line">iKubernetes demoapp v1.0 !! ClientIP: 10.244.0.0, ServerName: demoapp-5f7d8f9847-2s6zd, ServerIP: 10.244.2.2!</span><br><span class="line"></span><br><span class="line"><span class="comment">## 在 node1 上面，测试 API 注意 node 端口是 31938</span></span><br><span class="line">curl http://192.168.1.120:31938</span><br><span class="line">iKubernetes demoapp v1.0 !! ClientIP: 10.244.1.1, ServerName: demoapp-5f7d8f9847-2wqdv, ServerIP: 10.244.1.4!</span><br><span class="line"></span><br><span class="line"><span class="comment">## 在 node2 上面，测试 API 注意 node 端口是 31938</span></span><br><span class="line">curl http://192.168.1.121:31938</span><br><span class="line">iKubernetes demoapp v1.0 !! ClientIP: 10.244.2.0, ServerName: demoapp-5f7d8f9847-xch2b, ServerIP: 10.244.1.6!</span><br></pre></td></tr></table></figure>
+<p>demoapp是一个web应用，k8s 内部可以通过 service_ip + port “<a target="_blank" rel="noopener" href="http://10.245.33.169/">http://10.245.33.169:80</a>“ 访问。 集群外部可以通过 “<a target="_blank" rel="noopener" href="http://nodeip:31938/">http://NodeIP:31938</a>“ 这个URL访问demoapp上的应用，例如于集群外通过浏览器访问”<a target="_blank" rel="noopener" href="http://192.168.1.119:31938/">http://192.168.1.119:31938</a>“ 。 当然用 Nginx 做一层代理也是可以的， 或者云上的话，就是 load balancer</p>
+<blockquote>
+<p> 注意 Service IP 10.245.33.169 完全是虚拟的，它从来没有走过网络，如果对它如何工作的原理感到好奇， 可以进一步阅读 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies">服务代理</a> 的内容。</p>
+</blockquote>
+<h3 id="service-forward"><a href="#service-forward" class="headerlink" title="service forward"></a>service forward</h3><ul>
+<li>service virtual ip： 10.245.33.169  port:80 </li>
+<li>node_ip: 192.168.1.x   port:31938</li>
+</ul>
+<p>请先看一下这篇文章 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/charlieroro/p/9588019.html">理解kubernetes环境的iptables</a> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># nat 表里面的转发规则 ，关于 destination 是 虚拟 ip 的有两条规则</span><br><span class="line">iptables -t nat -L KUBE-SERVICES -n | grep 10.245.33.169 </span><br><span class="line"></span><br><span class="line">KUBE-MARK-MASQ  tcp  -- !10.244.0.0/16        10.245.33.169   /* default/demoapp:80-80 cluster IP */ tcp dpt:80</span><br><span class="line">KUBE-SVC-EGFVCLHG4JMRSQGG  tcp  --  0.0.0.0/0 10.245.33.169   /* default/demoapp:80-80 cluster IP */ tcp dpt:80</span><br><span class="line"></span><br><span class="line"># 6 个 pods ，注意 IP 地址</span><br><span class="line">kubectl get pods -o wide </span><br><span class="line">NAME                      READY STATUS  RESTARTS   AGE     IP            NODE     NOMINATED NODE  READINESS GATES</span><br><span class="line">demoapp-5f7d8f9847-2z5g4  1/1   Running   0      5d17h   10.244.1.44   ubuntu18-120   &lt;none&gt;       &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-dq6s9  1/1   Running   0      5d17h   10.244.1.47   ubuntu18-120   &lt;none&gt;       &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-p7vdc  1/1   Running   0      5d17h   10.244.1.48   ubuntu18-120   &lt;none&gt;       &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-pps49  1/1   Running   0      5d17h   10.244.1.49   ubuntu18-120   &lt;none&gt;       &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-t6c8k  1/1   Running   0      5d17h   10.244.1.46   ubuntu18-120   &lt;none&gt;       &lt;none&gt;</span><br><span class="line">demoapp-5f7d8f9847-wjqmm  1/1   Running   0      5d17h   10.244.1.45   ubuntu18-120   &lt;none&gt;       &lt;none&gt;</span><br><span class="line"></span><br><span class="line"># 每个 pods 都有一条规则， 如果有请求是访问 pods 的</span><br><span class="line">iptables -t nat -L -n  | grep 10.244.1</span><br><span class="line">KUBE-MARK-MASQ  all  --  10.244.1.49   0.0.0.0/0  /* default/demoapp:80-80 */</span><br><span class="line">KUBE-MARK-MASQ  all  --  10.244.1.47   0.0.0.0/0  /* default/demoapp:80-80 */</span><br><span class="line">KUBE-MARK-MASQ  all  --  10.244.1.44   0.0.0.0/0  /* default/demoapp:80-80 */</span><br><span class="line">KUBE-MARK-MASQ  all  --  10.244.1.48   0.0.0.0/0  /* default/demoapp:80-80 */</span><br><span class="line">KUBE-MARK-MASQ  all  --  10.244.1.46   0.0.0.0/0  /* default/demoapp:80-80 */</span><br><span class="line">KUBE-MARK-MASQ  all  --  10.244.1.45   0.0.0.0/0  /* default/demoapp:80-80 */</span><br></pre></td></tr></table></figure>
+
+<p>从上面可以看到， iptable 最终进入到 KUBE-MARK-MASQ chain 链， 而最终会 mark 标记后的请求由 kube-proxy 处理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Chain KUBE-MARK-MASQ (23 references)</span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line">MARK       all  --  0.0.0.0/0            0.0.0.0/0            MARK or 0x4000</span><br></pre></td></tr></table></figure>
+<h3 id="iptables-proxy"><a href="#iptables-proxy" class="headerlink" title="iptables proxy"></a>iptables proxy</h3><p>检查是哪一种 proxy mode <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/66746018/how-to-find-which-mode-kube-proxy-is-running-in">How to find which mode kube-proxy is running in</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu18-119:~<span class="comment"># docker logs  k8s_kube-proxy_kube-proxy-k8xth_kube-system_0c7ede9e-3398-42ed-b30d-3e0af106049d_14 </span></span><br><span class="line">I0601 06:59:18.494352  1 node.go:172] Successfully retrieved node IP: 192.168.1.119</span><br><span class="line">I0601 06:59:18.494404  1 server_others.go:140] Detected node IP 192.168.1.119</span><br><span class="line">W0601 06:59:18.494436  1 server_others.go:598] Unknown proxy mode <span class="string">&quot;&quot;</span>, assuming iptables proxy</span><br><span class="line">I0601 06:59:18.617259  1 server_others.go:206] kube-proxy running <span class="keyword">in</span> dual-stack mode, IPv4-primary</span><br><span class="line">I0601 06:59:18.617285  1 server_others.go:212] Using iptables Proxier.</span><br><span class="line">I0601 06:59:18.617295  1 server_others.go:219] creating dualStackProxier <span class="keyword">for</span> iptables.</span><br><span class="line">W0601 06:59:18.617306  1 server_others.go:512] detect-local-mode <span class="built_in">set</span> to ClusterCIDR, but no IPv6 cluster CIDR defined, , defaulting to no-op detect-local <span class="keyword">for</span> IPv6</span><br><span class="line">I0601 06:59:18.620918  1 server.go:643] Version: v1.21.1</span><br><span class="line">I0601 06:59:18.623937  1 conntrack.go:100] Set sysctl <span class="string">&#x27;net/netfilter/nf_conntrack_max&#x27;</span> to 131072</span><br><span class="line">I0601 06:59:18.623965  1 conntrack.go:52] Setting nf_conntrack_max to 131072</span><br><span class="line">I0601 06:59:18.624646  1 conntrack.go:83] Setting conntrack hashsize to 32768</span><br><span class="line">I0601 06:59:18.641659  1 conntrack.go:100] Set sysctl <span class="string">&#x27;net/netfilter/nf_conntrack_tcp_timeout_established&#x27;</span> to 86400</span><br><span class="line">I0601 06:59:18.641709  1 conntrack.go:100] Set sysctl <span class="string">&#x27;net/netfilter/nf_conntrack_tcp_timeout_close_wait&#x27;</span> to 3600</span><br><span class="line">I0601 06:59:18.647124  1 config.go:315] Starting service config controller</span><br><span class="line">I0601 06:59:18.648113  1 shared_informer.go:240] Waiting <span class="keyword">for</span> caches to <span class="built_in">sync</span> <span class="keyword">for</span> service config</span><br><span class="line">I0601 06:59:18.648459  1 config.go:224] Starting endpoint slice config controller</span><br></pre></td></tr></table></figure>
+
+<p>有两幅图很生动，第一幅是从宏观上，第二幅是从微观上 iptable chain 过程<br><img src="/img/misc/3.svg"> </p>
+<p><img src="/img/misc/4.svg"> </p>
+<p>看完第二幅图，以我们自己的实验环境举例子，结果如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 根据 SVC demoapp get KUBE-SVC-EGFVCLHG4JMRSQGG </span></span><br><span class="line">KUBE-SVC-EGFVCLHG4JMRSQGG  tcp  --  0.0.0.0/0    10.245.33.169    /* default/demoapp:80-80 cluster IP */ tcp dpt:80</span><br><span class="line"></span><br><span class="line"><span class="comment"># check KUBE-SVC-EGFVCLHG4JMRSQGG , probability 就是 load balancer</span></span><br><span class="line">iptables -t nat -L KUBE-SVC-EGFVCLHG4JMRSQGG -n</span><br><span class="line">Chain KUBE-SVC-EGFVCLHG4JMRSQGG (2 references)</span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line">KUBE-SEP-LFNE4UIW5JTX3DLE  all  --  0.0.0.0/0    0.0.0.0/0  /* default/demoapp:80-80 */ statistic mode random probability 0.16666666651</span><br><span class="line">KUBE-SEP-VKI6CD7L7QDWV7PR  all  --  0.0.0.0/0    0.0.0.0/0  /* default/demoapp:80-80 */ statistic mode random probability 0.20000000019</span><br><span class="line">KUBE-SEP-ONGVKLAWWHRT2JYZ  all  --  0.0.0.0/0    0.0.0.0/0  /* default/demoapp:80-80 */ statistic mode random probability 0.25000000000</span><br><span class="line">KUBE-SEP-BWUFDZ7V66HHLROZ  all  --  0.0.0.0/0    0.0.0.0/0  /* default/demoapp:80-80 */ statistic mode random probability 0.33333333349</span><br><span class="line">KUBE-SEP-NQEYALZIWTXZ4WPY  all  --  0.0.0.0/0    0.0.0.0/0  /* default/demoapp:80-80 */ statistic mode random probability 0.50000000000</span><br><span class="line">KUBE-SEP-36MBDHMST2HAATHB  all  --  0.0.0.0/0    0.0.0.0/0  /* default/demoapp:80-80 */</span><br><span class="line"></span><br><span class="line"><span class="comment"># KUBE-SEP-36MBDHMST2HAATHB</span></span><br><span class="line">iptables -t nat -L KUBE-SEP-36MBDHMST2HAATHB  -n</span><br><span class="line">Chain KUBE-SEP-36MBDHMST2HAATHB (1 references)</span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line">KUBE-MARK-MASQ  all  --  10.244.1.49     0.0.0.0/0     /* default/demoapp:80-80 */</span><br><span class="line">DNAT       tcp  --  0.0.0.0/0            0.0.0.0/0     /* default/demoapp:80-80 */ tcp DNAT [unsupported revision]</span><br></pre></td></tr></table></figure>
+<h2 id="部署-dashboard"><a href="#部署-dashboard" class="headerlink" title="部署 dashboard"></a>部署 dashboard</h2><p>官网： <a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tasks/access-application-cluster/web-ui-dashboard/">https://kubernetes.io/zh/docs/tasks/access-application-cluster/web-ui-dashboard/</a><br>github： <a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard">https://github.com/kubernetes/dashboard</a><br>Dashboard 是基于网页的 Kubernetes 用户界面。 你可以使用 Dashboard 将容器应用部署到 Kubernetes 集群中，也可以对容器应用排错，还能管理集群资源。 你可以使用 Dashboard 获取运行在集群中的应用的概览信息，也可以创建或者修改 Kubernetes 资源 （如 Deployment，Job，DaemonSet 等等）。 例如，你可以对 Deployment 实现弹性伸缩、发起滚动升级、重启 Pod 或者使用向导创建新的应用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># To deploy Dashboard, execute following command:</span></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml</span><br><span class="line"></span><br><span class="line">namespace/kubernetes-dashboard created</span><br><span class="line">serviceaccount/kubernetes-dashboard created</span><br><span class="line">service/kubernetes-dashboard created</span><br><span class="line">secret/kubernetes-dashboard-certs created</span><br><span class="line">secret/kubernetes-dashboard-csrf created</span><br><span class="line">secret/kubernetes-dashboard-key-holder created</span><br><span class="line">configmap/kubernetes-dashboard-settings created</span><br><span class="line">role.rbac.authorization.k8s.io/kubernetes-dashboard created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/kubernetes-dashboard created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created</span><br><span class="line">deployment.apps/kubernetes-dashboard created</span><br><span class="line">service/dashboard-metrics-scraper created</span><br><span class="line">deployment.apps/dashboard-metrics-scraper created</span><br><span class="line"></span><br><span class="line"><span class="comment"># Creating a Service Account</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | kubectl apply -f -</span></span><br><span class="line"><span class="string">apiVersion: v1</span></span><br><span class="line"><span class="string">kind: ServiceAccount</span></span><br><span class="line"><span class="string">metadata:</span></span><br><span class="line"><span class="string">  name: admin-user</span></span><br><span class="line"><span class="string">  namespace: kubernetes-dashboard</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Creating a ClusterRoleBinding</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | kubectl apply -f -</span></span><br><span class="line"><span class="string">apiVersion: rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="string">kind: ClusterRoleBinding</span></span><br><span class="line"><span class="string">metadata:</span></span><br><span class="line"><span class="string">  name: admin-user</span></span><br><span class="line"><span class="string">roleRef:</span></span><br><span class="line"><span class="string">  apiGroup: rbac.authorization.k8s.io</span></span><br><span class="line"><span class="string">  kind: ClusterRole</span></span><br><span class="line"><span class="string">  name: cluster-admin</span></span><br><span class="line"><span class="string">subjects:</span></span><br><span class="line"><span class="string">- kind: ServiceAccount</span></span><br><span class="line"><span class="string">  name: admin-user</span></span><br><span class="line"><span class="string">  namespace: kubernetes-dashboard</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Getting a Bearer Token</span></span><br><span class="line">kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath=<span class="string">&quot;&#123;.secrets[0].name&#125;&quot;</span>) -o go-template=<span class="string">&quot;&#123;&#123;.data.token | base64decode&#125;&#125;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># token 应该是很长的一串字符，类似</span></span><br><span class="line">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure>
+<h3 id="命令行代理"><a href="#命令行代理" class="headerlink" title="命令行代理"></a>命令行代理</h3><p>还得使用代理才能访问到 Dashboard 的服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl proxy </span><br><span class="line">Starting to serve on 127.0.0.1:8001</span><br></pre></td></tr></table></figure>
+<p>kubectl 会使得 Dashboard 可以通过 <a target="_blank" rel="noopener" href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/">http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/</a> 访问</p>
+<p>打开 master 虚拟机桌面，用 Firefox 浏览器输入网址 <code>http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/</code>  并输入上面得到的 Bearer Token 登录<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203320.png"></p>
+<p>成功登录以后，就可以看到整个集群的情况和做一些相关的操作了<br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203325.png"><br><img src="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203445.png"></p>
+<h3 id="nginx-proxy"><a href="#nginx-proxy" class="headerlink" title="nginx proxy"></a>nginx proxy</h3><p>因为 Dashboard 监听在 127.0.0.1:8001，没有暴露服务给 public，这里我们可以用 Nginx 反向代理师兄</p>
+<ul>
+<li>首先安装 Nginx<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我已经关闭了防火墙的</span></span><br></pre></td></tr></table></figure></li>
+<li>设置代理转发，配置文件如下<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/sites-enabled/k8s-dashboard.conf</span><br><span class="line"></span><br><span class="line">upstream k8s-dashboard &#123;</span><br><span class="line">    server 127.0.0.1:8001;</span><br><span class="line">    keepalive 15;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line"></span><br><span class="line">    listen 192.168.1.119:8080;</span><br><span class="line">    server_name 192.168.1.119;</span><br><span class="line">    access_log /var/log/nginx/k8s-dashboard.access.log;</span><br><span class="line">    error_log /var/log/nginx/k8s-dashboard.error.log;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">    </span><br><span class="line">        proxy_http_version 1.1;</span><br><span class="line">        proxy_buffer_size 64k;</span><br><span class="line">        proxy_buffers   32 32k;</span><br><span class="line">        proxy_busy_buffers_size 128k;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP       <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For  <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        proxy_set_header Connection <span class="string">&quot;Keep-Alive&quot;</span>;</span><br><span class="line">        proxy_set_header Proxy-Connection <span class="string">&quot;Keep-Alive&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        proxy_pass    http://k8s-dashboard;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">systemctl start nginx</span><br><span class="line">systemctl <span class="built_in">enable</span> nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记得删除 default 的 80 服务，以免和其他服务冲突.</span></span><br><span class="line"><span class="built_in">rm</span> -f /etc/nginx/sites-enabled/default</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h1><h2 id="虚拟机双网卡"><a href="#虚拟机双网卡" class="headerlink" title="虚拟机双网卡"></a>虚拟机双网卡</h2><p>如果虚拟机是双网卡，一般默认的是 NAT 那一张，桥接的在第二张。在我本次实验中，当安装完 flannel 网络后，却发现有错误。 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果部署出现问题可通过如下命令查看日志</span></span><br><span class="line">kubectl logs kube-flannel-ds-6xxs5 --namespace=kube-system</span><br><span class="line">kubectl describe pod kube-flannel-ds-6xxs5 --namespace=kube-system</span><br></pre></td></tr></table></figure>
+<p>日志的结果显示，用了 NAT 那一张网卡，导致和最开始设置的 <code>apiserver-advertise-address=192.168.1.119</code> 无法连接，启动失败了。<br>临时修复的办法就是，禁用 NAT 网卡，永久修复的办法就是关机后，移除 NAT 网卡(网络适配器)</p>
+<h2 id="Flannel网络"><a href="#Flannel网络" class="headerlink" title="Flannel网络"></a>Flannel网络</h2><p>通常，仅Flannel一类的网络插件需要手动指定该地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--service-cidr=10.245.0.0/16</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/vm/" rel="prev" title="本地虚拟机环境搭建">
+      <i class="fa fa-chevron-left"></i> 本地虚拟机环境搭建
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/drawio/" rel="next" title="draw.io 画图教程">
+      draw.io 画图教程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E9%9B%86%E7%BE%A4"><span class="nav-number">2.</span> <span class="nav-text">搭建集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E8%A6%81%E6%B1%82"><span class="nav-number">2.1.1.</span> <span class="nav-text">硬件要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-docker"><span class="nav-number">2.1.2.</span> <span class="nav-text">安装 docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Container-runtimes"><span class="nav-number">2.1.3.</span> <span class="nav-text">Container runtimes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%9B%86%E7%BE%A4"><span class="nav-number">2.2.</span> <span class="nav-text">设置集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#master"><span class="nav-number">2.2.1.</span> <span class="nav-text">master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node1"><span class="nav-number">2.2.2.</span> <span class="nav-text">node1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node2"><span class="nav-number">2.2.3.</span> <span class="nav-text">node2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">2.3.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#service-forward"><span class="nav-number">2.3.1.</span> <span class="nav-text">service forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iptables-proxy"><span class="nav-number">2.3.2.</span> <span class="nav-text">iptables proxy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2-dashboard"><span class="nav-number">2.4.</span> <span class="nav-text">部署 dashboard</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BB%A3%E7%90%86"><span class="nav-number">2.4.1.</span> <span class="nav-text">命令行代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx-proxy"><span class="nav-number">2.4.2.</span> <span class="nav-text">nginx proxy</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="nav-number">3.</span> <span class="nav-text">踩过的坑</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%8C%E7%BD%91%E5%8D%A1"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟机双网卡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flannel%E7%BD%91%E7%BB%9C"><span class="nav-number">3.2.</span> <span class="nav-text">Flannel网络</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="天下武功，唯快不破这一篇文章是讲解如何安装微信自动回复机器人，独乐乐不如众乐乐。画风突转，先来一段鸡汤：并不是每个人都值得你腾出手中的事情秒回，如果有那么一个人，让你情不自禁地秒回了，说明那个人何其重要。或者说，你被别人秒回，又是多么温暖的存在啊。他秒回的瞬间，仿佛在说：你在我心中，很重要。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小白也会用的微信机器人">
+<meta property="og:url" content="http://feiyang233.club/post/Robot/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="天下武功，唯快不破这一篇文章是讲解如何安装微信自动回复机器人，独乐乐不如众乐乐。画风突转，先来一段鸡汤：并不是每个人都值得你腾出手中的事情秒回，如果有那么一个人，让你情不自禁地秒回了，说明那个人何其重要。或者说，你被别人秒回，又是多么温暖的存在啊。他秒回的瞬间，仿佛在说：你在我心中，很重要。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://feiyang233.club/img/robot/miaohui.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/robot/result1.jpeg">
+<meta property="og:image" content="http://feiyang233.club/img/robot/result2.jpeg">
+<meta property="og:image" content="http://feiyang233.club/img/robot/result3.jpeg">
+<meta property="og:image" content="http://feiyang233.club/img/robot/qidai.jpeg">
+<meta property="og:image" content="http://feiyang233.club/img/robot/python.png">
+<meta property="og:image" content="http://feiyang233.club/img/robot/happy.jpg">
+<meta property="og:image" content="http://feiyang233.club/img/robot/dalao.png">
+<meta property="og:image" content="http://feiyang233.club/img/robot/tuling.png">
+<meta property="og:image" content="http://feiyang233.club/img/robot/run.png">
+<meta property="og:image" content="http://feiyang233.club/img/robot/tencent.png">
+<meta property="og:image" content="http://feiyang233.club/img/robot/poor.jpeg">
+<meta property="article:published_time" content="2018-03-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-27T01:13:04.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://feiyang233.club/img/robot/miaohui.jpg">
+
+<link rel="canonical" href="http://feiyang233.club/post/Robot/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>小白也会用的微信机器人 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/Robot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          小白也会用的微信机器人
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-03-09 00:00:00" itemprop="dateCreated datePublished" datetime="2018-03-09T00:00:00+08:00">2018-03-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-27 09:13:04" itemprop="dateModified" datetime="2021-06-27T09:13:04+08:00">2021-06-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="天下武功，唯快不破"><a href="#天下武功，唯快不破" class="headerlink" title="天下武功，唯快不破"></a>天下武功，唯快不破</h2><p>这一篇文章是讲解如何安装微信自动回复机器人，独乐乐不如众乐乐。<br><code>画风突转，先来一段鸡汤：</code>并不是每个人都值得你腾出手中的事情秒回，如果有那么一个人，让你情不自禁地秒回了，说明那个人何其重要。<br>或者说，你被别人秒回，又是多么温暖的存在啊。<br>他秒回的瞬间，仿佛在说：你在我心中，很重要。</p>
+<span id="more"></span>
+
+
+<p><img src="/img/robot/miaohui.jpg" alt="秒回"></p>
+<blockquote>
+<p>只可惜我只是一个机器人，惊不惊喜，意不意外？</p>
+</blockquote>
+<p>废话不多说，先来看一看效果图：</p>
+<p><img src="/img/robot/result1.jpeg" alt="举例子图片1"> </p>
+<p><img src="/img/robot/result2.jpeg" alt="举例子图片2"></p>
+<p><img src="/img/robot/result3.jpeg" alt="举例子图片3"></p>
+<p>看完是不是有点小激动呢？</p>
+<p><img src="/img/robot/qidai.jpeg" alt="激动的搓搓小手"></p>
+<p>老司机通道：<code>会python的直接往下拉--看运行机器人程序</code></p>
+<h2 id="第一步安装python环境"><a href="#第一步安装python环境" class="headerlink" title="第一步安装python环境"></a>第一步安装python环境</h2><p>俗话说，人生苦短，我用python。安装python就像安装游戏、QQ一样，去<a target="_blank" rel="noopener" href="https://www.python.org/downloads/">官网</a>下载安装包，只是安装后桌面没有运行图标，而是在我们的计算机上安装了一个运行环境。</p>
+<p>看<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7a0b52075f70">Windows-python安装教程</a><br>如果不明白的话，再看看<a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/0014316090478912dab2a3a9e8f4ed49d28854b292f85bb000">视频教程</a>。</p>
+<p>用苹果电脑的点击观看<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/a10402b48a1c">苹果电脑python安装教程</a>。<br>如果看不懂，可以去视频网站<code>搜python安装教学视频</code>，一边看视频一边依葫芦画瓢，我在这里就不详细说明了。万事开头难，搞不懂的话你可以微信问我呀，哈哈。</p>
+<p>安装好以后，在Windows命令行 or Mac的终端检查一下python的version版本</p>
+<p><img src="/img/robot/python.png" alt="检查"></p>
+<h2 id="安装python包"><a href="#安装python包" class="headerlink" title="安装python包"></a>安装python包</h2><p>当你把python环境安装好了以后，接下来你需要安装<code>python包</code>（python包是武林高手们打造的神兵利器，从新手村刚刚出来的你再也不用苦苦磨炼，自己去做武器啦）</p>
+<p><img src="/img/robot/happy.jpg" alt="超开心耶"></p>
+<p>那么问题来了，你怎么样从大侠手中借到神兵利器？？？<br>这个时候就需要我们常说的py交易（开玩笑的啦），肯定是用<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/cf420956e9c1">pip</a><br>。此外，这个机器人自动回复，需要两个包：一个是requests，另一个是itchat。</p>
+<p>在Windows命令行 or Mac的终端 输入以下命令</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install requests</span><br><span class="line"></span><br><span class="line">pip install itchat</span><br></pre></td></tr></table></figure>
+<p>当用pip借到大佬们的神兵利器后，终于可以开始打怪升级了，美滋滋。</p>
+<p><img src="/img/robot/dalao.png" alt="低头"></p>
+<h2 id="运行机器人程序"><a href="#运行机器人程序" class="headerlink" title="运行机器人程序"></a>运行机器人程序</h2><p>第一步需要点击下载<a target="_blank" rel="noopener" href="https://codeload.github.com/fainyang/Test/zip/master">源代码</a> 下载时存放的<code>地点</code>要记住。<br>下载之后解压文件<code>Test-master.zip</code>，其中的<code>tuling.py</code>就是我们的微信自动回复机器人小程序 。<br>在文件夹中找到<code>tuling.py</code>,右键&#x3D;&gt;打开方式用<code>记事本</code>打开，其中有两个地方需要修改。</p>
+<p>第一个是图灵机器人的<code>apikey</code>，首先点击打开<a target="_blank" rel="noopener" href="http://www.tuling123.com/">图灵机器人网站</a>注册一个账号，免费创建一个机器人，得到机器人的<code>apikey</code></p>
+<p><img src="/img/robot/tuling.png" alt="tuling"></p>
+<p>第二个地方就是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">itchat.auto_login(enableCmdQR=<span class="number">2</span>) </span><br></pre></td></tr></table></figure>
+<p>修改为如下形式：这样是为了弹窗形式二维码比命令行形式的二维码清晰</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">itchat.auto_login() </span><br></pre></td></tr></table></figure>
+
+<p>至此，我们得到了机器人<code>apikey</code>，修改了二维码形式，就可以运行<code>tuling.py</code>了。</p>
+<p>（最简单的小白法） Mac的终端 输入以下命令：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd  xxxx/Test-master   <span class="comment">#注释：先移动到tuling.py 所在文件</span></span><br><span class="line">python tuling.py      <span class="comment">#释：运行tuling.py</span></span><br></pre></td></tr></table></figure>
+<p><img src="/img/robot/run.png" alt="run"><br>Windows用户在<code>Test-master</code>文件夹打开命令行，方法为：在此文件夹窗口内空白区域<code>右键单击（需要同时按住Shift）</code>，从菜单中选择＂在此处打开命令行窗口＂的项。</p>
+<p>然后在命令窗口输入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python tuling.py </span><br></pre></td></tr></table></figure>
+
+<p>如果前面python包成功安装，运行将会弹出来一个网页登录的二维码。微信扫码登录后，看到命令窗口的个人信息就意味着大功告成了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Getting uuid of QR code.</span><br><span class="line">Downloading QR code.</span><br><span class="line">Please scan the QR code to log <span class="keyword">in</span>.</span><br><span class="line">Please press confirm on your phone.</span><br><span class="line">Loading the contact, this may take a little <span class="keyword">while</span>.</span><br><span class="line">TERM environment variable <span class="keyword">not</span> <span class="built_in">set</span>.</span><br><span class="line">Login successfully <span class="keyword">as</span> Fain 费洋</span><br><span class="line">Start auto replying. </span><br></pre></td></tr></table></figure>
+
+<p>但是这个机器人有一个缺陷：一旦运行python的电脑断网、休眠、关机。那么自动回复将会失效，因为自动回复的核心是<code>电脑</code>运行python调用图灵机器人来进行回复。但是对于小白来讲，这就已经足够<del>(≧▽≦)</del>啦啦啦。</p>
+<h2 id="兽（瘦）人永不为奴，云服务器永不关机"><a href="#兽（瘦）人永不为奴，云服务器永不关机" class="headerlink" title="兽（瘦）人永不为奴，云服务器永不关机"></a>兽（瘦）人永不为奴，云服务器永不关机</h2><p>我这周刚买的<a target="_blank" rel="noopener" href="https://cloud.tencent.com/act/campus">腾讯云</a>服务器，学生优惠下来3年360，超级划算的。<br><img src="/img/robot/tencent.png" alt="tencent"></p>
+<p>我选择的系统是CentOS7.4（自带python2.7），需要安装python3.6–请参考<a target="_blank" rel="noopener" href="http://www.jb51.net/article/133560.htm">教程1</a> 和<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1017880">教程2</a> </p>
+<p>安装好python环境以后，也需要安装两个包，一个是<code>requests</code>，另一个是<code>itchat</code>。<br>然后是在本地用<code>scp</code>把<code>tuling.py</code> 上传到云服务器，方法请参考<a target="_blank" rel="noopener" href="https://cloud.tencent.com/document/product/213/2133">这里</a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp 本地文件地址 云服务器登录名@云服务器公网IP/域名:云服务器文件地址</span><br></pre></td></tr></table></figure>
+<p>上传完成以后，运行试一试？结果你会发现当我们远程ssh关闭的时候，云服务器中的python程序也关闭了。<br>为了能长时间运行，你需要使用<a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-cn-nohup/">Linux 技巧</a>来续几年。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setsid python tuling.py </span><br></pre></td></tr></table></figure>
+
+<p>这样我们的机器人就能在云服务器一直运行啦，直到天荒地老，海枯石烂？</p>
+<p>错！是服务器到期欠费。</p>
+<p><img src="/img/robot/poor.jpeg" alt="poor"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/Combination/" rel="prev" title="排列组合了解一下(阿里笔试题改编)">
+      <i class="fa fa-chevron-left"></i> 排列组合了解一下(阿里笔试题改编)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/Canteen/" rel="next" title="NUS食堂排队指南">
+      NUS食堂排队指南 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A9%E4%B8%8B%E6%AD%A6%E5%8A%9F%EF%BC%8C%E5%94%AF%E5%BF%AB%E4%B8%8D%E7%A0%B4"><span class="nav-number">1.</span> <span class="nav-text">天下武功，唯快不破</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E5%AE%89%E8%A3%85python%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">第一步安装python环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85python%E5%8C%85"><span class="nav-number">3.</span> <span class="nav-text">安装python包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%A8%8B%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">运行机器人程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%BD%EF%BC%88%E7%98%A6%EF%BC%89%E4%BA%BA%E6%B0%B8%E4%B8%8D%E4%B8%BA%E5%A5%B4%EF%BC%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%B0%B8%E4%B8%8D%E5%85%B3%E6%9C%BA"><span class="nav-number">5.</span> <span class="nav-text">兽（瘦）人永不为奴，云服务器永不关机</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

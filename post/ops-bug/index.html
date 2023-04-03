@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="仅以本文记录那些年弟弟背过的锅！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DevOps 中踩过的坑">
+<meta property="og:url" content="http://feiyang233.club/post/ops-bug/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="仅以本文记录那些年弟弟背过的锅！">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-07-05T02:58:36.000Z">
+<meta property="article:modified_time" content="2021-06-30T15:15:15.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="elk">
+<meta property="article:tag" content="jenkins">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://feiyang233.club/post/ops-bug/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>DevOps 中踩过的坑 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/ops-bug/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DevOps 中踩过的坑
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-05 10:58:36" itemprop="dateCreated datePublished" datetime="2019-07-05T10:58:36+08:00">2019-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-30 23:15:15" itemprop="dateModified" datetime="2021-06-30T23:15:15+08:00">2021-06-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>仅以本文记录那些年弟弟背过的锅！</p>
+<span id="more"></span>  
+<h1 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h1><ol>
+<li>大部分时候，iptables 只存了 filter 表。 对于 nat 表，我们一旦 restart iptables， nat 表的规则就会被刷新。建议用 reload</li>
+<li>-A INPUT -m state –state RELATED,ESTABLISHED -j ACCEPT 这一条 iptables 的规则也非常重要。Packets in a RELATED or ESTABLISHED state are those ones which belong to an already opened connection; you’ll generally want to accept them, otherwise connections will get established correctly but nothing will be able to flow after the initial handshake. 如果没有这一条，会遇到 DNS 解析失败， curl 失败。 凡是 iptables 没有允许的 IP, 都不能正常的工作。 例如 DNS 查询发包后，三次握手建立。回包收到了，却会被 iptables 阻挡，上层应用无法拿到解析的结果，导致 hang 住。</li>
+<li>tcpdump 抓包分析时， 进入的包都可以抓到，不会受到 iptables, 发出的包会受到 iptables 影响，可能被 iptables 阻挡导致抓包失败。</li>
+<li>如果是命令行添加的规则，例如 iptables -t nat -A OUTPUT -s 172.17.0.3 -p tcp –dport 10050 -j ACCEPT  在使用 reload 后，其规则一样会被刷掉。但 docker 的规则不会被 reload 刷掉，会被 restart 刷掉。这一点有疑问，期待大神给弟弟解惑。</li>
+<li>docker iptables filter 表 input 链规则失效，原因是：从 NAT 表 prerouting 链匹配到 DOCKER 链，直接与容器沟通，跳过了 input 链。感谢智凯哥哥的解决办法如下：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">*filter</span><br><span class="line">:INPUT DROP [0:0]</span><br><span class="line">:FORWARD ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [0:0]</span><br><span class="line"></span><br><span class="line">:DOCKER-USER - [0:0]</span><br><span class="line">-A FORWARD -j DOCKER-USER</span><br><span class="line">-A DOCKER-USER -s x.x.x.x -p tcp --dport 80 -j RETURN</span><br><span class="line">-A DOCKER-USER -p tcp --dport 80 -j DROP</span><br><span class="line">-A DOCKER-USER -p udp --dport 80 -j DROP</span><br><span class="line">-A DOCKER-USER -j RETURN</span><br><span class="line"></span><br><span class="line">COMMIT</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="python"><a href="#python" class="headerlink" title="python"></a>python</h1><ol>
+<li>tab 键与空格不能混用</li>
+<li>函数不要嵌套，例如 result&#x3D;A(B(C())) 这样不利于 debug，检查每个函数的返回值</li>
+<li>在 multiprocessing 多进程中 apply_async()  报错不容易定位，最好使用 try catch 把报错写成 log</li>
+</ol>
+<h1 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h1><ol>
+<li>在部署的时候，ansible 一直在 gathering facts 卡住了，直到 timeout。 <a target="_blank" rel="noopener" href="https://serverfault.com/questions/630253/ansible-stuck-on-gathering-facts">网友解答</a> 我遇到的是 <a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/2.4/intro_configuration.html#control-path">control_path</a> 文件太多了，导致了 jenkins deploy node 卡住，任务无法进行。 需要删除该部署节点下面的 control_path_dir 的文件，清空。</li>
+</ol>
+<h1 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h1><ol>
+<li>docker container IP default  is 172.17.0.0&#x2F;16  检查 iptables 是否阻挡</li>
+<li>docker -v 挂载出来的时候，要注意文件夹权限问题。</li>
+<li>docker logs 日志文件很大的时候，记得删除。<a target="_blank" rel="noopener" href="https://blog.csdn.net/yjk13703623757/article/details/80283729">Docker容器日志查看与清理</a> 也可以在 &#x2F;etc&#x2F;docker&#x2F;daemon 里<a href="https://feiyang233.club/post/docker/#docker-iptables">设置 log 的大小</a>。</li>
+<li>dind, 见 gitlab 搭建 post</li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/LtgGcS9b8X-TqbfaLfBldQ">一次有趣的 Docker 容器网络排查</a></li>
+</ol>
+<h1 id="NetworkManager"><a href="#NetworkManager" class="headerlink" title="NetworkManager"></a>NetworkManager</h1><ol>
+<li>报错 bus-manager: could not create org.freedesktop.DBus proxy 直接 stop NetworkManager 就行了。</li>
+</ol>
+<h1 id="文件权限问题"><a href="#文件权限问题" class="headerlink" title="文件权限问题"></a>文件权限问题</h1><ol>
+<li>&#x2F;tmp permission 又搞我 drwxrwxrwt.</li>
+<li>文件夹权限 folder permission 对于目录文件来说，可读表示能够读取目录内的文件列表；可写表示能够在目录内新增、删除、重命名文件；可执行表示能够进入该目录。</li>
+<li><a target="_blank" rel="noopener" href="https://www.unixtutorial.org/atime-ctime-mtime-in-unix-filesystems">atime, ctime and mtime in Unix filesystems</a></li>
+</ol>
+<h1 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h1><ol>
+<li>&#x2F;etc&#x2F;resolv.conf 有两个默认的值至关重要，一个是超时的 timeout，一个是重试的 attempts，默认情况下，前者是 5s 后者是 2 次。对于日常的应用来说，包括 web server、mail client、db 以及各种 app server 等等，任何使用 glibc resolver 都需要经过 resolv.conf 文件。对于 libresolv 来说，只认 resolv.conf 的前三个 nameserver，所以写的再多也没什么意义。正常情况下，resolver 会从上至下进行解析，每个 nameserver 等待 timeout 的时间，如果一直到第三个都没结果，resolver 会重复上面的步骤 (attempts – 1) 次。</li>
+</ol>
+<h1 id="Ansible"><a href="#Ansible" class="headerlink" title="Ansible"></a>Ansible</h1><ol>
+<li>user 模块，密码必须要加密。需要用到 <a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-encrypted-passwords-for-the-user-module">Ansible ad-hoc command</a></li>
+<li>加密文件，解密文件 <a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/user_guide/vault.html#id10">https://docs.ansible.com/ansible/latest/user_guide/vault.html#id10</a><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ansible-vault encrypt file_need_encrypt</span><br><span class="line">New Vault password: </span><br><span class="line">Confirm New Vault password: </span><br><span class="line"></span><br><span class="line">ansible-vault decrypt encrypted_file </span><br><span class="line">Vault password: </span><br><span class="line">Decryption successful</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="Markdown"><a href="#Markdown" class="headerlink" title="Markdown"></a>Markdown</h1><ol>
+<li>Markdown链接括号的问题: %28 代替(, %29代替) 主要是后者会歧义链接部分的结束. 这是使用url符号码去代替ascii的符号. 能够解决这个问题</li>
+</ol>
+<h1 id="Django"><a href="#Django" class="headerlink" title="Django"></a>Django</h1><ol>
+<li>文件名第一个字符为空格，设置 static 时，多了一个空格 %20 ，导致资源路径出出错。</li>
+<li>Mac Django 连接 MySQL, <a target="_blank" rel="noopener" href="https://docs.djangoproject.com/en/2.2/ref/databases/#mysql-notes">官网</a>上提供了两种方法。第一种 mysqlclient 在 Mac 上有遇到错误。 <a target="_blank" rel="noopener" href="https://pypi.org/project/mysqlclient/">mysqlclient 官网</a>也有说明, <a target="_blank" rel="noopener" href="https://ruddra.com/posts/install-mysqlclient-macos/">Google一下</a>后发现是因为我的 Mac 没有安装 clang，安装完 xcode-select –install 再 pip install mysqlclient 就可以了。<br>第二种，安装<a target="_blank" rel="noopener" href="https://dev.mysql.com/downloads/connector/python/">Connector</a> 在 setting.py 里添加<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">&#x27;default&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;NAME&#x27;</span>: <span class="string">&#x27;user_data&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;ENGINE&#x27;</span>: <span class="string">&#x27;mysql.connector.django&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;USER&#x27;</span>: <span class="string">&#x27;mysql_user&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;PASSWORD&#x27;</span>: <span class="string">&#x27;password&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;OPTIONS&#x27;</span>: &#123;</span><br><span class="line">          <span class="string">&#x27;autocommit&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h1><ol>
+<li>内存泄漏指由于疏忽或错误造成程序未能释放已经不再使用的内存。内存泄漏并非指内存在物理上的消失，而是应用程序分配某段内存后，由于设计错误，导致在释放该段内存之前就失去了对该段内存的控制，从而造成了内存的浪费。 有一个服务跑在容器里面，当连接的时候总是 time out， 查看日志 是 stream is closed，还有一个错误是 No such file or directory: u’&#x2F;var&#x2F;run&#x2F;tmp&#x2F;summary_398320.db’  当我们进入 &#x2F;var&#x2F;run&#x2F;tmp 发现有太多的文件，每一个进程都会有一个 pid 命名的文件。说明 worker 进程不断被 kill 然后又被 master 拉起，当我们到宿主机上看 docker stats ， 发现该容器的内存已经满了，导致了 worker 进程不断被杀。需要增大容器的 memory 初始值。补充（gunicorn 会启动一组 worker进程，所有worker进程公用一组listener，在每个worker中为每个listener建立一个wsgi server。每当有HTTP链接到来时，wsgi server创建一个协程来处理该链接，协程处理该链接的时候，先初始化WSGI环境，然后调用用户提供的app对象去处理HTTP请求。）</li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wangqiguo/p/6464234.html">xargs与管道的区别</a> 其实基本上linux的命令中很多的命令的设计是先从命令行参数中获取参数，然后从标准输入中读取。另外很多程序是不处理标准输入的，例如 kill , rm 这些程序如果命令行参数中没有指定要处理的内容则不会默认从标准输入中读取。所以 xargs 可以用来传递参数</li>
+<li>Linux fork() <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/MsGeaWNmSVOCT7kXFrQm_g">https://mp.weixin.qq.com/s/MsGeaWNmSVOCT7kXFrQm_g</a>  printf Unix下的设备有“块设备”和“字符设备”的概念，所谓块设备，就是以一块一块的数据存取的设备，字符设备是一次存取一个字符的设备。磁盘、内存都是块设备，字符设备如键盘和串口。块设备一般都有缓存，而字符设备一般都没有缓存。</li>
+<li><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/351725/why-eval-the-output-of-ssh-agent">为什么需要 eval 命令启动 ssh-agent?</a></li>
+</ol>
+<h1 id="读取超大日志文件"><a href="#读取超大日志文件" class="headerlink" title="读取超大日志文件"></a>读取超大日志文件</h1><p>如果日志没有做切割，有可能会导致生成一个超大的日志，这个时候对应我们查看日志文件非常的不方便。这个时候有一个方法就是用 <code>split</code> 将大日志均分为小日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#按行数均分</span></span><br><span class="line"><span class="built_in">split</span> -l 10000 test.log -d -a 4 test_</span><br><span class="line"></span><br><span class="line"><span class="comment">#-l, --lines=NUMBER：对file进行切分，每个文件有NUMBER行。</span></span><br><span class="line"><span class="comment">#每个文件10000行(-l 10000)</span></span><br><span class="line"><span class="comment">#文件名称后缀系数不是字母而是数字（-d）</span></span><br><span class="line"><span class="comment">#后缀系数为四位数（-a 4）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以按文件大小均分</span></span><br><span class="line"><span class="built_in">split</span> -b test.log -d -a 4 test_</span><br><span class="line"></span><br><span class="line"><span class="comment">#-b, --bytes=SIZE：对file进行切分，每个小文件大小为SIZE。可以指定单位b,k,m,g。</span></span><br></pre></td></tr></table></figure>
+<h1 id="kafka"><a href="#kafka" class="headerlink" title="kafka"></a>kafka</h1><ol>
+<li>kafka listen all interfaces<br>In order to listen all the interfaces, comment  #host.name in &#x2F;etc&#x2F;kafka&#x2F;server.properties<br>This action can make Kafka listen in all interfaces, but it will change hostname to localhost, then Kafka cannot communicate with each other.<br>Error is the connection with node -1 failed.<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Info <span class="keyword">in</span> zookeeper: <span class="string">&quot;PLAINTEXT://localhost:29092&quot;</span>],<span class="string">&quot;jmx_port&quot;</span>:9093,<span class="string">&quot;host&quot;</span>:<span class="string">&quot;localhost&quot;</span>,</span><br></pre></td></tr></table></figure>
+solution: Kafka can listen in all interfaces and connection with each other.<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">listeners=PLAINTEXT://0.0.0.0:29092</span><br><span class="line">advertised.host.name=10.66.236.43</span><br><span class="line">host.name=10.66.236.43</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="gitlab"><a href="#gitlab" class="headerlink" title="gitlab"></a>gitlab</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://gist.github.com/Kovrinic/ea5e7123ab5c97d451804ea222ecd78a">gitlab url 替换</a> </li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/55929417/how-to-securely-git-clone-pip-install-a-private-repository-into-my-docker-image">访问私有仓库</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/elk/" rel="tag"># elk</a>
+              <a href="/tags/jenkins/" rel="tag"># jenkins</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/zabbix/" rel="prev" title="zabbix 从入门到放弃">
+      <i class="fa fa-chevron-left"></i> zabbix 从入门到放弃
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/singtel/" rel="next" title="singtel 路由器踩坑经历">
+      singtel 路由器踩坑经历 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#iptables"><span class="nav-number">1.</span> <span class="nav-text">iptables</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#python"><span class="nav-number">2.</span> <span class="nav-text">python</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jenkins"><span class="nav-number">3.</span> <span class="nav-text">jenkins</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker"><span class="nav-number">4.</span> <span class="nav-text">docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NetworkManager"><span class="nav-number">5.</span> <span class="nav-text">NetworkManager</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">文件权限问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DNS"><span class="nav-number">7.</span> <span class="nav-text">DNS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ansible"><span class="nav-number">8.</span> <span class="nav-text">Ansible</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Markdown"><span class="nav-number">9.</span> <span class="nav-text">Markdown</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Django"><span class="nav-number">10.</span> <span class="nav-text">Django</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux"><span class="nav-number">11.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E8%B6%85%E5%A4%A7%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6"><span class="nav-number">12.</span> <span class="nav-text">读取超大日志文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kafka"><span class="nav-number">13.</span> <span class="nav-text">kafka</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gitlab"><span class="nav-number">14.</span> <span class="nav-text">gitlab</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

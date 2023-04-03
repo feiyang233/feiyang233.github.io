@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文记录用Google Script 处理数据，发送每日邮件的过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google Script 学习">
+<meta property="og:url" content="http://feiyang233.club/post/google-script/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="本文记录用Google Script 处理数据，发送每日邮件的过程。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-08-15T07:04:49.000Z">
+<meta property="article:modified_time" content="2020-09-22T03:30:42.000Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="google">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://feiyang233.club/post/google-script/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Google Script 学习 | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/google-script/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="佛系咸鱼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Google Script 学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-08-15 15:04:49" itemprop="dateCreated datePublished" datetime="2019-08-15T15:04:49+08:00">2019-08-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-22 11:30:42" itemprop="dateModified" datetime="2020-09-22T11:30:42+08:00">2020-09-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文记录用<a target="_blank" rel="noopener" href="https://developers.google.com/apps-script/guides/sheets">Google Script</a> 处理数据，发送每日邮件的过程。</p>
+<span id="more"></span>
+<h1 id="创建-Sheet-和-Script"><a href="#创建-Sheet-和-Script" class="headerlink" title="创建 Sheet 和 Script"></a>创建 Sheet 和 Script</h1><p>首先用自己的谷歌账号创建一个新的 Google Sheet, 然后点击菜单栏的 Tools &gt; Script editor 就可以创建脚本。其语法和 JavaScript 相似的。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Sends emails with data from the current spreadsheet.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 首先添加一个发送按钮名称为 Action，绑定到函数 SendEmail</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">onOpen</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="title class_">SpreadsheetApp</span>.<span class="title function_">getUi</span>()</span><br><span class="line">      .<span class="title function_">createMenu</span>(<span class="string">&#x27;Action&#x27;</span>)</span><br><span class="line">      .<span class="title function_">addItem</span>(<span class="string">&#x27;Send Daily Report&#x27;</span>, <span class="string">&#x27;SendEmail&#x27;</span>)</span><br><span class="line">      .<span class="title function_">addToUi</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="学会-debug"><a href="#学会-debug" class="headerlink" title="学会 debug"></a>学会 debug</h1><p>可以调用函数 Logger.log(); 打印结果到后台，然后在 View &gt; Logs 查看结果。举一个简单的例子：<br>markdown 语法注意，使用时发现，表格的语句上一行必须为空行，不然表格不生效。比如你的表是这个样子的  </p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">A</th>
+<th align="center">B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">A1</td>
+<td align="center">B1</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">A2</td>
+<td align="center">B2</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">A3</td>
+<td align="center">B3</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">A4</td>
+<td align="center">B4</td>
+</tr>
+</tbody></table>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logProductInfo</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> sheet = <span class="title class_">SpreadsheetApp</span>.<span class="title function_">getActiveSheet</span>();</span><br><span class="line">  <span class="keyword">var</span> data = sheet.<span class="title function_">getDataRange</span>().<span class="title function_">getValues</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; data.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    <span class="title class_">Logger</span>.<span class="title function_">log</span>(<span class="string">&#x27;Product name: &#x27;</span> + data[i][<span class="number">0</span>]);</span><br><span class="line">    <span class="title class_">Logger</span>.<span class="title function_">log</span>(<span class="string">&#x27;Product number: &#x27;</span> + data[i][<span class="number">1</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们在 script editor 界面点击 Run &gt; Run function &gt; logProductInfo, 运行结束后，可以点击 View &gt; Logs 查看结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[19-08-15 01:16:37:475 PDT] Product name: A1</span><br><span class="line">[19-08-15 01:16:37:475 PDT] Product number: B1</span><br><span class="line">[19-08-15 01:16:37:476 PDT] Product name: A2</span><br><span class="line">[19-08-15 01:16:37:476 PDT] Product number: B2</span><br><span class="line">[19-08-15 01:16:37:477 PDT] Product name: A3</span><br><span class="line">[19-08-15 01:16:37:477 PDT] Product number: B3</span><br><span class="line">[19-08-15 01:16:37:477 PDT] Product name: A4</span><br><span class="line">[19-08-15 01:16:37:478 PDT] Product number: B4</span><br></pre></td></tr></table></figure>
+<h1 id="Code-gs"><a href="#Code-gs" class="headerlink" title="Code.gs"></a>Code.gs</h1><p>直接放上代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Sends emails with data from the current spreadsheet.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">onOpen</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="title class_">SpreadsheetApp</span>.<span class="title function_">getUi</span>()</span><br><span class="line">      .<span class="title function_">createMenu</span>(<span class="string">&#x27;Action&#x27;</span>)</span><br><span class="line">      .<span class="title function_">addItem</span>(<span class="string">&#x27;Send Daily Report&#x27;</span>, <span class="string">&#x27;SendEmail&#x27;</span>)</span><br><span class="line">      .<span class="title function_">addToUi</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> scriptProperties = <span class="title class_">PropertiesService</span>.<span class="title function_">getScriptProperties</span>();</span><br><span class="line">  <span class="keyword">var</span> nickname = scriptProperties.<span class="title function_">getProperty</span>(<span class="string">&#x27;Project&#x27;</span>);</span><br><span class="line">  <span class="title class_">Logger</span>.<span class="title function_">log</span>(nickname)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">SendEmail</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> client = <span class="title class_">PropertiesService</span>.<span class="title function_">getScriptProperties</span>().<span class="title function_">getProperty</span>(<span class="string">&#x27;Project&#x27;</span>);</span><br><span class="line">  <span class="comment">// Property 可以在 File &gt; Project Properties &gt; Script properties 里面设置</span></span><br><span class="line">  <span class="keyword">var</span> monitor_vn = <span class="title class_">SpreadsheetApp</span>.<span class="title function_">getActiveSpreadsheet</span>().<span class="title function_">getSheetByName</span>(<span class="string">&quot;VN&quot;</span>).<span class="title function_">getDataRange</span>().<span class="title function_">getValues</span>();</span><br><span class="line">  <span class="comment">// 获取表单名称为 VN 的表内容</span></span><br><span class="line">  <span class="keyword">var</span> monitor_th = <span class="title class_">SpreadsheetApp</span>.<span class="title function_">getActiveSpreadsheet</span>().<span class="title function_">getSheetByName</span>(<span class="string">&quot;TH&quot;</span>).<span class="title function_">getDataRange</span>().<span class="title function_">getValues</span>();</span><br><span class="line">  <span class="comment">// 获取表单名称为 TH 的表内容</span></span><br><span class="line">  <span class="keyword">var</span> sendlist = <span class="title class_">SpreadsheetApp</span>.<span class="title function_">getActiveSpreadsheet</span>().<span class="title function_">getSheetByName</span>(<span class="string">&quot;email&quot;</span>).<span class="title function_">getDataRange</span>().<span class="title function_">getValues</span>();</span><br><span class="line">  <span class="comment">// 获取表单名称为 email 的表内容</span></span><br><span class="line">  <span class="keyword">var</span> sendto = []</span><br><span class="line">  <span class="keyword">var</span> sendcc = []</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 将发送和 cc 分开存储</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">1</span>;i&lt;sendlist.<span class="property">length</span>;i++)&#123;</span><br><span class="line">    <span class="keyword">if</span> (sendlist[i][<span class="number">0</span>]!=<span class="string">&#x27;&#x27;</span>) sendto.<span class="title function_">push</span>(sendlist[i][<span class="number">0</span>])</span><br><span class="line">    <span class="keyword">if</span> (sendlist[i][<span class="number">1</span>]!=<span class="string">&#x27;&#x27;</span>) sendcc.<span class="title function_">push</span>(sendlist[i][<span class="number">1</span>])</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  sendto = sendto.<span class="title function_">join</span>(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">  sendcc = sendcc.<span class="title function_">join</span>(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">  </span><br><span class="line"> <span class="comment">// Email Template 连接绑定文件 index.html</span></span><br><span class="line">  <span class="keyword">var</span> template = <span class="title class_">HtmlService</span>.<span class="title function_">createTemplateFromFile</span>(<span class="string">&#x27;index&#x27;</span>);</span><br><span class="line">  <span class="comment">// 传参到 template</span></span><br><span class="line">  template.<span class="property">monitor_vn</span> = monitor_vn;</span><br><span class="line">  template.<span class="property">monitor_th</span> = monitor_th;</span><br><span class="line">  template.<span class="property">client</span> = client;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 自定义一个数组，将数字月份映射为英文</span></span><br><span class="line">  <span class="keyword">const</span> monthNames = [<span class="string">&quot;January&quot;</span>, <span class="string">&quot;February&quot;</span>, <span class="string">&quot;March&quot;</span>, <span class="string">&quot;April&quot;</span>, <span class="string">&quot;May&quot;</span>, <span class="string">&quot;June&quot;</span>,</span><br><span class="line">  <span class="string">&quot;July&quot;</span>, <span class="string">&quot;August&quot;</span>, <span class="string">&quot;September&quot;</span>, <span class="string">&quot;October&quot;</span>, <span class="string">&quot;November&quot;</span>, <span class="string">&quot;December&quot;</span></span><br><span class="line">  ];</span><br><span class="line">  <span class="comment">// 获取当前的日期</span></span><br><span class="line">  <span class="keyword">var</span> d = <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 发送邮件</span></span><br><span class="line">  <span class="title class_">MailApp</span>.<span class="title function_">sendEmail</span>(&#123;</span><br><span class="line">    <span class="attr">to</span>: sendto,</span><br><span class="line">    <span class="attr">cc</span>: sendcc,</span><br><span class="line">    <span class="attr">subject</span>: client+<span class="string">&#x27; Monitoring Daily Report (&#x27;</span>+d.<span class="title function_">getDate</span>()+<span class="string">&#x27;-&#x27;</span>+monthNames[d.<span class="title function_">getMonth</span>()]+<span class="string">&#x27;-&#x27;</span>+d.<span class="title function_">getYear</span>()+<span class="string">&#x27;)&#x27;</span>,</span><br><span class="line">    <span class="attr">htmlBody</span>: template.evaluate().<span class="title function_">getContent</span>()&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="index-html"><a href="#index-html" class="headerlink" title="index.html"></a>index.html</h1><p>这个是邮件的主体模板，可以看一下<a target="_blank" rel="noopener" href="https://developers.google.com/apps-script/guides/html/templates">官网介绍</a><br>条件语句嵌套<? ... ?></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">base</span> <span class="attr">target</span>=<span class="string">&quot;_top&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    &lt;? if (true) &#123; ?&gt;</span><br><span class="line">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>This will always be served!<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    &lt;? &#125; else  &#123; ?&gt;</span><br><span class="line">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>This will never be served.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    &lt;? &#125; ?&gt;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>赋值语句<?= ... ?> 是</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">base</span> <span class="attr">target</span>=<span class="string">&quot;_top&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    &lt;?= &#x27;My favorite Google products:&#x27; ?&gt;</span><br><span class="line">    &lt;? var data = [&#x27;Gmail&#x27;, &#x27;Docs&#x27;, &#x27;Android&#x27;];</span><br><span class="line">      for (var i = 0; i &lt; data.length; i++) &#123; ?&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">b</span>&gt;</span>&lt;?= data[i] ?&gt;<span class="tag">&lt;/<span class="name">b</span>&gt;</span></span><br><span class="line">    &lt;? &#125; ?&gt;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">base</span> <span class="attr">target</span>=<span class="string">&quot;_top&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">p</span>&gt;</span>Hi,<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">p</span>&gt;</span>Below is daily ops report for &lt;?=client?&gt;:<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line">     </span><br><span class="line">     <span class="tag">&lt;<span class="name">b</span> <span class="attr">style</span>=<span class="string">&quot;font-size: 15px;&quot;</span>&gt;</span>Monitoring_VN:<span class="tag">&lt;/<span class="name">b</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">table</span> <span class="attr">style</span>=<span class="string">&quot;border-collapse: collapse; margin-left:20px;border: 1px solid black&quot;</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">     &lt;? for (var j=1;j&lt;7;j++) &#123; ?&gt;  <span class="comment">&lt;!-- 因为只读取1-6列的数据 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">th</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;background-color: grey; color: white; width:15%&quot;</span>&gt;</span>&lt;?= monitor_vn[0][j] ?&gt;<span class="tag">&lt;/<span class="name">th</span>&gt;</span>  </span><br><span class="line">     &lt;? &#125; ?&gt;</span><br><span class="line">     <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">                    <span class="comment">&lt;!--monitor_vn.length 是行数--&gt;</span></span><br><span class="line">     &lt;? for(var i=1;i&lt;monitor_vn.length;i++) &#123; ?&gt;</span><br><span class="line">     <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">       &lt;? for(var j=1;j&lt;7;j++) &#123; ?&gt;</span><br><span class="line">         &lt;? if ( j&gt;2 &amp;&amp; j&lt; 6  ) &#123; ?&gt;</span><br><span class="line">          &lt;? if (monitor_vn[i][j] &gt; 0.7) &#123;?&gt; <span class="comment">&lt;!-- 值大于0.7 底色红色--&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black; background-color: red;&quot;</span>&gt;</span>&lt;?= (monitor_vn[i][j]*100).toFixed(2)?&gt;%<span class="tag">&lt;/<span class="name">td</span>&gt;</span> </span><br><span class="line">           &lt;? &#125; else  &#123; ?&gt;   <span class="comment">&lt;!--toFixed(2) 保留两位小数 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;&quot;</span>&gt;</span>&lt;?= (monitor_vn[i][j]*100).toFixed(2)?&gt;%<span class="tag">&lt;/<span class="name">td</span>&gt;</span> </span><br><span class="line">            &lt;? &#125; ?&gt;</span><br><span class="line">       &lt;? &#125; else  &#123; ?&gt;</span><br><span class="line">        &lt;? if ( j==6 &amp;&amp; monitor_vn[i][j] &gt; 100) &#123;?&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;background-color: red;&quot;</span>&gt;</span>&lt;?= (monitor_vn[i][j]) ?&gt;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">           &lt;? &#125; else  &#123; ?&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;&quot;</span>&gt;</span>&lt;?= (monitor_vn[i][j]) ?&gt;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                   &lt;? &#125; ?&gt;</span><br><span class="line">     </span><br><span class="line">         &lt;? &#125; ?&gt;</span><br><span class="line">       &lt;? &#125; ?&gt;</span><br><span class="line">     <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">     &lt;? &#125; ?&gt;</span><br><span class="line">     <span class="tag">&lt;/<span class="name">table</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="tag">&lt;<span class="name">b</span> <span class="attr">style</span>=<span class="string">&quot;font-size: 15px;&quot;</span>&gt;</span>Monitoring_TH:<span class="tag">&lt;/<span class="name">b</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">table</span> <span class="attr">style</span>=<span class="string">&quot;border-collapse: collapse; margin-left:20px;border: 1px solid black&quot;</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">     &lt;? for (var j=1;j&lt;7;j++)&#123; ?&gt;</span><br><span class="line">     <span class="tag">&lt;<span class="name">th</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;background-color: grey; color: white; width:15%&quot;</span>&gt;</span>&lt;?= monitor_th[0][j] ?&gt;<span class="tag">&lt;/<span class="name">th</span>&gt;</span>  </span><br><span class="line">     &lt;? &#125; ?&gt;</span><br><span class="line">     <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     &lt;? for(var i=1;i&lt;monitor_th.length;i++)&#123;?&gt;</span><br><span class="line">     <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">       &lt;? for(var j=1;j&lt;7;j++)&#123;?&gt;</span><br><span class="line">         &lt;? if ( j&gt;2 &amp;&amp; j&lt; 6  ) &#123; ?&gt;</span><br><span class="line">           &lt;? if (monitor_th[i][j] &gt; 0.7) &#123;?&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black; background-color: red;&quot;</span>&gt;</span>&lt;?= (monitor_th[i][j]*100).toFixed(2)?&gt;%<span class="tag">&lt;/<span class="name">td</span>&gt;</span> </span><br><span class="line">           &lt;? &#125; else  &#123; ?&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;&quot;</span>&gt;</span>&lt;?= (monitor_th[i][j]*100).toFixed(2)?&gt;%<span class="tag">&lt;/<span class="name">td</span>&gt;</span> </span><br><span class="line">                   &lt;? &#125; ?&gt;</span><br><span class="line">         &lt;? &#125; else  &#123; ?&gt;</span><br><span class="line">           &lt;? if ( j==6 &amp;&amp; monitor_th[i][j] &gt; 100) &#123;?&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;background-color: red;&quot;</span>&gt;</span>&lt;?= (monitor_th[i][j]) ?&gt;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">           &lt;? &#125; else  &#123; ?&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span> <span class="attr">style</span>=<span class="string">&quot;border: 1px solid black;&quot;</span>&gt;</span>&lt;?= (monitor_th[i][j]) ?&gt;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                   &lt;? &#125; ?&gt;</span><br><span class="line">         &lt;? &#125; ?&gt;</span><br><span class="line">       &lt;? &#125; ?&gt;</span><br><span class="line">     <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">     &lt;? &#125; ?&gt;</span><br><span class="line">     <span class="tag">&lt;/<span class="name">table</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="未完"><a href="#未完" class="headerlink" title="未完"></a>未完</h1>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/google/" rel="tag"># google</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/docker/" rel="prev" title="docker 学习笔记">
+      <i class="fa fa-chevron-left"></i> docker 学习笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/mac/" rel="next" title="Mac 小技巧">
+      Mac 小技巧 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-Sheet-%E5%92%8C-Script"><span class="nav-number">1.</span> <span class="nav-text">创建 Sheet 和 Script</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%BC%9A-debug"><span class="nav-number">2.</span> <span class="nav-text">学会 debug</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Code-gs"><span class="nav-number">3.</span> <span class="nav-text">Code.gs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#index-html"><span class="nav-number">4.</span> <span class="nav-text">index.html</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AA%E5%AE%8C"><span class="nav-number">5.</span> <span class="nav-text">未完</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">佛系咸鱼</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
