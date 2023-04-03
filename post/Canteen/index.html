@@ -231,6 +231,20 @@
             </span>
 
           
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/post/Canteen/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="post/Canteen/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 
         </div>
       </header>
@@ -279,7 +293,7 @@
 <p>PS: 如果对这个分析有更好的建议，或者发现了错误之处。欢迎交流，联系方式:</p>
 <ul>
 <li>QQ: 601300870</li>
-<li>Email: <a href="mailto:&#x66;&#x61;&#105;&#110;&#121;&#97;&#110;&#103;&#x40;&#102;&#x6f;&#120;&#109;&#x61;&#105;&#108;&#46;&#x63;&#111;&#109;">&#x66;&#x61;&#105;&#110;&#121;&#97;&#110;&#103;&#x40;&#102;&#x6f;&#120;&#109;&#x61;&#105;&#108;&#46;&#x63;&#111;&#109;</a></li>
+<li>Email: <a href="mailto:&#x66;&#x61;&#x69;&#x6e;&#121;&#97;&#x6e;&#103;&#64;&#102;&#x6f;&#120;&#109;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#x6d;">&#x66;&#x61;&#x69;&#x6e;&#121;&#97;&#x6e;&#103;&#64;&#102;&#x6f;&#120;&#109;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#x6d;</a></li>
 </ul>
 
     </div>
@@ -318,6 +332,13 @@
 
           </div>
           
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -503,6 +524,37 @@
   
 
   
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://feiyang.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://feiyang233.club/post/Canteen/";
+    this.page.identifier = "post/Canteen/";
+    this.page.title = "NUS食堂排队指南";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://feiyang.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
 
 </body>
 </html>
