@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="如何用 postman grpc 调用 API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="postman grpc test">
+<meta property="og:url" content="http://feiyang233.club/post/postman/index.html">
+<meta property="og:site_name" content="feiyang&#39;s blog">
+<meta property="og:description" content="如何用 postman grpc 调用 API">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032015610.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032017324.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032022081.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032022099.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032027626.png">
+<meta property="article:published_time" content="2023-04-03T11:45:17.000Z">
+<meta property="article:modified_time" content="2023-04-03T12:36:01.394Z">
+<meta property="article:author" content="feiyang">
+<meta property="article:tag" content="testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032015610.jpeg">
+
+<link rel="canonical" href="http://feiyang233.club/post/postman/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>postman grpc test | feiyang's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">feiyang's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">费洋的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/postman/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/feiy.gif">
+      <meta itemprop="name" content="feiyang">
+      <meta itemprop="description" content="南洋打工人">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feiyang's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          postman grpc test
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-04-03 19:45:17 / Modified: 20:36:01" itemprop="dateCreated datePublished" datetime="2023-04-03T19:45:17+08:00">2023-04-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/post/postman/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="post/postman/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>如何用 postman grpc 调用 API </p>
+<span id="more"></span>
+<h1 id="postman"><a href="#postman" class="headerlink" title="postman"></a>postman</h1><p><a target="_blank" rel="noopener" href="https://www.postman.com/">https://www.postman.com/</a>  postman 想必大家已经很熟悉了, 平时用得比较多的是 HTTP call 测试。但有的服务,只有 grpc, 没有 http 方法, 测试的时候别无选择.</p>
+<p>参考官方的文档：<a target="_blank" rel="noopener" href="https://learning.postman.com/docs/sending-requests/grpc/grpc-client-overview/">https://learning.postman.com/docs/sending-requests/grpc/grpc-client-overview/</a> </p>
+<h1 id="什么是-RPC"><a href="#什么是-RPC" class="headerlink" title="什么是 RPC"></a>什么是 RPC</h1><p>RPC（Remote Procedure Call，远程过程调用）是一种计算机通信协议，它允许一台计算机程序调用另一台计算机上的程序，而不需要程序员显式编写远程调用的代码。通过 RPC，程序员可以编写分布式应用程序，使得程序像运行在本地一样简单。<br>RPC 框架一般分为三个部分：客户端、服务器端和协议。客户端调用本地的代理程序，代理程序负责将调用转换为网络消息，然后发送给服务器端。服务器端接收到消息后，解析消息，调用本地的程序执行对应的操作，然后将结果返回给客户端。协议规定了客户端和服务器端之间的通信格式和方式，包括消息的结构、编码方式、传输协议等。<br>RPC 框架有很多种，常见的包括 gRPC、Thrift、Dubbo 等，它们都提供了类似的功能，使得开发人员可以快速地构建分布式应用程序。<br>总之，RPC 是一种计算机通信协议，可以让程序像本地程序一样调用远程程序，它可以帮助开发人员快速构建分布式应用程序。</p>
+<h1 id="什么是-gRPC"><a href="#什么是-gRPC" class="headerlink" title="什么是 gRPC"></a>什么是 gRPC</h1><p>gRPC（g stands for Google）是一种高性能、开源、通用的远程过程调用（RPC）框架，由 Google 开发，支持多种编程语言。gRPC 基于 Protocol Buffers（protobuf）序列化协议开发，提供了比传统的 HTTP&#x2F;REST API 更快、更可靠和更高效的远程服务调用方式。<br>gRPC 的核心设计理念是定义服务，生成客户端和服务器端的 stub（存根），使得客户端和服务器端可以像调用本地方法一样调用远程方法，而且支持多种编程语言，包括 C、C++、Java、Python、Go、Ruby、Node.js 等。在 gRPC 中，客户端只需要通过服务定义文件来生成相应的客户端 stub，然后就可以像调用本地方法一样调用远程服务，非常方便。<br>gRPC 支持四种不同类型的服务方法，分别是：</p>
+<ul>
+<li>单向流：客户端发送一组请求到服务器端，但不等待回应。</li>
+<li>双向流：客户端和服务器端可以同时发送多组请求和回应。</li>
+<li>服务端流：客户端发送一组请求到服务器端，等待服务器端返回多组回应。</li>
+<li>客户端流：客户端发送多组请求到服务器端，等待服务器端返回一组回应。<br>除此之外，gRPC 还提供了许多功能，例如支持 TLS&#x2F;SSL 安全传输、支持客户端和服务器端的流量控制、支持多语言扩展等。<br>总之，gRPC 是一种高性能、开源、通用的 RPC 框架，可以支持多种编程语言，提供了比传统的 HTTP&#x2F;REST API 更快、更可靠和更高效的远程服务调用方式。</li>
+</ul>
+<h1 id="什么是-Protobuf"><a href="#什么是-Protobuf" class="headerlink" title="什么是 Protobuf"></a>什么是 Protobuf</h1><p>Protobuf，全称为 Protocol Buffers，是一种语言无关、平台无关、可扩展的序列化数据格式，由 Google 公司开发。它支持多种编程语言，包括 C++、Java、Python 等，可以在不同的系统之间进行数据交换和存储。<br>与 XML 和 JSON 等数据格式相比，Protobuf 具有更高的序列化和反序列化效率、更小的数据体积以及更简单的数据结构定义。使用 Protobuf 可以帮助开发人员轻松地定义数据结构，然后使用自动生成的代码来进行序列化和反序列化。<br>在实际应用中，Protobuf 主要用于分布式应用程序中的数据传输和存储，例如在 Google 内部的各种系统和服务中就广泛使用了 Protobuf。<br>总之，Protobuf 是一种语言无关、平台无关、可扩展的序列化数据格式，具有更高的效率和更小的数据体积，可以帮助开发人员轻松地定义数据结构并进行数据传输和存储。</p>
+<h1 id="开始实验"><a href="#开始实验" class="headerlink" title="开始实验"></a>开始实验</h1><p>先来看一看这个 pb 文件</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> todolistpb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/protobuf/empty.proto&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/api/annotations.proto&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;protoc-gen-swagger/options/annotations.proto&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generated by Kit - do not change this package</span></span><br><span class="line">option go_package = <span class="string">&quot;xxxxxxxxx/gophers/go/todolist/pb&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The base path is only for Swagger and does not affect the routing - do not change this.</span></span><br><span class="line">option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = &#123;</span><br><span class="line">  base_path: <span class="string">&quot;/todolist&quot;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">service Todolist &#123;</span><br><span class="line">  rpc AddTodo(AddTodoRequest) returns (AddTodoResponse) &#123;</span><br><span class="line">    option idempotency_level = IDEMPOTENCY_UNKNOWN;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      post: <span class="string">&quot;/addTodo&quot;</span></span><br><span class="line">      body: <span class="string">&quot;*&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  rpc ListTodos(google.protobuf.Empty) returns (ListTodosResponse) &#123;</span><br><span class="line">    option idempotency_level = NO_SIDE_EFFECTS;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      get: <span class="string">&quot;/listTodos&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  rpc DoneTodo(DoneTodoRequest) returns (ListTodosResponse) &#123;</span><br><span class="line">    option idempotency_level = NO_SIDE_EFFECTS;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      get: <span class="string">&quot;/doneTodo&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message AddTodoRequest &#123;</span><br><span class="line">  <span class="type">string</span> author = <span class="number">1</span>;</span><br><span class="line">  <span class="type">string</span> description = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message AddTodoResponse &#123;</span><br><span class="line">  Todo todo = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message Todo &#123;</span><br><span class="line">  <span class="type">int64</span> id = <span class="number">1</span>;</span><br><span class="line">  <span class="type">string</span> author = <span class="number">2</span>;</span><br><span class="line">  <span class="type">string</span> description = <span class="number">3</span>;</span><br><span class="line">  <span class="type">bool</span> done = <span class="number">4</span>;</span><br><span class="line">  <span class="type">string</span> created_at = <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message ListTodosResponse &#123;</span><br><span class="line">  repeated Todo todos = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message DoneTodoRequest &#123;</span><br><span class="line">  repeated <span class="type">int64</span> id = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的地方是 import 的路径, 比如在 goland IDE 里面，也需要设置，如下图所示<br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032015610.jpeg"></p>
+<p>在 postman 里面导入了 Protocol Buffers 文件后，可以直接点击橙色的 next ，如果有报错，则说明缺少了依赖，需要导入依赖的包的路径。和上图类似<br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032017324.png"></p>
+<p>因为我们本地的服务监听在 8087, 所以地址就填写 localhost:8087 , 可以看到是两个蓝色的箭头双向流：<br>我们先 add 一条记录<br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032022081.png"></p>
+<p>然后再查询所有的<br><img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032022099.png"></p>
+<h1 id="需要注意的地方"><a href="#需要注意的地方" class="headerlink" title="需要注意的地方"></a>需要注意的地方</h1><ul>
+<li>注意时间的格式 <a target="_blank" rel="noopener" href="https://protobuf.dev/reference/php/api-docs/Google/Protobuf/Timestamp">https://protobuf.dev/reference/php/api-docs/Google/Protobuf/Timestamp</a><br>protected	$seconds Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive. 可以在这个网站转换 <a target="_blank" rel="noopener" href="https://www.epochconverter.com/">https://www.epochconverter.com/</a><br>protected	$nanos Non-negative fractions of a second at nanosecond resolution. Negative second values with fractions must still have non-negative nanos values that count forward in time. Must be from 0 to 999,999,999 inclusive.<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">google.protobuf.Timestamp startTime = <span class="number">9</span> </span><br></pre></td></tr></table></figure>
+<img src="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032027626.png"></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/testing/" rel="tag"># testing</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/SG-food/" rel="prev" title="新加坡吃过的店 (SG FOOD)">
+      <i class="fa fa-chevron-left"></i> 新加坡吃过的店 (SG FOOD)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#postman"><span class="nav-number">1.</span> <span class="nav-text">postman</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-RPC"><span class="nav-number">2.</span> <span class="nav-text">什么是 RPC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-gRPC"><span class="nav-number">3.</span> <span class="nav-text">什么是 gRPC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Protobuf"><span class="nav-number">4.</span> <span class="nav-text">什么是 Protobuf</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%AE%9E%E9%AA%8C"><span class="nav-number">5.</span> <span class="nav-text">开始实验</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="nav-number">6.</span> <span class="nav-text">需要注意的地方</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="feiyang"
+      src="/images/feiy.gif">
+  <p class="site-author-name" itemprop="name">feiyang</p>
+  <div class="site-description" itemprop="description">南洋打工人</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feiyang233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feiyang233" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feiyang.sg@gmail.com" title="E-Mail → mailto:feiyang.sg@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://engineering.grab.com/" title="https:&#x2F;&#x2F;engineering.grab.com&#x2F;" rel="noopener" target="_blank">Grab</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsgzao.github.io/" title="https:&#x2F;&#x2F;wsgzao.github.io&#x2F;" rel="noopener" target="_blank">奥哥</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hjin.club/" title="https:&#x2F;&#x2F;hjin.club&#x2F;" rel="noopener" target="_blank">黄金</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">feiyang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://feiyang.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://feiyang233.club/post/postman/";
+    this.page.identifier = "post/postman/";
+    this.page.title = "postman grpc test";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://feiyang.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
