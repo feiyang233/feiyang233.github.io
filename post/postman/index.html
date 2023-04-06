@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="如何用 postman grpc 调用 API">
@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032022099.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/feiyang233/pictures/master/img/202304032027626.png">
 <meta property="article:published_time" content="2023-04-03T11:45:17.000Z">
-<meta property="article:modified_time" content="2023-04-03T12:36:01.394Z">
+<meta property="article:modified_time" content="2023-04-06T14:28:09.651Z">
 <meta property="article:author" content="feiyang">
 <meta property="article:tag" content="testing">
 <meta name="twitter:card" content="summary">
@@ -111,6 +111,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -145,11 +146,38 @@
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -195,10 +223,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2023-04-03 19:45:17 / Modified: 20:36:01" itemprop="dateCreated datePublished" datetime="2023-04-03T19:45:17+08:00">2023-04-03</time>
+              <time title="Created: 2023-04-03 19:45:17" itemprop="dateCreated datePublished" datetime="2023-04-03T19:45:17+08:00">2023-04-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-04-06 22:28:09" itemprop="dateModified" datetime="2023-04-06T22:28:09+08:00">2023-04-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -244,8 +278,9 @@
 <li>单向流：客户端发送一组请求到服务器端，但不等待回应。</li>
 <li>双向流：客户端和服务器端可以同时发送多组请求和回应。</li>
 <li>服务端流：客户端发送一组请求到服务器端，等待服务器端返回多组回应。</li>
-<li>客户端流：客户端发送多组请求到服务器端，等待服务器端返回一组回应。<br>除此之外，gRPC 还提供了许多功能，例如支持 TLS&#x2F;SSL 安全传输、支持客户端和服务器端的流量控制、支持多语言扩展等。<br>总之，gRPC 是一种高性能、开源、通用的 RPC 框架，可以支持多种编程语言，提供了比传统的 HTTP&#x2F;REST API 更快、更可靠和更高效的远程服务调用方式。</li>
+<li>客户端流：客户端发送多组请求到服务器端，等待服务器端返回一组回应。</li>
 </ul>
+<p>除此之外，gRPC 还提供了许多功能，例如支持 TLS&#x2F;SSL 安全传输、支持客户端和服务器端的流量控制、支持多语言扩展等。<br>总之，gRPC 是一种高性能、开源、通用的 RPC 框架，可以支持多种编程语言，提供了比传统的 HTTP&#x2F;REST API 更快、更可靠和更高效的远程服务调用方式。</p>
 <h1 id="什么是-Protobuf"><a href="#什么是-Protobuf" class="headerlink" title="什么是 Protobuf"></a>什么是 Protobuf</h1><p>Protobuf，全称为 Protocol Buffers，是一种语言无关、平台无关、可扩展的序列化数据格式，由 Google 公司开发。它支持多种编程语言，包括 C++、Java、Python 等，可以在不同的系统之间进行数据交换和存储。<br>与 XML 和 JSON 等数据格式相比，Protobuf 具有更高的序列化和反序列化效率、更小的数据体积以及更简单的数据结构定义。使用 Protobuf 可以帮助开发人员轻松地定义数据结构，然后使用自动生成的代码来进行序列化和反序列化。<br>在实际应用中，Protobuf 主要用于分布式应用程序中的数据传输和存储，例如在 Google 内部的各种系统和服务中就广泛使用了 Protobuf。<br>总之，Protobuf 是一种语言无关、平台无关、可扩展的序列化数据格式，具有更高的效率和更小的数据体积，可以帮助开发人员轻松地定义数据结构并进行数据传输和存储。</p>
 <h1 id="开始实验"><a href="#开始实验" class="headerlink" title="开始实验"></a>开始实验</h1><p>先来看一看这个 pb 文件</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> todolistpb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/protobuf/empty.proto&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/api/annotations.proto&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;protoc-gen-swagger/options/annotations.proto&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generated by Kit - do not change this package</span></span><br><span class="line">option go_package = <span class="string">&quot;xxxxxxxxx/gophers/go/todolist/pb&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The base path is only for Swagger and does not affect the routing - do not change this.</span></span><br><span class="line">option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = &#123;</span><br><span class="line">  base_path: <span class="string">&quot;/todolist&quot;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">service Todolist &#123;</span><br><span class="line">  rpc AddTodo(AddTodoRequest) returns (AddTodoResponse) &#123;</span><br><span class="line">    option idempotency_level = IDEMPOTENCY_UNKNOWN;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      post: <span class="string">&quot;/addTodo&quot;</span></span><br><span class="line">      body: <span class="string">&quot;*&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  rpc ListTodos(google.protobuf.Empty) returns (ListTodosResponse) &#123;</span><br><span class="line">    option idempotency_level = NO_SIDE_EFFECTS;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      get: <span class="string">&quot;/listTodos&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  rpc DoneTodo(DoneTodoRequest) returns (ListTodosResponse) &#123;</span><br><span class="line">    option idempotency_level = NO_SIDE_EFFECTS;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      get: <span class="string">&quot;/doneTodo&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message AddTodoRequest &#123;</span><br><span class="line">  <span class="type">string</span> author = <span class="number">1</span>;</span><br><span class="line">  <span class="type">string</span> description = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message AddTodoResponse &#123;</span><br><span class="line">  Todo todo = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message Todo &#123;</span><br><span class="line">  <span class="type">int64</span> id = <span class="number">1</span>;</span><br><span class="line">  <span class="type">string</span> author = <span class="number">2</span>;</span><br><span class="line">  <span class="type">string</span> description = <span class="number">3</span>;</span><br><span class="line">  <span class="type">bool</span> done = <span class="number">4</span>;</span><br><span class="line">  <span class="type">string</span> created_at = <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message ListTodosResponse &#123;</span><br><span class="line">  repeated Todo todos = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message DoneTodoRequest &#123;</span><br><span class="line">  repeated <span class="type">int64</span> id = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -468,6 +503,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

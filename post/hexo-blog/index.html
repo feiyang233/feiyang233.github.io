@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="关于写博客2018 年我在 GitHub 上看到强哥的博客，当时为之心动然后 Fork 了那个 repository。后来搬砖沦为社会人就断更了，在工作之后看到奥哥的博客，在他的安利之下，把之前的 Jekyll 的博客换成如今的 Hexo-NexT，打算记录下工作的点滴，学习的心得。一是分享，二是方便自己回顾和查阅。">
@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://feiyang233.club/img/2019/github.png">
 <meta property="og:image" content="http://feiyang233.club/img/2019/publish.png">
 <meta property="article:published_time" content="2019-03-15T03:05:30.000Z">
-<meta property="article:modified_time" content="2021-06-27T02:03:55.000Z">
+<meta property="article:modified_time" content="2023-04-06T14:43:01.081Z">
 <meta property="article:author" content="feiyang">
 <meta property="article:tag" content="hexo">
 <meta name="twitter:card" content="summary">
@@ -108,6 +108,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -142,11 +143,38 @@
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -200,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-06-27 10:03:55" itemprop="dateModified" datetime="2021-06-27T10:03:55+08:00">2021-06-27</time>
+                <time title="Modified: 2023-04-06 22:43:01" itemprop="dateModified" datetime="2023-04-06T22:43:01+08:00">2023-04-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -298,8 +326,13 @@
 <li>hexo deploy git user.name 和全局的不一样 <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues/2125">https://github.com/hexojs/hexo/issues/2125</a>, </li>
 <li>update hexo <a target="_blank" rel="noopener" href="https://finisky.github.io/2019/11/24/updatehexo/">https://finisky.github.io/2019/11/24/updatehexo/</a></li>
 <li>解决Hexo博客模板hexo-theme-next的翻页按钮不正常显示问题 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiejava/p/12456273.html">https://www.cnblogs.com/xiejava/p/12456273.html</a></li>
-<li>sidebar 出现 archives&#x2F;%7C%7C%20archive<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=&quot;&#123;&#123; url_for(theme.menu.archives).split(&#x27;||&#x27;)[0] | trim &#125;&#125;&quot;&gt; </span><br><span class="line">替换为</span><br><span class="line">&lt;a href=&quot;&#123;&#123; url_for(theme.menu.archives.split(&#x27;||&#x27;)[0] | trim) &#125;&#125;&quot;&gt; </span><br></pre></td></tr></table></figure></li>
+<li>sidebar 出现 archives&#x2F;%7C%7C%20archive<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;&#123; url_for(theme.menu.archives).split(&#x27;||&#x27;)[0] | trim &#125;&#125;&quot;</span>&gt;</span> </span><br><span class="line">替换为</span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;&#123; url_for(theme.menu.archives.split(&#x27;||&#x27;)[0] | trim) &#125;&#125;&quot;</span>&gt;</span> </span><br></pre></td></tr></table></figure></li>
 </ol>
+<h2 id="hexo-升级"><a href="#hexo-升级" class="headerlink" title="hexo 升级"></a>hexo 升级</h2><p>换了新电脑，环境重新配置的时候，老版本的 node 已经 brew 已经 deprecate 了，所以干脆就升级了。 用最新的 hexo V6 也是非常的简单</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">brew install node</span><br><span class="line"></span><br><span class="line">npm install -g hexo-cli</span><br><span class="line"></span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line">npm install hexo-generator-search --save</span><br><span class="line"></span><br><span class="line">➜  blog git:(main) ✗ hexo --version                                                                                                                                                                                                       &lt;aws:default&gt;</span><br><span class="line">INFO  Validating config</span><br><span class="line">hexo: 6.3.0</span><br><span class="line">hexo-cli: 4.3.0</span><br><span class="line"></span><br><span class="line">hexo init new_blog</span><br><span class="line">cd new_blog/</span><br><span class="line">npm install</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装主题</span></span><br><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>然后就把 blog root 目录下面的 _config.yml 文件还有 source 文件夹替换到新的 new_blog 下面， 最后就是替换 themes&#x2F;next 主题的配置文件 _config.yml</p>
+<p>中间可能 hexo 有一些配置需要修改， 当运行 hexo s 会提示错误在哪里，然后就根据提示修改 hexo config 就行</p>
 
     </div>
 
@@ -390,7 +423,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%86%99%E5%8D%9A%E5%AE%A2"><span class="nav-number">1.</span> <span class="nav-text">关于写博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="nav-number">2.</span> <span class="nav-text">更新历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GitHub"><span class="nav-number">3.</span> <span class="nav-text">GitHub</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo"><span class="nav-number">4.</span> <span class="nav-text">Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E6%8F%90"><span class="nav-number">4.1.</span> <span class="nav-text">安装前提</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%AE%89%E8%A3%85"><span class="nav-number">4.2.</span> <span class="nav-text">开始安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%99%E6%98%AF%E6%88%91%E7%9A%84-config-yml-%E9%85%8D%E7%BD%AE"><span class="nav-number">4.3.</span> <span class="nav-text">这是我的 _config.yml 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">4.4.</span> <span class="nav-text">Hexo 常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E7%BD%91%E7%AB%99"><span class="nav-number">4.5.</span> <span class="nav-text">本地运行网站</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#post-subfolder"><span class="nav-number">4.6.</span> <span class="nav-text">_post subfolder</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NexT"><span class="nav-number">5.</span> <span class="nav-text">NexT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Next"><span class="nav-number">5.1.</span> <span class="nav-text">安装 Next</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-config-yml"><span class="nav-number">5.2.</span> <span class="nav-text">主题配置文件 _config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0-GitHub"><span class="nav-number">5.3.</span> <span class="nav-text">部署到 GitHub</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E7%AE%A1%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">图片管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#github-%E6%94%B9%E5%90%8D"><span class="nav-number">7.</span> <span class="nav-text">github 改名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-github-%E6%94%B9%E5%90%8D"><span class="nav-number">8.</span> <span class="nav-text">hexo github 改名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91"><span class="nav-number">9.</span> <span class="nav-text">踩过的一些坑</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%86%99%E5%8D%9A%E5%AE%A2"><span class="nav-number">1.</span> <span class="nav-text">关于写博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="nav-number">2.</span> <span class="nav-text">更新历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GitHub"><span class="nav-number">3.</span> <span class="nav-text">GitHub</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo"><span class="nav-number">4.</span> <span class="nav-text">Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E6%8F%90"><span class="nav-number">4.1.</span> <span class="nav-text">安装前提</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%AE%89%E8%A3%85"><span class="nav-number">4.2.</span> <span class="nav-text">开始安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%99%E6%98%AF%E6%88%91%E7%9A%84-config-yml-%E9%85%8D%E7%BD%AE"><span class="nav-number">4.3.</span> <span class="nav-text">这是我的 _config.yml 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">4.4.</span> <span class="nav-text">Hexo 常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E7%BD%91%E7%AB%99"><span class="nav-number">4.5.</span> <span class="nav-text">本地运行网站</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#post-subfolder"><span class="nav-number">4.6.</span> <span class="nav-text">_post subfolder</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NexT"><span class="nav-number">5.</span> <span class="nav-text">NexT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Next"><span class="nav-number">5.1.</span> <span class="nav-text">安装 Next</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-config-yml"><span class="nav-number">5.2.</span> <span class="nav-text">主题配置文件 _config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0-GitHub"><span class="nav-number">5.3.</span> <span class="nav-text">部署到 GitHub</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E7%AE%A1%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">图片管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#github-%E6%94%B9%E5%90%8D"><span class="nav-number">7.</span> <span class="nav-text">github 改名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-github-%E6%94%B9%E5%90%8D"><span class="nav-number">8.</span> <span class="nav-text">hexo github 改名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91"><span class="nav-number">9.</span> <span class="nav-text">踩过的一些坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-%E5%8D%87%E7%BA%A7"><span class="nav-number">10.</span> <span class="nav-text">hexo 升级</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -513,6 +546,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
