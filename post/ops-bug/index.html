@@ -17,26 +17,26 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"feiyang233.club","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"feiyang233.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="仅以本文记录那些年弟弟背过的锅！">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DevOps 中踩过的坑">
-<meta property="og:url" content="http://feiyang233.club/post/ops-bug/index.html">
+<meta property="og:url" content="https://feiyang233.github.io/post/ops-bug/index.html">
 <meta property="og:site_name" content="feiyang&#39;s blog">
 <meta property="og:description" content="仅以本文记录那些年弟弟背过的锅！">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-07-05T02:58:36.000Z">
 <meta property="article:modified_time" content="2021-06-30T15:15:15.000Z">
 <meta property="article:author" content="feiyang">
+<meta property="article:tag" content="python">
 <meta property="article:tag" content="docker">
 <meta property="article:tag" content="elk">
 <meta property="article:tag" content="jenkins">
-<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://feiyang233.club/post/ops-bug/">
+<link rel="canonical" href="https://feiyang233.github.io/post/ops-bug/">
 
 
 <script id="page-configurations">
@@ -198,7 +198,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://feiyang233.club/post/ops-bug/">
+    <link itemprop="mainEntityOfPage" href="https://feiyang233.github.io/post/ops-bug/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/feiy.gif">
@@ -285,7 +285,7 @@
 <h1 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h1><ol>
 <li>docker container IP default  is 172.17.0.0&#x2F;16  检查 iptables 是否阻挡</li>
 <li>docker -v 挂载出来的时候，要注意文件夹权限问题。</li>
-<li>docker logs 日志文件很大的时候，记得删除。<a target="_blank" rel="noopener" href="https://blog.csdn.net/yjk13703623757/article/details/80283729">Docker容器日志查看与清理</a> 也可以在 &#x2F;etc&#x2F;docker&#x2F;daemon 里<a href="https://feiyang233.club/post/docker/#docker-iptables">设置 log 的大小</a>。</li>
+<li>docker logs 日志文件很大的时候，记得删除。<a target="_blank" rel="noopener" href="https://blog.csdn.net/yjk13703623757/article/details/80283729">Docker容器日志查看与清理</a> 也可以在 &#x2F;etc&#x2F;docker&#x2F;daemon 里<a target="_blank" rel="noopener" href="https://feiyang233.club/post/docker/#docker-iptables">设置 log 的大小</a>。</li>
 <li>dind, 见 gitlab 搭建 post</li>
 <li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/LtgGcS9b8X-TqbfaLfBldQ">一次有趣的 Docker 容器网络排查</a></li>
 </ol>
@@ -336,10 +336,10 @@ solution: Kafka can listen in all interfaces and connection with each other.<fig
 
       <footer class="post-footer">
           <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
               <a href="/tags/docker/" rel="tag"># docker</a>
               <a href="/tags/elk/" rel="tag"># elk</a>
               <a href="/tags/jenkins/" rel="tag"># jenkins</a>
-              <a href="/tags/python/" rel="tag"># python</a>
           </div>
 
         
@@ -576,7 +576,7 @@ solution: Kafka can listen in all interfaces and connection with each other.<fig
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://feiyang233.club/post/ops-bug/";
+    this.page.url = "https://feiyang233.github.io/post/ops-bug/";
     this.page.identifier = "post/ops-bug/";
     this.page.title = "DevOps 中踩过的坑";
     };
