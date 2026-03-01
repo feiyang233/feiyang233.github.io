@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203325.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/fainyang/pictures/master/img/20210513203445.png">
 <meta property="article:published_time" content="2021-05-13T02:44:00.000Z">
-<meta property="article:modified_time" content="2021-10-11T02:15:20.000Z">
+<meta property="article:modified_time" content="2026-03-01T00:56:45.433Z">
 <meta property="article:author" content="feiyang">
 <meta property="article:tag" content="docker">
 <meta property="article:tag" content="kubernetes">
@@ -232,7 +232,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-10-11 10:15:20" itemprop="dateModified" datetime="2021-10-11T10:15:20+08:00">2021-10-11</time>
+                <time title="Modified: 2026-03-01 08:56:45" itemprop="dateModified" datetime="2026-03-01T08:56:45+08:00">2026-03-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -272,7 +272,7 @@
         <p>都 2021 年了，我终于把 kubernetes 实验测试环境搭建好了，泪目</p>
 <span id="more"></span>
 
-<p>2019 年的时候，我也曾经尝试学习，搭建 kubernetes 集群，结果当时自己的电脑性能太差了。一台  mac 模拟出三台虚拟机，性能上根本无法满足要求，甚至偶尔死机。还有当时自己 naive， 也不会善用<a target="_blank" rel="noopener" href="https://feiyang233.club/post/vm/#%E5%AD%A6%E4%BC%9A%E5%BF%AB%E7%85%A7-snapshot">快照</a>, 每次搞崩溃了环境，又重头再来，费时费力。</p>
+<p>2019 年的时候，我也曾经尝试学习，搭建 kubernetes 集群，结果当时自己的电脑性能太差了。一台  mac 模拟出三台虚拟机，性能上根本无法满足要求，甚至偶尔死机。还有当时自己 naive， 也不会善用<a href="https://feiyang233.github.io/post/vm/#%E5%AD%A6%E4%BC%9A%E5%BF%AB%E7%85%A7-snapshot">快照</a>, 每次搞崩溃了环境，又重头再来，费时费力。</p>
 <p>如今，时代变了。兵强马壮，家里有三台笔记本，一台台式机，机荒的日子已经一去不复返了。重现当年好学的荣光，我辈义不容辞，冲。</p>
 <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>本文记录了，在三台 Ubuntu 虚拟机上搭建一个 kubernetes 集群的全部过程，以及分享菜鸡我踩过的坑。</p>
 <p>实验的环境如下， 都是 Ubuntu desktop 桌面版的，我也建议用桌面版。 原因：比如 kubernetes Dashboard 只能从 localhost 本地访问，桌面版自带 Firefox 浏览器，就可以直接在虚拟机界面里面直接操作， 少一步转发。</p>
@@ -317,7 +317,7 @@
 </tr>
 </tbody></table>
 <p>这三台虚拟机，分别跑在三台笔记本电脑上。这样做的好处是，桥接模式不需要 NAT 端口映射，在我家的局域网里面尽情的玩耍。<br>当然如果你的电脑性能超级好，一台物理机跑三台虚拟机也是没有问题的。</p>
-<p>实验环境的搭建，可以参考我的另外一篇博客 <a target="_blank" rel="noopener" href="https://feiyang233.club/post/vm/">https://feiyang233.club/post/vm/</a></p>
+<p>实验环境的搭建，可以参考我的另外一篇博客 <a href="https://feiyang233.github.io/post/vm/">https://feiyang233.github.io/post/vm/</a></p>
 <h1 id="搭建集群"><a href="#搭建集群" class="headerlink" title="搭建集群"></a>搭建集群</h1><p>分享两个不错的参考文档：</p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dMygLTxvdUEieQsaQ2RGLA">部署v1.20版的Kubernetes集群</a> 这个很不错</li>
